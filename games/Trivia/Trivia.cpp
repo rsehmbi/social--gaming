@@ -1,59 +1,66 @@
 #include "include/Trivia.h"
 #include <string>
 #include <iostream>
-Trivia::Trivia()
-{
-    this->index_questions = 0;
-    this->index_answers = 0;
-    this->max_questions = 10;
-    questions = new std::string [this->max_questions];
-    answers = new std::string [this->max_questions];
+
+using trivia::Trivia;
+
+//Default Constructor
+Trivia::Trivia() {
+    this->indexQuestions = 0;
+    this->indexAnswers = 0;
+    this->maxQuestions = 10;
+    questions = new std::string[this->maxQuestions];
+    answers = new std::string[this->maxQuestions];
 }
 
-Trivia::~Trivia()
-{
-    this->index_questions = 0;
-    this->index_answers = 0;
-    this->score = 0;
-    int max_questions = 0;
-    delete []questions;
-    delete []answers;
+//Destructor
+Trivia::~Trivia() {
+    this->indexAnswers = 0;
+    this->indexQuestions = 0;
+    this->currentScore = 0;
+    this->maxQuestions = 0;
+    delete[]questions;
+    delete[]answers;
 }
 
-int Trivia :: getindexquestions()
+//Getter and Setters
+int Trivia::getIndexQuestions()
 {
-    return this->index_questions;
+    return this->indexQuestions;
 }
 
-void Trivia :: setindexquestions(int index)
+void Trivia::setIndexQuestions(int index)
 {
-    this->index_questions = index;
+    this->indexQuestions = index;
 }
 
-int Trivia :: getindexanswers()
+int Trivia::getIndexAnswers()
 {
-    return this->index_answers;
+    return this->indexAnswers;
 }
 
-void Trivia:: setindexanswers(int index)
+void Trivia::setIndexAnswers(int index)
 {
-    this->index_answers = index;
+    this->indexAnswers = index;
 }
 
-int Trivia :: getscore()
+int Trivia::getScore()
 {
-    return this->score;
+    return this->currentScore;
 }
 
-void Trivia::settotalscore(int score)
+void Trivia::setScore(int score)
 {
-    this->score =  score;
+    this->currentScore = score;
 }
 
-int Trivia::getMax_no_questions() {
-    return this->max_questions;
+int Trivia::getMaxNoQuestions()
+{
+    return this->maxQuestions;
 }
-void Trivia::setMax_Questions(int Maxquestions) {
-    this->max_questions = Maxquestions;
+
+void Trivia::setMaxQuestions(int maxnoquestions)
+{
+    this->maxQuestions = maxnoquestions;
 }
 
