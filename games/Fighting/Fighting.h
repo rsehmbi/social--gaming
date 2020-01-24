@@ -5,14 +5,13 @@ namespace fighting {
   
   class Fighting {
     private:
-      const Users player1;
-      const Users player2;
-      int player1Health;
-      int player2Health;
+      Users *players;
+      int *playerHealth;
+      int maxPlayers;
 
     public:
       // Constructs an instance of the Brawn game for two players
-      Fighting(Users player1, Users player2);
+      Fighting();
 
       // Desctructor
       ~Fighting();
@@ -28,6 +27,12 @@ namespace fighting {
 
       // Deducts a player's health points.
       void lowerHealthPoints(User player);
+
+      // Sets maximum number of players.
+      void setMaxPlayers(int max);
+
+      // Gets the maximum number of players.
+      int getMaxPlayers();
   };
 }
 
