@@ -1,9 +1,9 @@
-#ifndef BRAWN_H
-#define BRAWN_H
+#ifndef FIGHTING_H
+#define FIGHTING_H
 
-namespace brawn {
+namespace fighting {
   
-  class Brawn {
+  class Fighting {
     private:
       const Users player1;
       const Users player2;
@@ -12,16 +12,22 @@ namespace brawn {
 
     public:
       // Constructs an instance of the Brawn game for two players
-      Brawn(Users player1, Users player2);
+      Fighting(Users player1, Users player2);
 
-      // Processes the attacking input and reduces the opponent's health.
-      void processAttackInput();
+      // Desctructor
+      ~Fighting();
+
+      // Processes a certain attack move.
+      void processAttackMove();
 
       // Determines if a player has lost yet.
       bool hasPlayerLostYet();
 
       // Returns the losing player.
       Users getLosingPlayer();
+
+      // Deducts a player's health points.
+      void lowerHealthPoints(User player);
   };
 }
 
