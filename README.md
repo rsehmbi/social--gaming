@@ -1,4 +1,3 @@
-
 # Single Threaded Web Socket Networking
 
 This repository contains an example library for single threaded client/server
@@ -21,7 +20,7 @@ demonstrate how to use this API.
 This project requires:
 
 1. C++17 or newer
-2. Boost >= 1.66
+2. Boost == 1.68 (1.7 introduces changes to library functions that affect the project and people in class had issue with compiling with 1.66)
 3. CMake >= 3.12
 4. NCurses (only tested with 6.1)
 
