@@ -1,19 +1,6 @@
-# Single Threaded Web Socket Networking
+# Social Gaming Platform
 
-This repository contains an example library for single threaded client/server
-programs based on web sockets using boost beast. Multiple clients and the server
-can transfer simple string messages back and forth. Because the API is single
-threaded, it integrates easily into a main update loop, e.g. for a game.
-Because it is web socket based, it supports both native and browser based
-clients at the same time. Examples of both are provided.
 
-*Note:* Both the creation of the communication channel as well as all
-communication between the client and the server is insecure. It is trivially
-subject to interception and alteration, and it should not be used to transmit
-sensitive information of any sort.
-
-In addition, a simple chat server with NCurses and browser based chat clients
-demonstrate how to use this API.
 
 ## Dependencies
 
@@ -23,35 +10,6 @@ This project requires:
 2. Boost == 1.68 (1.7 introduces changes to library functions that affect the project and people in class had issue with compiling with 1.66)
 3. CMake >= 3.12
 4. NCurses (only tested with 6.1)
-
-## Building with CMake
-
-1. Clone the repository.
-
-        git clone https://github.com/nsumner/web-socket-networking.git
-
-2. Create a new directory for building.
-
-        mkdir networkbuild
-
-3. Change into the new directory.
-
-        cd networkbuild
-
-4. Run CMake with the path to the source.
-
-        cmake ../web-socket-networking/
-
-5. Run make inside the build directory:
-
-        make
-
-This produces `chatserver` and `chatclient` tools called `bin/chatserver` and
-`bin/chatclient` respectively. The library for single threaded clients and
-servers is built in `lib/`.
-
-Note, building with a tool like ninja can be done by adding `-G Ninja` to
-the cmake invocation and running `ninja` instead of `make`.
 
 
 ## Running the Example Chat Client and Chat Server
