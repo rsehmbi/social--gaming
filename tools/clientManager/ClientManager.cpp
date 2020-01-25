@@ -2,12 +2,12 @@
 
 void
 clientManager::ClientManager::incrementConnectedClients(){
-    this->connectedClients--;
+    this->connectedClients++;
 }
 
 void
 clientManager::ClientManager::decrementConnectedClients(){
-    this->connectedClients++;
+    this->connectedClients--;
 }
 
 void
@@ -16,8 +16,7 @@ clientManager::ClientManager::update(const networking::Client &client,
         // TODO: send updates to the session Manager.
 }
 
-// connection request made by the client to join a room or create a room
 void 
 clientManager::ClientManager::connectionRequest(const networking::Client &client, std::string_view token){
-    
+
 }

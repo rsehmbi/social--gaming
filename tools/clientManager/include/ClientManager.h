@@ -18,20 +18,20 @@ namespace clientManager{
 
 	private:
 	// Map a player to its client window to send a message to the client.
-	// session -> client unique id.
+	// session -> client unique id
 	std::unordered_map<uintptr_t, std::string_view> sessionMap();
 
 	// number of connected clients.
 	unsigned int connectedClients;
 
-	// add Connected Clients.
+	// add Connected Clients
 	void incrementConnectedClients();
 
-	// remove Connected Clients.
+	// remove Connected Clients
 	void decrementConnectedClients();
 
 	// request to join a session.
-	void connectionRequest(const networking::Client &client, std::string_view token)
+	void connectionRequest(const networking::Client &client, std::string_view token);
 };
 }
 
