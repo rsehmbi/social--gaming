@@ -1,11 +1,13 @@
 #ifndef FIGHTING_H
 #define FIGHTING_H
 
+#include "../../../users/include/Users.h"
+
 namespace fighting {
   
   class Fighting {
     private:
-      Users *players;
+      users::Users *players;
       int *playerHealth;
       int maxPlayers;
 
@@ -23,10 +25,10 @@ namespace fighting {
       bool hasPlayerLostYet();
 
       // Returns the losing player.
-      Users getLosingPlayer();
+      users::Users getLosingPlayer();
 
       // Deducts a player's health points.
-      void lowerHealthPoints(User player);
+      void lowerHealthPoints(users::Users player);
 
       // Sets maximum number of players.
       void setMaxPlayers(int max);
