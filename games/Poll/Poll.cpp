@@ -1,59 +1,59 @@
-#include "include/beauty.h"
+#include "include/poll.h"
 
-using beauty::Beauty;
+using poll::Poll;
 
-Beauty::Beauty(){
+Poll::Poll(){
     this->roundCount = 0;
     this->votes = nullptr;
     this->answers = nullptr;
     this->players = nullptr;
 }
 
-Beauty::~Beauty(){
+Poll::~Poll(){
     this->roundCount = 0;
     delete votes;
     delete answers;
     delete players;
 }
 
-int Beauty::getRoundCount(){
+int Poll::getRoundCount(){
     return this->roundCount;
 }
 
-int* Beauty::getVotes(){
+int* Poll::getVotes(){
     return this->votes;
 }
 
-std::string* Beauty::getAnswers(){
+std::string* Poll::getAnswers(){
     return this->answers;
 }
 
-Users* Beauty::getPlayers(){
+std::vector<users::Users*> Poll::getPlayers(){
     return this->players;
 }
 
-void Beauty::setVotes(int* votes){
+void Poll::setVotes(int* votes){
     this->votes = votes;
 }
 
-void Beauty::setAnswers(std::string* answers){
+void Poll::setAnswers(std::string* answers){
     this->answers = answers;
 }
 
 
-void Beauty::setPlayers(std::Users* players){
+void Poll::setPlayers(users::Users* players){
     this->players = players;
 }
 
-void Beauty::updateRoundCount(){
+void Poll::updateRoundCount(){
     this->roundCount++;
 }
 
-void Beauty::calculateVotes(){
+void Poll::calculateVotes(){
 
 }
 
-void Beauty::calculateWinners(){
+void Poll::calculateWinners(){
     
 }
             

@@ -7,8 +7,8 @@ using fighting::Fighting;
 Fighting::Fighting() {
   // TODO: change later to be according to number of players in game
   this->maxPlayers = 8;
-  players = new Users[this->maxPlayers];
-  playerHealth = new Users[this->maxPlayers];
+  players = new users::Users[this->maxPlayers];
+  playerHealth = new int[this->maxPlayers];
 }
 
 Fighting::~Fighting() {
@@ -27,7 +27,7 @@ Game::mainGameLogic() {
 
 }
 
-std::vector<Users>
+std::vector<users::Users>
 Game::getWinner() {
 
 }
@@ -42,13 +42,13 @@ Fighting::hasPlayerLostYet() {
 
 }
 
-Users 
+users::Users 
 Fighting::getLosingPlayer() {
   
 }
 
 void
-Fighting::lowerHealthPoints(User player) {
+Fighting::lowerHealthPoints(users::Users player) {
 
 }
 

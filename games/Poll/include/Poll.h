@@ -1,28 +1,30 @@
-#ifndef BEAUTY_H
-#define BEAUTY_H
+#ifndef POLL_H
+#define POLL_H
 
 #include <string>
+#include <vector>
+#include "../../../users/include/Users.h"
 
-namespace beauty{
+namespace poll{
     
-    class Beauty{
+    class Poll{
         private:
             int roundCount;
             int* votes;
-            std::string* answers;
-            Users* players;
+            std::string answers;
+            std::vector<users::Users*> players;
         public:
-            Beauty();
-            ~Beauty();
+            Poll();
+            ~Poll();
 
             int getRoundCount();
             int* getVotes();
             std::string* getAnswers();
-            Users* getPlayers();
+            std::vector<users::Users*> getPlayers();
 
             void setVotes(int* votes);
             void setAnswers(std::string* answers);
-            void setPlayers(std::Users* players);
+            void setPlayers(users::Users* players);
 
             void updateRoundCount();
             void calculateVotes();
