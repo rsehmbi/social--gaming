@@ -1,39 +1,23 @@
-#include <iostream>
+#include "ClientManager.h"
 
-#include "Client.h"
+void
+clientManager::ClientManager::incrementConnectedClients(){
+    this->connectedClients--;
+}
 
-int main(int argc, char* argv[]){
+void
+clientManager::ClientManager::decrementConnectedClients(){
+    this->connectedClients++;
+}
 
-  if (argc < 3){
-    std::cerr << "Usage: \n" 
-      << argv[0] << "<ip address> <port>\n"
-      << " e.g " << argv[0] << "localhost 44440\n";
-    return 1;
-  }
+void
+clientManager::ClientManager::update(const networking::Client &client, 
+    std::string_view response){
+        // TODO: send updates to the session Manager.
+}
 
-  networking::Client client{argv[1], argv[2]};
-  bool finish = false;
-  auto onTextEntry = [&finish, &client] (std::string text) {
-		if (text == "exit" || text == "quit") {
-    	finish = true;
-  	} else {
-    	client.send(text);
-  	}
-  };
-
-  while (!finish && !client.isDisconnected()) {
-  	try {
-    	client.update();
-		} catch (std::exception& e) {
-    	finish = true;
-    	std::cout << "Exception from Client update:" << e.what;
-  	}
-
-  	auto response = client.receive();
-  	if (!response.empty()) {
-    	std::cout << "received a new message:" << response;
-  	}
-  }
-
-	return 0;
+// connection request made by the client to join a room or create a room
+void 
+clientManager::ClientManager::connectionRequest(const networking::Client &client, std::string_view token){
+    
 }
