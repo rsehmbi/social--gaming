@@ -28,7 +28,7 @@ std::string* Poll::getAnswers(){
     return this->answers;
 }
 
-std::vector<users::Users*> Poll::getPlayers(){
+users::Users* Poll::getPlayers(){
     return this->players;
 }
 
