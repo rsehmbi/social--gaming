@@ -2,7 +2,6 @@
 #define POLL_H
 
 #include <string>
-#include <vector>
 #include "../../../users/include/Users.h"
 
 namespace poll{
@@ -11,8 +10,8 @@ namespace poll{
         private:
             int roundCount;
             int* votes;
-            std::string answers;
-            std::vector<users::Users*> players;
+            std::string* answers;
+            users::Users* players;
         public:
             Poll();
             ~Poll();
@@ -20,7 +19,7 @@ namespace poll{
             int getRoundCount();
             int* getVotes();
             std::string* getAnswers();
-            std::vector<users::Users*> getPlayers();
+            users::Users* getPlayers();
 
             void setVotes(int* votes);
             void setAnswers(std::string* answers);
