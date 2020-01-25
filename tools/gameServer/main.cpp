@@ -2,11 +2,12 @@
 //  This code adapts code taken from web-socket-networking chatserver.cpp at
 //  https://github.com/nsumner/web-socket-networking into a social platform
 //  that supports user specified games
-//  This file follows original MIT License. See the LICENSE file
+//  This project follows original MIT License. See the LICENSE file
 //  for details.
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
+#include "sessionManager.h"
 
 #include <fstream>
 #include <iostream>
@@ -28,8 +29,8 @@ std::std::unorder_map<uintptr_t, sessionManager*> sessionMap();
 
 void
 onConnect(Connection c) {
-  std::cout << "New connection found: " << c.id << "\n";
-  clients.push_back(c);
+    std::cout << "New connection found: " << c.id << "\n";
+    clients.push_back(c);
 }
 
 
@@ -49,18 +50,42 @@ struct MessageResult {
 
 MessageResult
 processMessages(Server& server, const std::deque<Message>& incoming) {
-  std::ostringstream result;
-  bool quit = false;
-  for (auto& message : incoming) {
-    if (message.text == "quit") {
-      server.disconnect(message.connection);
-    } else if (message.text == "shutdown") {
-      std::cout << "Shutting down.\n";
-      quit = true;
-    } else {
-      result << message.connection.id << "> " << message.text << "\n";
+    std::ostringstream result;
+    bool quit = false;
+    for (auto& message : incoming) {
+    //scan for command in inbound messages
+    switch (message.text)
+        {
+            case "/quit": 
+            {
+                server.disconnect(message.connection);
+                break;
+            }
+            case "/shutdown":
+            {
+                std::cout << "Shutting down.\n";
+                quit = true;
+                break;
+            }
+            case "/join":
+            {
+                std::cout << "Joining session...\n";
+                //TODO: parse string for session id, then id to sessionMap()
+                break;
+            }
+            case "/create":
+            {
+                std::cout << "Creating session...\n";
+                //TODO: create new session and add id to sessionMap()
+                break;
+            }
+            default:
+            {
+                result << message.connection.id << "> " << message.text << "\n";
+                break;
+            }
+        }
     }
-  }
   return MessageResult{result.str(), quit};
 }
 
@@ -120,8 +145,8 @@ main(int argc, char* argv[]) {
         auto incoming = server.receive();
 
         //TO DO:
-        //check if any incoming message create room command
-        //sort messages into session using session mapping
+        //check if any incoming message with create room command
+        //sort messages into sessions using session mapping
         //pass session message to sessionManager
         auto [log, shouldQuit] = processMessages(server, incoming);
         auto outgoing = buildOutgoing(log);
