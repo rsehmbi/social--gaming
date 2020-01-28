@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
-#include "sessionManager.h"
+// #include "sessionManager.h"
 
 #include <fstream>
 #include <iostream>
@@ -24,7 +24,7 @@ using networking::Message;
 
 std::vector<Connection> clients;
 //key value pair mapping connection id to a game session
-std::std::unorder_map<uintptr_t, sessionManager*> sessionMap();
+// std::unordered_map<uintptr_t, sessionManager*> sessionMap();
 
 
 void
@@ -52,40 +52,18 @@ MessageResult
 processMessages(Server& server, const std::deque<Message>& incoming) {
     std::ostringstream result;
     bool quit = false;
-    for (auto& message : incoming) {
     //scan for command in inbound messages
-    switch (message.text)
-        {
-            case "/quit": 
-            {
-                server.disconnect(message.connection);
-                break;
-            }
-            case "/shutdown":
-            {
-                std::cout << "Shutting down.\n";
-                quit = true;
-                break;
-            }
-            case "/join":
-            {
-                std::cout << "Joining session...\n";
-                //TODO: parse string for session id, then id to sessionMap()
-                break;
-            }
-            case "/create":
-            {
-                std::cout << "Creating session...\n";
-                //TODO: create new session and add id to sessionMap()
-                break;
-            }
-            default:
-            {
-                result << message.connection.id << "> " << message.text << "\n";
-                break;
-            }
-        }
+    for (auto& message : incoming) {
+      if (message.text == "quit") {
+          server.disconnect(message.connection);
+      } else if (message.text == "shutdown") {
+          std::cout << "Shutting down.\n";
+          quit = true;
+      } else {
+          result << message.connection.id << "> " << message.text << "\n";
+      }
     }
+  
   return MessageResult{result.str(), quit};
 }
 
@@ -150,6 +128,8 @@ main(int argc, char* argv[]) {
         //pass session message to sessionManager
         auto [log, shouldQuit] = processMessages(server, incoming);
         auto outgoing = buildOutgoing(log);
+
+
         server.send(outgoing);
 
         if (shouldQuit || errorWhileUpdating) {
