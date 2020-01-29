@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
-// #include "sessionManager.h"
+#include "SessionManager.h"
 
 #include <fstream>
 #include <iostream>
@@ -23,8 +23,9 @@ using networking::Message;
 
 
 std::vector<Connection> clients;
-//key value pair mapping connection id to a game session
-// std::unordered_map<uintptr_t, sessionManager*> sessionMap();
+
+//session manager object that manages session messages
+SessionManager manager;
 
 
 void
@@ -33,50 +34,12 @@ onConnect(Connection c) {
     clients.push_back(c);
 }
 
-
 void
 onDisconnect(Connection c) {
   std::cout << "Connection lost: " << c.id << "\n";
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
 }
-
-
-struct MessageResult {
-  std::string result;
-  bool shouldShutdown;
-};
-
-
-MessageResult
-processMessages(Server& server, const std::deque<Message>& incoming) {
-    std::ostringstream result;
-    bool quit = false;
-    //scan for command in inbound messages
-    for (auto& message : incoming) {
-      if (message.text == "quit") {
-          server.disconnect(message.connection);
-      } else if (message.text == "shutdown") {
-          std::cout << "Shutting down.\n";
-          quit = true;
-      } else {
-          result << message.connection.id << "> " << message.text << "\n";
-      }
-    }
-  
-  return MessageResult{result.str(), quit};
-}
-
-
-std::deque<Message>
-buildOutgoing(const std::string& log) {
-  std::deque<Message> outgoing;
-  for (auto client : clients) {
-    outgoing.push_back({client, log});
-  }
-  return outgoing;
-}
-
 
 std::string
 getHTTPMessage(const char* htmlLocation) {
@@ -122,17 +85,14 @@ main(int argc, char* argv[]) {
         //collect all inbound messages
         auto incoming = server.receive();
 
-        //TO DO:
-        //check if any incoming message with create room command
-        //sort messages into sessions using session mapping
-        //pass session message to sessionManager
-        auto [log, shouldQuit] = processMessages(server, incoming);
-        auto outgoing = buildOutgoing(log);
-
+        //send off to session manager
+        manager.processMessages(incoming, clients);
+        
+        auto outgoing = manager.outboundMessages();
 
         server.send(outgoing);
 
-        if (shouldQuit || errorWhileUpdating) {
+        if (errorWhileUpdating) {
             break;
     }
 
