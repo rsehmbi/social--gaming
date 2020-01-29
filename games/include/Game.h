@@ -2,7 +2,7 @@
 #define GAMES_H
 
 #include <vector>
-#include "../users/include/Users.h"
+#include "../../users/include/Users.h"
 
 namespace game {
 
