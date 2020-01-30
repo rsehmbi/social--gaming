@@ -1,6 +1,6 @@
 
 add_library(sessionmanager
-  src/sessionManager.cpp
+  src/SessionManager.cpp
 )
 
 target_include_directories(sessionmanager
@@ -9,7 +9,6 @@ target_include_directories(sessionmanager
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${Boost_INCLUDE_DIR}
 )
 
 set_target_properties(sessionmanager
@@ -17,6 +16,8 @@ set_target_properties(sessionmanager
                       LINKER_LANGUAGE CXX
                       CXX_STANDARD 17
 )
+
+target_link_libraries(sessionmanager networking)
 
 install(TARGETS sessionmanager
   ARCHIVE DESTINATION lib

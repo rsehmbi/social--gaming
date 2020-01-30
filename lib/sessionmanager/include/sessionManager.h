@@ -33,9 +33,9 @@ public:
 
     ~SessionManager(); //destructor
 
-    void processMessages(const std::deque<Message>& incoming, const std::vector<Connection>& clients);
+    void processMessages(const std::deque<Message>& incoming);
 
-    std::deque<Message> outboundMessages();
+    const std::deque<Message>& outboundMessages(const std::vector<Connection>& clients);
 
     //add connection as owner of current session
     // void addOwner(const Connection& ownerC);
@@ -60,6 +60,9 @@ private:
 
     //a hashed key value pair to map session id to sessions objects
     std::unordered_map<std::string, Session> sessionMap;
+
+    //chat logs for each session
+    std::unordered_map<std::string, std::string> sessionLogs;
 
     //outbound deque of messages
     std::deque<Message> outgoing;

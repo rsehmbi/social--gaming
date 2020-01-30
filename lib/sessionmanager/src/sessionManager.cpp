@@ -22,6 +22,10 @@ SessionManager::SessionManager() {  //constructor
 
     //a set of sessions objects
     std::unordered_map<std::string, Session> sessionMap;
+
+    //initialize chatlogs and add public entry
+    std::unordered_map<std::string, std::string> sessionLogs;
+    sessionLogs["public"] = "";
     
     //outbound msgs
     std::deque<Message> outgoing;
@@ -31,8 +35,13 @@ SessionManager::SessionManager() {  //constructor
     std::mt19937                        generator(rand_dev());
 }
 
-void SessionManager::processMessages(const std::deque<Message>& incoming, const std::vector<Connection>& clients) {
-    
+SessionManager::~SessionManager(){
+    //all class objects are destroyed automatically when out of scope
+}
+
+void SessionManager::processMessages(const std::deque<Message>& incoming) {
+    outgoing.clear();
+    sessionLogs.clear();
     for (auto& message : incoming) {
         //create session request
         if (message.text.find("/create") != std::string::npos) {
@@ -40,21 +49,26 @@ void SessionManager::processMessages(const std::deque<Message>& incoming, const 
             std::cout << "Request for create.\n";
 
         //join session request
-        } else if (message.text.find("/join")) {
+        } else if (message.text.find("/join") != std::string::npos) {
             //parse string for id number
             std::string sessionID = parseSecondWord(message.text);
             joinSession(message.connection.id, sessionID);
             std::cout << "Request for join.\n";
         
         //close session request
-        } else if (message.text.find("/close")){
+        } else if (message.text.find("/close") != std::string::npos){
             
-        } else if (message.text.find("/chowner")) {
+        } else if (message.text.find("/chowner") != std::string::npos) {
 
         } else {
+            //connection in public chat
+            if(connectionMap.find(message.connection.id) == connectionMap.end()){
+                std::ostringstream publicStr;
+                publicStr << message.connection.id << "> " << message.text << "\n";
+                sessionLogs["public"] += publicStr.str();
+            }
             //TODO: perform sort by connectionMap and deliver to sorted messages to session by sessionMap
             //if not in connectionMap, append to public chat log
-            // result << message.connection.id << "> " << message.text << "\n";
         }
     }
   
@@ -77,9 +91,9 @@ void SessionManager::createSession(const uintptr_t& connectionID) {
     //create new session and map to session id
     sessionMap[sessionID] = Session{sessionID};
     connectionMap[connectionID] = sessionID;
-    std::ostringstream oss;
-    oss << "Session created. Session ID: " << sessionID << "\n";
-    outgoing.push_back({connectionID, oss.str()});
+    std::ostringstream outStr;
+    outStr << "Session created. Session ID: " << sessionID << "\n";
+    outgoing.push_back({connectionID, outStr.str()});
     return;
 }
 
@@ -91,7 +105,6 @@ void SessionManager::joinSession(const uintptr_t& connectionID, const std::strin
                             "You are already in a session. Open a new connection to join another session.\n"});
         return;
     }
-
     //check if sessionID exists
     if(sessionMap.find(sessionID) == sessionMap.end()){
         outgoing.push_back({connectionID, "Invalid session ID\n"});
@@ -99,14 +112,22 @@ void SessionManager::joinSession(const uintptr_t& connectionID, const std::strin
     }
 
     connectionMap[connectionID] = sessionID;
-    std::ostringstream oss;
-    oss << "Connected to session: " << sessionID << "\n";
-    outgoing.push_back({connectionID, oss.str()});
+    std::ostringstream outStr;
+    outStr << "Connected to session: " << sessionID << "\n";
+    outgoing.push_back({connectionID, outStr.str()});
     return;
 }
 
-std::deque<Message> SessionManager::outboundMessages(){
-
+const std::deque<Message>& SessionManager::outboundMessages(const std::vector<Connection>& clients){
+    for(auto& client : clients){
+        //public client
+        if(connectionMap.find(client.id) == connectionMap.end()){
+            outgoing.push_back({client.id, sessionLogs["public"]});
+        } else { //session client
+            outgoing.push_back({client.id, sessionLogs[connectionMap[client.id]]});
+        }
+    }
+    return outgoing;
 }
 
 //generates a random alphanumeric string for session id of specified length

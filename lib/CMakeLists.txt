@@ -1,3 +1,3 @@
 add_subdirectory(networking)
-#add_subdirectory(sessionmanager)
+add_subdirectory(sessionmanager)
 

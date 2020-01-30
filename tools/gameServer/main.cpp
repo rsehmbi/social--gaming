@@ -86,9 +86,9 @@ main(int argc, char* argv[]) {
         auto incoming = server.receive();
 
         //send off to session manager
-        manager.processMessages(incoming, clients);
+        manager.processMessages(incoming);
         
-        auto outgoing = manager.outboundMessages();
+        auto outgoing = manager.outboundMessages(clients);
 
         server.send(outgoing);
 

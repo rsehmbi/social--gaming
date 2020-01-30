@@ -16,11 +16,11 @@ target_link_libraries(main
   networking
   ${CMAKE_THREAD_LIBS_INIT}
 )
-#target_link_libraries(main
-#  networking
-#  ${CMAKE_THREAD_LIBS_INIT}
-#  sessionmanager
-#)
+
+target_link_libraries(main
+  sessionmanager
+  ${CMAKE_THREAD_LIBS_INIT}
+)
 
 install(TARGETS main
   RUNTIME DESTINATION bin
