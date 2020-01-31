@@ -28,12 +28,16 @@
       }
 
       var ws = null;
+      var count = 0;
       var uriPieces = window.location.href.split('/');
       var wsLocation = 'ws://' + uriPieces[2];
       $('#uri:text').val(wsLocation);
       
       $('#connect').click(function() {
-        ws = new WebSocket(uri.value);
+        if(count == 0){
+          ws = new WebSocket(uri.value);
+          count++;
+        }
         ws.onopen = function(ev) {
           appendText("Connected!\n");
         };
@@ -51,6 +55,7 @@
 
       $('#disconnect').click(function () {
         ws.close();
+        count--;
       });
 
       $('#send').click(function () {
