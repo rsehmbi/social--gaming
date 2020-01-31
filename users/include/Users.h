@@ -11,7 +11,7 @@ namespace users {
         int playerNum; //Are you player #1,2,3 or 4
         int playerID;   //unique identifier 
         bool isOwner; //if player is the Owner of game
-
+        int wins; // Keep track of wins for single player
 
     public:
         //Default Constructor
@@ -37,6 +37,9 @@ namespace users {
 
         bool getIsOwner();
 
+        int getWins();
+
+        void setWins();
         //Class Functions
         void connectToServer(std::string *passcode);
 

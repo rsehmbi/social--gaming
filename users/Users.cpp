@@ -9,6 +9,7 @@ Users::Users() {
     playerName= new std::string;
     this->playerID= 0;
     this->isOwner= false;
+    this->wins = 0;
 };
 
 //Destructor
@@ -16,6 +17,7 @@ Users::~Users(){
     delete[]playerName;
     this->playerID=0;
     this->isOwner=false;
+    this->wins = 0;
 }
 
 //Getters and Setters to access and change the private variables
@@ -49,6 +51,14 @@ void Users::setIsOwner(bool owner){
 
 bool Users::getIsOwner(){
     return this->isOwner;
+}
+
+int Users::getWins() {
+    return this->wins;
+}
+
+void Users::setWins() {
+    this->wins = ++this->wins;
 }
 
 //Class Functions to be created after server format is setup
