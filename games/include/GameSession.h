@@ -4,23 +4,11 @@
 using json = nlohmann::json;
 
 class GameSession {
-private:
 
-    json gameConfiguration;
-
-    json constants;
-    json variables;
-
-    std::vector<users::Users> Audience;
 public:
     const std::vector<users::Users> &getAudience() const;
 
     const std::vector<users::Users> &getPlayers() const;
-
-private:
-    std::vector<users::Users> Players;
-
-public:
     //Constructor
     GameSession(json gameSpecification) : gameConfiguration(gameSpecification) {
     };
@@ -62,6 +50,17 @@ public:
     void display(std::string);
 
     json getUpdate();
+
+private:
+
+    json gameConfiguration;
+
+    json constants;
+    json variables;
+
+    std::vector<users::Users> Audience;
+    std::vector<users::Users> Players;
+
 
 };
 
