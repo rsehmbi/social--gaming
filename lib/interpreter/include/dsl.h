@@ -12,6 +12,20 @@ public:
     DSL();
     ~DSL();
 
+nlohmann::json inputChoice(nlohmann::json h);
+
+nlohmann::json inputText(nlohmann::json h);
+
+nlohmann::json inputVote(nlohmann::json h);
+
+nlohmann::json message(nlohmann::json h);
+
+nlohmann::json globalMessage(nlohmann::json h);
+
+nlohmann::json scores(nlohmann::json h);
+
+void updateStatus();
+
 private:
     std::map<std::string, std::string> commandMappings;
 };
