@@ -3,6 +3,9 @@
 
 #include <string>
 #include <map>
+#include "json.hpp"
+
+using nlohmann::json;
 
 // The DSL class is responsible for holding information regarding
 // the domain specific language used in JSON files
@@ -12,6 +15,7 @@ public:
     DSL();
     ~DSL();
 
+    static json add(json rule);
 private:
     std::map<std::string, std::string> commandMappings;
 };

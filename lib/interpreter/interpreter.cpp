@@ -18,13 +18,12 @@ void Interpreter::processRules(json gameRules, json gameData){
         processRules(ruleBlock, gameData);
     }
     //calls processor to process rule block
-    return gameData;
 }
 
 json Interpreter::getNextRuleBlock(json ruleBlock){
     return NULL;
 }
 
-boolean Interpreter::hasNestedRules(json ruleBlock){
+bool Interpreter::hasNestedRules(json ruleBlock){
     return false;
 }

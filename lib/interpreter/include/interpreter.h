@@ -5,6 +5,7 @@
 #include "include/dsl.h"
 #include "json.hpp"
 
+using nlohmann::json;
 //responsible for checking rule inside json 
 
 namespace interpreter{
@@ -13,10 +14,10 @@ namespace interpreter{
     private:
         json gameRules;
         json gameData;  
-        std::unique_ptr<DSL::DSL> processor(new processor());
+        std::unique_ptr<DSL> processor;
 
         json getNextRuleBlock(json jsonBlock);
-        boolean hasNestedRules(json ruleBlock);
+        bool hasNestedRules(json ruleBlock);
         
     
     public:
