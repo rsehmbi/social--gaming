@@ -4,10 +4,7 @@
 using interpreter::Interpreter;
 
 Interpreter::Interpreter(json data, json rules)
-    : gameRules(rules), gameData(data){}
-
-Interpreter::~Interpreter(){   
-}
+    : gameRules(rules), gameData(data);
 
 json Interpreter::getUpdate(){
     return this-> gameData;
