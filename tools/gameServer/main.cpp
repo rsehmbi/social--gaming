@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
-#include "sessionManager.h"
+#include "SessionManager.h"
 
 #include <fstream>
 #include <iostream>
@@ -23,8 +23,9 @@ using networking::Message;
 
 
 std::vector<Connection> clients;
-//key value pair mapping connection id to a game session
-std::std::unorder_map<uintptr_t, sessionManager*> sessionMap();
+
+//session manager object that manages session messages
+SessionManager manager;
 
 
 void
@@ -33,72 +34,12 @@ onConnect(Connection c) {
     clients.push_back(c);
 }
 
-
 void
 onDisconnect(Connection c) {
   std::cout << "Connection lost: " << c.id << "\n";
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
 }
-
-
-struct MessageResult {
-  std::string result;
-  bool shouldShutdown;
-};
-
-
-MessageResult
-processMessages(Server& server, const std::deque<Message>& incoming) {
-    std::ostringstream result;
-    bool quit = false;
-    for (auto& message : incoming) {
-    //scan for command in inbound messages
-    switch (message.text)
-        {
-            case "/quit": 
-            {
-                server.disconnect(message.connection);
-                break;
-            }
-            case "/shutdown":
-            {
-                std::cout << "Shutting down.\n";
-                quit = true;
-                break;
-            }
-            case "/join":
-            {
-                std::cout << "Joining session...\n";
-                //TODO: parse string for session id, then id to sessionMap()
-                break;
-            }
-            case "/create":
-            {
-                std::cout << "Creating session...\n";
-                //TODO: create new session and add id to sessionMap()
-                break;
-            }
-            default:
-            {
-                result << message.connection.id << "> " << message.text << "\n";
-                break;
-            }
-        }
-    }
-  return MessageResult{result.str(), quit};
-}
-
-
-std::deque<Message>
-buildOutgoing(const std::string& log) {
-  std::deque<Message> outgoing;
-  for (auto client : clients) {
-    outgoing.push_back({client, log});
-  }
-  return outgoing;
-}
-
 
 std::string
 getHTTPMessage(const char* htmlLocation) {
@@ -144,15 +85,14 @@ main(int argc, char* argv[]) {
         //collect all inbound messages
         auto incoming = server.receive();
 
-        //TO DO:
-        //check if any incoming message with create room command
-        //sort messages into sessions using session mapping
-        //pass session message to sessionManager
-        auto [log, shouldQuit] = processMessages(server, incoming);
-        auto outgoing = buildOutgoing(log);
+        //send off to session manager
+        manager.processMessages(incoming);
+        
+        auto outgoing = manager.outboundMessages(clients);
+
         server.send(outgoing);
 
-        if (shouldQuit || errorWhileUpdating) {
+        if (errorWhileUpdating) {
             break;
     }
 
