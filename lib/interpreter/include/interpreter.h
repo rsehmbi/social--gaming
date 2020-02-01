@@ -2,25 +2,29 @@
 #define INTERPRETER_H
 
 #include <string>
+#include "json.hpp"
 #include "include/dsl.h"
 
-namespace interpreter {
+//responsible for checking rule inside json 
 
-    // The Interpreter class is responsible for interpreting
-    // game rules that are specified in a JSON file
-    class Interpreter {
+namespace interpreter{
+
+    class Interpreter{
+    private:
+        json gameRules;
+        json gameData;  
+        std::unique_ptr<DSL::DSL> processor(new processor());
+
+        json getNextRuleBlock(json jsonBlock);
+        boolean hasNestedRules(json ruleBlock);
+        
+    
     public:
-        Interpreter();
+        Interpreter(json rules, json data);
         ~Interpreter();
 
-        // Takes JSON file that specifies a game
-        void interpretGame();
-
-    private:
-        DSL::DSL language;
-        
-        // Reads the specifications for the domain specific language
-        void configureDSL();
+        json getUpdate();
+        void processRules(json gameRules, json gameData);
     };
 }
 

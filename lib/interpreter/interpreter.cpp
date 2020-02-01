@@ -2,18 +2,29 @@
 
 using interpreter::Interpreter;
 
-Interpreter::Interpreter() {
-    configureDSL();
+Interpreter::Interpreter(json data, json rules)
+    : gameRules(rules), gameData(data){}
+
+Interpreter::~Interpreter(){   
 }
 
-void Interpreter::configureDSL() {
-    // Read JSON file that specifies the DSL
-    // Based on the specification, configure the DSL
-
-    // DSL is currently a stub
-    language = DSL();
+json Interpreter::getUpdate(){
+    return this-> gameData;
 }
 
-void Interpreter::interpretGame() {
+void Interpreter::processRules(json gameRules, json gameData){
+    json ruleBlock = getNextRuleBlock(gameRules);
+    if(hasNestedRules(ruleBlock)){
+        processRules(ruleBlock, gameData);
+    }
+    //calls processor to process rule block
+    return gameData;
+}
 
+json Interpreter::getNextRuleBlock(json ruleBlock){
+    return NULL;
+}
+
+boolean Interpreter::hasNestedRules(json ruleBlock){
+    return false;
 }
