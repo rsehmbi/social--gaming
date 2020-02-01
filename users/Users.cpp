@@ -6,6 +6,8 @@ using users::Users;
 
 //Destructor
 Users::~Users(){
+    this->NumOfWins=0;
+    this->playerNum=0;
     this->playerID=0;
     this->isOwner=false;
 }

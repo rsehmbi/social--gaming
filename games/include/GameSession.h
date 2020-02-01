@@ -3,7 +3,6 @@
 
 #include <list>
 #include <utility>
-
 #include "json.hpp"
 #include "users/include/Users.h"
 
@@ -17,33 +16,37 @@ private:
     json constants;
     json variables;
 
-    std::vector<Users> Audience;
-public:
-    const std::vector<Users> &getAudience() const;
-
-    const std::vector<Users> &getPlayers() const;
-
-private:
-    std::vector<Users> Players;
+    std::vector <Users> Audience;
+    std::vector <Users> Players;
 
 public:
     //Constructor
-    GameSession(json gameSpecification): gameSpecification(gameSpecification){
+    GameSession(json gameSpecification) : gameSpecification(gameSpecification) {
     };
 
     std::string getNameOfGame();
+
     int getMinNoOfPlayers();
+
     int getMaxNoOfPlayers();
 
-    std::string getConstants(const std::string& nameOfConstant);
-    std::string getVariables(const std::string& nameOfVariable);
+    std::string getConstants(const std::string &nameOfConstant);
+
+    std::string getVariables(const std::string &nameOfVariable);
 
     bool isAudience();
-    std::list<std::string> getPlayerNames();
+
+    std::list <std::string> getPlayerNames();
+
     int getPlayerCount();
+
     int getAudienceCount();
 
-    void setConstants(const std:: string& nameOfConstant);
+    void setConstants(const std::string &nameOfConstant);
+
+    const std::vector <Users> &getAudience() const;
+
+    const std::vector <Users> &getPlayers() const;
 
     // Contains the main logic for the game.
     void mainGameLogic();
@@ -60,6 +63,7 @@ public:
 
     // Gets a message to display to players of the game.
     void display(std::string);
+
     json getUpdate();
 
 };
