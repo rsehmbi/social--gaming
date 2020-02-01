@@ -8,7 +8,7 @@
 #include <glog/logging>
 
 
-namespace jsonParser {
+namespace jsonReader {
 
     /* 
         The jsonReader class is responsible for reding and validating the json 
@@ -17,7 +17,7 @@ namespace jsonParser {
         format and create a nlohmann::json object.
     */
 
-    class JsonParser {
+    class jsonReader {
     public:
 
         nlohmann::json createGame(std::string_view specJsonPath, std::string_view configJsonPath);

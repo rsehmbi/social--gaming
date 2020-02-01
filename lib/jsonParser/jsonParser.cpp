@@ -1,9 +1,9 @@
-#include "include/jsonParser.h"
+#include "include/jsonReader.h"
 
 using json = nlohmann::json;
 
 
-json jsonParser::JsonParser::createGame(std::string_view specJsonPath, std::string_view configJsonPath){
+json jsonReader::jsonReader::createGame(std::string_view specJsonPath, std::string_view configJsonPath){
     json jsonSpecs = readGameSpecification(specJsonPath);
     if (jsonSpecs != nullptr){
         json jsonGame = readGameConfiguration(jsonSpecs, configJsonPath);
@@ -18,7 +18,7 @@ json jsonParser::JsonParser::createGame(std::string_view specJsonPath, std::stri
     }
 }
 
-json jsonParser::JsonParser::readGameSpecification(std::string_view jsonSpecPath){
+json jsonReader::jsonReader::readGameSpecification(std::string_view jsonSpecPath){
     try{
         std::ifstream inStream(std::string(jsonSpecPath).c_str());
         if (inStream.is_open()) {
@@ -35,7 +35,7 @@ json jsonParser::JsonParser::readGameSpecification(std::string_view jsonSpecPath
     return nullptr;
 }
 
-json jsonParser::JsonParser::readGameConfiguration(json jsonSpecs, std::string_view jsonConfigPath){
+json jsonReader::jsonReader::readGameConfiguration(json jsonSpecs, std::string_view jsonConfigPath){
     try{
         if(jsonConfigPath.empty()){
             json configuration = {};
@@ -59,7 +59,7 @@ json jsonParser::JsonParser::readGameConfiguration(json jsonSpecs, std::string_v
     return nullptr;
 }
 
-bool jsonParser::JsonParser::validateGameJson(const json& jsonGame){
+bool jsonReader::jsonReader::validateGameJson(const json& jsonGame){
     if (jsonGame == nullptr)
         return false;
 
@@ -79,7 +79,7 @@ bool jsonParser::JsonParser::validateGameJson(const json& jsonGame){
 
 }
 
-bool jsonParser::JsonParser::validateConfigurationSetups(const json& setups){
+bool jsonReader::jsonReader::validateConfigurationSetups(const json& setups){
     if (setups.is_null() || !setups.is_object()){
         return false;
 
@@ -90,7 +90,7 @@ bool jsonParser::JsonParser::validateConfigurationSetups(const json& setups){
                 if (setup.contains("kind") && !setup["kind"].is_string()){
                     return false;
                 }
-                
+
                 if (setup.contains("prompt") && !setup["prompt"].is_string()){
                     return false;
                 }
