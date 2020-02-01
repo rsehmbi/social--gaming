@@ -17,11 +17,18 @@ private:
     json constants;
     json variables;
 
-    std::list<Users> Players;
-    std::list<Users> Audience;
+    std::vector<Users> Audience;
+public:
+    const std::vector<Users> &getAudience() const;
+
+    const std::vector<Users> &getPlayers() const;
+
+private:
+    std::vector<Users> Players;
 
 public:
-    explicit GameSession(json gameSpecification): gameSpecification(gameSpecification){
+    //Constructor
+    GameSession(json gameSpecification): gameSpecification(gameSpecification){
     };
 
     std::string getNameOfGame();
@@ -32,8 +39,9 @@ public:
     std::string getVariables(const std::string& nameOfVariable);
 
     bool isAudience();
-
     std::list<std::string> getPlayerNames();
+    int getPlayerCount();
+    int getAudienceCount();
 
     void setConstants(const std:: string& nameOfConstant);
 
@@ -48,12 +56,13 @@ public:
     void requestServer();
 
     // Gets the next user's turn the the game.
-    //users::Users nextTurn();
+    // users::Users nextTurn();
 
     // Gets a message to display to players of the game.
     void display(std::string);
-};
+    json getUpdate();
 
+};
 
 #endif //UNTITLED1_GAMESESSION_H
 
