@@ -17,31 +17,28 @@ nlohmann::json DSL::add(json rule){
 }
 
 nlohmann::json inputChoice(nlohmann::json h) {
-    std::string input="";
     nlohmann::json returnObject;
     std::cout<<h["prompt"];
     std::cout<<h["choices"];
     printf("\n");
-    getline(std::cin, input);
+    returnObject["input_needed"]=true;
     returnObject["result"]= {input};
     returnObject["User"]="Player";// the player to request
     return returnObject;
 }
 
 nlohmann::json inputText(nlohmann::json h) {
-    std::string input="";
     nlohmann::json returnObject;
     std::cout<<h["prompt"];
     //std::cout<<h["choices"];
     printf("\n");
-    getline(std::cin, input);
+    returnObject["input_needed"]=true;
     returnObject["result"]= {input};
     returnObject["User"]="Player";// the player to request
     return returnObject;
 }
 
 nlohmann::json inputVote(nlohmann::json h) {
-    std::string input="";
     nlohmann::json returnObject;
     std::list<std::string> listOfPeople ={"a","b","c"};
     for (auto i: listOfPeople){//send message to multiple players in the future
@@ -50,7 +47,7 @@ nlohmann::json inputVote(nlohmann::json h) {
     }
     std::cout<<h["choices"];
     printf("\n");
-    getline(std::cin, input);
+    returnObject["input_needed"]=true;
     returnObject["result"]= {input};
     returnObject["User"]="Player";// the player to request
     return returnObject;
