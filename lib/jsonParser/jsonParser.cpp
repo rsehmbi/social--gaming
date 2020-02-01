@@ -26,39 +26,79 @@ json jsonParser::JsonParser::readGameSpecification(std::string_view jsonSpecPath
             inStream >> jsonSpecs;
             return jsonSpecs;
         } else {
-            std::cerr << "Could not open specs file. Error: " << strerror(errno) << std::endl;
+            LOG(ERROR) << "Could not open specs file. Error: " << strerror(errno);
         }
         return nullptr;
     } catch (const std::exception& e){
-        std::cout << "Caught exception " << e.what() << std::endl;
+        LOG(ERROR) << "Caught exception with message: " << e.what();
     }
     return nullptr;
 }
 
 json jsonParser::JsonParser::readGameConfiguration(json jsonSpecs, std::string_view jsonConfigPath){
     try{
-        std::ifstream inStream(std::string(jsonConfigPath).c_str());
-        if (inStream.is_open()) {
-            json jsonConfig;
-            inStream >> jsonConfig;
+        if(jsonConfigPath.empty()){
+            json configuration = {};
             jsonSpecs["configuration"] = jsonConfig["configuration"];
             return jsonSpecs;
         } else {
-            std::cerr << "Could not open configs file. Error: " << strerror(errno) << std::endl;
-        }
-        return nullptr;
+            std::ifstream inStream(std::string(jsonConfigPath).c_str());
+            if (inStream.is_open()) {
+                json jsonConfig;
+                inStream >> jsonConfig;
+                jsonSpecs["configuration"] = jsonConfig["configuration"];
+                return jsonSpecs;
+            } else {
+                LOG(ERROR) << "Could not open configs file. Error:" << e.what();
+            }
+            return nullptr;
+        } 
     } catch (const std::exception& e){
-        std::cout << "Caught exception with message: " << e.what() << std::endl;
+         LOG(ERROR) << "Caught exception with message: " << e.what();
     } 
     return nullptr;
 }
 
-bool jsonParser::JsonParser::ValidateGameJson(json jsonGame){
+bool jsonParser::JsonParser::validateGameJson(const json& jsonGame){
     if (jsonGame == nullptr)
         return false;
+
+    // Very basic case is if the game doesn't have configurations or rules.
+    if (!jsonGame.contains["configuarations"] || !jsonGame.contains["rules"])
+        return false;
+
+    if (jsonGame["Configurations"].contains["setup"]){
+        if (!validateConfigurationSetups(jsonGame["Configurations"]["setup"])){
+            return false;
+        }
+    }
     
-    // Validates the jsonGame and returns it  the json object if the json is valid else returns nullptr.
+    // Need to add more cases here.
 
     return true;
 
+}
+
+bool jsonParser::JsonParser::validateConfigurationSetups(const json& setups){
+    if (setups.is_null() || !setups.is_object()){
+        return false;
+
+        std::unordered_set <std::string> possible_kinds = 
+            {"integer", "string", "boolean", "question-answer", "multiple-choice"};
+        for (const auto& setups : setup){
+            if (setup.is_object()){
+                if (setup.contains("kind") && !setup["kind"].is_string()){
+                    return false;
+                }
+                
+                if (setup.contains("prompt") && !setup["prompt"].is_string()){
+                    return false;
+                }
+
+                if ( !possible_kinds.contains(setup["kind"] ){
+                    return false;
+                }
+            }
+        }
+    }
 }

@@ -5,11 +5,18 @@
 #include <iostream>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <glog/logging>
+
 
 namespace jsonParser {
 
-    // The Interpreter class is responsible for interpreting
-    // game rules that are specified in a JSON file
+    /* 
+        The jsonReader class is responsible for reding and validating the json 
+        provided by the user for specs and configurations. Right now this consumes
+        file path for each file but this can be change to consume json in string 
+        format and create a nlohmann::json object.
+    */
+
     class JsonParser {
     public:
 
@@ -20,7 +27,9 @@ namespace jsonParser {
 
         nlohmann::json readGameConfiguration(nlohmann::json jsonGame, std::string_view path);
 
-        bool jsonParser::JsonParser::ValidateGameJson(nlohmann::json jsonGame);
+        bool validateGameJson(const nlohmann::json& jsonGame);
+
+        bool validateConfigurationSetups(const json& setups)
     
     };
 }
