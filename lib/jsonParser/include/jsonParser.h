@@ -19,6 +19,9 @@ namespace jsonParser {
         nlohmann::json readGameSpecification(std::string_view path);
 
         nlohmann::json readGameConfiguration(nlohmann::json jsonGame, std::string_view path);
+
+        bool jsonParser::JsonParser::ValidateGameJson(nlohmann::json jsonGame);
+    
     };
 }
 

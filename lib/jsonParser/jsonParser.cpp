@@ -7,6 +7,11 @@ json jsonParser::JsonParser::createGame(std::string_view specJsonPath, std::stri
     json jsonSpecs = readGameSpecification(specJsonPath);
     if (jsonSpecs != nullptr){
         json jsonGame = readGameConfiguration(jsonSpecs, configJsonPath);
+        if (ValidateGameJson(jsonGame)){
+            return jsonGame;
+        } else {
+            return nullptr ;
+        }
         return jsonGame;
     } else{
         return nullptr;
@@ -48,14 +53,12 @@ json jsonParser::JsonParser::readGameConfiguration(json jsonSpecs, std::string_v
     return nullptr;
 }
 
-int main(int argc,char** argv)
-{
-    std::ofstream outputFile("test.txt");
-    outputFile << "writing to file";
-    outputFile.close();
-    jsonParser::JsonParser i =  jsonParser::JsonParser();
+bool jsonParser::JsonParser::ValidateGameJson(json jsonGame){
+    if (jsonGame == nullptr)
+        return false;
     
-    i.createGame("Desktop/Classes/cmpt_373/project/social-gaming/exampleSpecs.json", 
-    "Desktop/Classes/cmpt_373/project/social-gaming/exampleConfig.json");
-    return 0;
+    // Validates the jsonGame and returns it  the json object if the json is valid else returns nullptr.
+
+    return true;
+
 }
