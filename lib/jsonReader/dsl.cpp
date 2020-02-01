@@ -71,6 +71,7 @@ nlohmann::json globalMessage(const nlohmann::json& h) {
 
 nlohmann::json scores(const nlohmann::json& h) {
     nlohmann::json returnObject;
+    /*
     std::cout<<h["score"];
     if (h["key"]==NULL || h["key"]==false){
         //need to figure out how to obtain value from players
@@ -79,6 +80,7 @@ nlohmann::json scores(const nlohmann::json& h) {
     else {
         //sort ascending
     }
+    */
     return returnObject;
 }
 
