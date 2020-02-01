@@ -7,17 +7,17 @@
 int main(){
     printf("Hello World!\n");
     using json = nlohmann::json;
-    std::ifstream i("example.json");
-    json k;
+    std::ifstream input("example.json");
+    json jsonObject;
     json modifiedInput;
     json modifiedOutput;
-    k<<i;
-    std::cout<<k;
+    jsonObject<<input;
+    std::cout<<jsonObject;
     //printf("\n");
-    std::cout<<k["to"];
-    modifiedInput=inputVote(k);
+    std::cout<<jsonObject["to"];
+    modifiedInput=inputVote(jsonObject);
     std::cout<<modifiedInput;//primitive testing for now
-    modifiedOutput=message(k);
+    modifiedOutput=message(jsonObject);
     std::cout<<modifiedOutput;
     return 0;
 }

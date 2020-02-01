@@ -16,7 +16,7 @@ nlohmann::json DSL::add(json rule){
     return returnObject["value"] =  rule["value"].get<int> + rule["to"].get<int>;
 }
 
-nlohmann::json inputChoice(nlohmann::json h) {
+nlohmann::json inputChoice((const) nlohmann::json& h) {
     nlohmann::json returnObject;
     std::cout<<h["prompt"];
     std::cout<<h["choices"];
@@ -27,7 +27,7 @@ nlohmann::json inputChoice(nlohmann::json h) {
     return returnObject;
 }
 
-nlohmann::json inputText(nlohmann::json h) {
+nlohmann::json inputText((const) nlohmann::json& h) {
     nlohmann::json returnObject;
     std::cout<<h["prompt"];
     //std::cout<<h["choices"];
@@ -38,7 +38,7 @@ nlohmann::json inputText(nlohmann::json h) {
     return returnObject;
 }
 
-nlohmann::json inputVote(nlohmann::json h) {
+nlohmann::json inputVote((const) nlohmann::json& h) {
     nlohmann::json returnObject;
     std::list<std::string> listOfPeople ={"a","b","c"};
     for (auto i: listOfPeople){//send message to multiple players in the future
@@ -53,7 +53,7 @@ nlohmann::json inputVote(nlohmann::json h) {
     return returnObject;
 }
 
-nlohmann::json message(nlohmann::json h) {
+nlohmann::json message((const) nlohmann::json& h) {
     nlohmann::json returnObject;
     std::list<std::string> listOfPeople ={"a","b","c"};
     for (auto& [key, value] : h.items()) {
@@ -62,13 +62,13 @@ nlohmann::json message(nlohmann::json h) {
     return returnObject;
 }
 
-nlohmann::json globalMessage(nlohmann::json h) {
+nlohmann::json globalMessage((const) nlohmann::json& h) {
     nlohmann::json returnObject;
     returnObject["User"]="Owner";
     std::cout<<h["value"];
 }
 
-nlohmann::json scores(nlohmann::json h) {
+nlohmann::json scores((const) nlohmann::json& h) {
     nlohmann::json returnObject;
     std::cout<<h["score"];
     if (h["key"]==NULL || h["key"]==false){

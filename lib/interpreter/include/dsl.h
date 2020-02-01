@@ -17,17 +17,17 @@ public:
 
 nlohmann::json add(json rule);
 
-nlohmann::json inputChoice(nlohmann::json h);
+nlohmann::json inputChoice((const) nlohmann::json& h);
 
-nlohmann::json inputText(nlohmann::json h);
+nlohmann::json inputText((const) nlohmann::json& h);
 
-nlohmann::json inputVote(nlohmann::json h);
+nlohmann::json inputVote((const) nlohmann::json& h);
 
-nlohmann::json message(nlohmann::json h);
+nlohmann::json message((const) nlohmann::json& h);
 
-nlohmann::json globalMessage(nlohmann::json h);
+nlohmann::json globalMessage((const) nlohmann::json& h);
 
-nlohmann::json scores(nlohmann::json h);
+nlohmann::json scores((const) nlohmann::json& h);
 
 void updateStatus();
 
