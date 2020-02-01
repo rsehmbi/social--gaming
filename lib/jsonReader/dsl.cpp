@@ -6,9 +6,10 @@
 
 // DSL is currently a stub
 
-DSL::DSL() {
+dsl::DSL() {
     // Takes a JSON file as an arguement
     // and creates a domain specific language
+<<<<<<< HEAD:lib/interpreter/dsl.cpp
 }
 
 nlohmann::json DSL::add(json rule){
@@ -82,3 +83,6 @@ nlohmann::json scores((const) nlohmann::json& h) {
 }
 
 void updateStatus(); //function to propgate action back to user
+=======
+};
+>>>>>>> production:lib/jsonReader/dsl.cpp

@@ -9,6 +9,8 @@ using nlohmann::json;
 
 // The DSL class is responsible for holding information regarding
 // the domain specific language used in JSON files
+namespace dsl{
+
 class DSL {
 public:
     // Takes in a configuration file and creates a DSL
@@ -33,6 +35,6 @@ void updateStatus();
 
 private:
     std::map<std::string, std::string> commandMappings;
-};
-
+};    
+}
 #endif
