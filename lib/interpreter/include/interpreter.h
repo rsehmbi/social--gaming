@@ -2,8 +2,8 @@
 #define INTERPRETER_H
 
 #include <string>
-#include "json.hpp"
 #include "include/dsl.h"
+#include "json.hpp"
 
 //responsible for checking rule inside json 
 
