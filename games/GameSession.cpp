@@ -1,51 +1,52 @@
-#include "include/GameSession.h"
+#include "GameSession.h"
 #include <iostream>
 
-std::string GameSession::getNameOfGame() {
-    if (!this->gameSpecification["configuration"].contains("name")) {
+// Based on the comments this key value pair can be exacted by only using one function,
+// We can change the functions for game session here as the requirement changes.
+std::string GameSession::getNameOfGame(std::string namekey) {
+    if (!this->gameConfiguration.contains(namekey)) {
         //If the name of game is not specified in Json Object
-        this->gameSpecification["configuration"].emplace("name", "Default Name");
     }
-    return this->gameSpecification["configuration"]["name"];
+    return this->gameConfiguration[namekey];
 }
 
-int GameSession::getMinNoOfPlayers() {
+int GameSession::getMinNoOfPlayers(std:: string minPlayerKey) {
     // If Configuration don't have the player count, it won't have the min
-    if (!this->gameSpecification["configuration"].contains("player count")) {
-        this->gameSpecification["configuration"]["player count"].emplace("min", 0);
+    if (!this->gameConfiguration.contains(minPlayerKey)) {
+        //Handles if the minimum number of players key is not in Json Configuration Object
     }
-    return this->gameSpecification["configuration"]["player count"]["min"];
+    return this->gameConfiguration[minPlayerKey];
 }
 
-int GameSession::getMaxNoOfPlayers() {
+int GameSession::getMaxNoOfPlayers(std:: string maxPlayerKey) {
     // If Configuration don't have the player count, it won't have the max
-    if (!this->gameSpecification["configuration"].contains("player count")) {
-        this->gameSpecification["configuration"]["player count"].emplace("max", 0);
+    if (!this->gameConfiguration.contains(maxPlayerKey)) {
+        //Handles max Player configuration here
     }
-    return this->gameSpecification["configuration"]["player count"]["max"];
+    return this->gameConfiguration[maxPlayerKey];
 }
 
-bool GameSession::isAudience() {
-    if (!this->gameSpecification["configuration"].contains("audience")) {
+bool GameSession::hasAudience(std::string audiencekey) {
+    if (!this->gameConfiguration.contains(audiencekey)) {
         //Set default audience to false or Allow user to update the audience value according to rule specification
         return false;
     }
-    return this->gameSpecification["configuration"]["audience"];;
+    return this->gameConfiguration[audiencekey];
 }
 
 std::string GameSession::getConstants(const std::string &nameOfConstant) {
-    if (this->gameSpecification["constants"].contains((nameOfConstant))) {
+    if (this->gameConfiguration.contains((nameOfConstant))) {
         //Demo Function that will return the constants as strings.
         // Chances are these will change in future.
-        return this->gameSpecification["constants"][nameOfConstant].dump();
+        return this->gameConfiguration[nameOfConstant].dump();
     }
 }
 
 std::string GameSession::getVariables(const std::string &nameOfVariable) {
     //Demo Function that will return the variables as strings.
     // Chances are these will change in future.
-    if (this->gameSpecification["variables"].contains(nameOfVariable)) {
-        return this->gameSpecification["variables"][nameOfVariable].dump();
+    if (this->gameConfiguration.contains(nameOfVariable)) {
+        return this->gameConfiguration[nameOfVariable].dump();
     }
 }
 
@@ -54,11 +55,11 @@ int GameSession::getPlayerCount() {
     return this->Players.size();
 }
 
-const std::vector <Users> &GameSession::getAudience() const {
+const std::vector<users::Users> &GameSession::getAudience() const {
     return Audience;
 }
 
-const std::vector <Users> &GameSession::getPlayers() const {
+const std::vector<users::Users> &GameSession::getPlayers() const {
     return Players;
 }
 
@@ -67,10 +68,10 @@ int GameSession::getAudienceCount() {
     return this->Audience.size();
 }
 
-std::list <std::string> GameSession::getPlayerNames() {
-    std::list <std::string> namesOfPlayers;
+std::vector<std::string> GameSession::getPlayerNames() {
+    std::vector<std::string> namesOfPlayers;
     for (auto iterator: this->Players) {
-        namesOfPlayers.push_front(iterator.getPlayerName());
+        namesOfPlayers.push_back(iterator.getPlayerName());
         std::cout << iterator.getPlayerName() << std::endl;
     }
     return namesOfPlayers;
@@ -80,3 +81,5 @@ json GameSession::getUpdate() {
     //Return the json object for the updates.
     //return json o;
 }
+
+

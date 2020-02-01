@@ -45,6 +45,13 @@ bool Users::getIsOwner(){
     return this->isOwner;
 }
 
+int Users::getNumOfWins() {
+    return this->NumOfWins;
+}
+
+void Users::setNumOfWins(int updatedNum) {
+    this->NumOfWins = updatedNum;
+}
 //Class Functions to be created after server format is setup
 void connectToServer(std::string *passcode);
 

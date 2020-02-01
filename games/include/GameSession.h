@@ -1,52 +1,49 @@
-#ifndef UNTITLED1_GAMESESSION_H
-#define UNTITLED1_GAMESESSION_H
-
-#include <list>
-#include <utility>
-#include "json.hpp"
-#include "users/include/Users.h"
+#ifndef GAMESESSION_H
+#define GAMESESSION_H
 
 using json = nlohmann::json;
 
 class GameSession {
 private:
 
-    json gameSpecification;
+    json gameConfiguration;
 
     json constants;
     json variables;
 
-    std::vector <Users> Audience;
-    std::vector <Users> Players;
+    std::vector<users::Users> Audience;
+public:
+    const std::vector<users::Users> &getAudience() const;
+
+    const std::vector<users::Users> &getPlayers() const;
+
+private:
+    std::vector<users::Users> Players;
 
 public:
     //Constructor
-    GameSession(json gameSpecification) : gameSpecification(gameSpecification) {
+    GameSession(json gameSpecification) : gameConfiguration(gameSpecification) {
     };
 
-    std::string getNameOfGame();
+    std::string getNameOfGame(std::string keyName);
 
-    int getMinNoOfPlayers();
+    int getMinNoOfPlayers(std::string keyName);
 
-    int getMaxNoOfPlayers();
+    int getMaxNoOfPlayers(std::string keyName);
 
     std::string getConstants(const std::string &nameOfConstant);
 
     std::string getVariables(const std::string &nameOfVariable);
 
-    bool isAudience();
+    bool hasAudience(std::string audiencekey);
 
-    std::list <std::string> getPlayerNames();
+    std::vector<std::string> getPlayerNames();
 
     int getPlayerCount();
 
     int getAudienceCount();
 
     void setConstants(const std::string &nameOfConstant);
-
-    const std::vector <Users> &getAudience() const;
-
-    const std::vector <Users> &getPlayers() const;
 
     // Contains the main logic for the game.
     void mainGameLogic();

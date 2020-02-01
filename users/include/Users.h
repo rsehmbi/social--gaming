@@ -47,6 +47,10 @@ namespace users {
 
         void receiveResponse(std::string *msg);
 
+        int getNumOfWins();
+
+        void setNumOfWins();
+
     };
 }
 
