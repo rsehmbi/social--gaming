@@ -9,7 +9,7 @@ std::string GameSession::getNameOfGame(std::string namekey) {
         return this->gameConfiguration[namekey];
     }
     else{
-        //Use default data or get data from users 
+        //Use default data or get data from users
     }
 }
 
