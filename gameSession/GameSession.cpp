@@ -99,3 +99,16 @@ json GameSession::getUpdate() {
 }
 
 
+GameSession::GameSession(std::string_view specifications, std::string_view configurations){
+    jsonReader::jsonReader jReader = jsonReader::jsonReader();
+    json jsonGameObject = jReader.gameJsonFromJson(specifications, configurations);
+    if (jsonGameObject == nullptr){
+        game = createGame(jsonGameObject);
+    } else {
+        LOG(ERROR) << "Could not start game session. Error reading the json";
+    }
+}
+
+Game::game GameSession::createGame(const json& jsonGameObject){
+
+}
