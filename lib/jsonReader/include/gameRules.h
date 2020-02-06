@@ -1,6 +1,9 @@
 #ifndef GAMERULES_H
 #define GAMERULES_H
 
+#include "../interpreter/include/json.hpp"
+#include "include/rule.h"
+
 // This GameRules class is responsible for holding the rules for games
 class GameRules {
 public:
@@ -8,9 +11,12 @@ public:
     ~GameRules();
 
     // Gets game rules from JSON file
-    void getGameRules();
+    void getGameRules(nlohmann::json jsonRules);
+    // Used for testing only
+    void printRules();
     
 private:
+    std::vector<Rule> rules;
 
 };
 

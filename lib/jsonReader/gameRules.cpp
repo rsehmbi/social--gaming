@@ -6,7 +6,7 @@ GameRules::GameRules() {
 
 // Gets game rules based on JSON file
 // Calls interpreter to do so
-void GameRules::getGameRules() {
+void GameRules::getGameRules(nlohmann::json jsonRules) {
     
 
 }
