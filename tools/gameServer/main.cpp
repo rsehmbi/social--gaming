@@ -8,6 +8,9 @@
 
 #include "Server.h"
 #include "SessionManager.h"
+#include "jsonReader.h"
+#include "game.h"
+#include "gameConverter.h"
 
 #include <fstream>
 #include <iostream>
@@ -26,6 +29,12 @@ std::vector<Connection> clients;
 
 //session manager object that manages session messages
 SessionManager manager;
+
+// List of all the availableGames created when server is initialized.
+std::vector <game::game> games;
+
+std::vector <game::game> 
+createGames(const std::vector<std::string_view>& specPaths);
 
 
 void
@@ -68,6 +77,10 @@ main(int argc, char* argv[]) {
     //server that the social gaming platform will be using
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
 
+  // This vector needs to contain the list of all the paths to the game specs.
+  std::vector<std::string_view> specPaths = std::vector<std::string_view>{"./../../examplesSpecs.json"};
+  games = createGames(specPaths);
+
     //main server loop
     while (true) {
         
@@ -100,4 +113,21 @@ main(int argc, char* argv[]) {
     }
 
   return 0;
+}
+
+std::vector <game::game> 
+createGames(const std::vector<std::string_view>& specPaths){
+  jsonReader::jsonReader jReader;
+  gameConverter::gameConverter converter;
+  
+  std::vector <game::game> availableGames;
+
+  for (const auto& specPath : specPaths){
+    nlohmann::json jsonGame = jReader.gameJsonFromFiles(specPath, "");
+    if (jsonGame != nullptr){
+      game::game game = converter.createGame(jsonGame);
+      availableGames.push_back(game);
+    }
+  }
+  return availableGames;
 }

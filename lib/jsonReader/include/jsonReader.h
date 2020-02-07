@@ -29,20 +29,11 @@ namespace jsonReader {
     private:
         nlohmann::json readGameSpecFromFile(std::string_view path);
 
-        nlohmann::json readGameConfigFromFile(nlohmann::json jsonSpecObject, std::string_view path);
+        nlohmann::json readGameConfigFromFile(nlohmann::json& jsonSpecObject, std::string_view path);
 
-        
-        
-        nlohmann::json readGameSpecFromJson(std::string_view specJson);
+        bool isValidGameJson(const nlohmann::json& jsonGame);
 
-        nlohmann::json readGameConfigFromJson(nlohmann::json jsonSpecObject, std::string_view configJson);
-
-
-
-        bool validateGameJson(const nlohmann::json& jsonGame);
-
-        bool validateConfigurationSetups(const json& setups);
-    
+        bool isValidConfigurationSetups(const nlohmann::json& setups);
     };
 }
 
