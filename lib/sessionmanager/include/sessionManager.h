@@ -16,9 +16,9 @@ using networking::Message;
 
 
 //abstract implementation from session class
-typedef std::deque<Message> SessionMessages;
-typedef std::string SessionID;
-typedef uintptr_t ConnectionID;
+using SessionMessages = std::deque<Message>;
+using SessionID = std::string;
+using ConnectionID = uintptr_t;
 
 //----------stub Session struct for testing----//
 struct Session
