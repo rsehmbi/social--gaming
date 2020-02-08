@@ -12,7 +12,7 @@ struct Message{
 class Messages{
     public:
         Messages();
-        const std::vector<std::string> getMessages();
+        const std::vector<Message> getMessages();
         void addMessage(const Message& message);
         std::vector<Message> getUpdate(); // only return updated messages
     private:
