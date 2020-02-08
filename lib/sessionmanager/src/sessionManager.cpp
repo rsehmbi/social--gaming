@@ -2,105 +2,83 @@
 #include <string.h>
 #include <sstream>
 #include <iostream>
+#include <chrono>
 
 #define SESSION_ID_LEN 10
 
-//parses input by space and returns second token
-std::string parseSecondWord(const std::string& input){
-    std::istringstream iss(input);
-    std::string out;
-    iss >> out;
-    iss >> out;
-    return out;
-}
+//----------Session Manager Class----------------------
+SessionManager::SessionManager() : 
+generator(std::chrono::high_resolution_clock::now().time_since_epoch().count()) {
 
-//Definition of Session Manager class
-SessionManager::SessionManager() {  //constructor
-    //connection ids are mapped to session
-    //if sessionMap() does not contain connection id, it is in public chat (not in any session)
-    std::unordered_map<uintptr_t, std::string> connectionMap;
-
-    //a set of sessions objects
-    std::unordered_map<std::string, Session> sessionMap;
-
-    //initialize chatlogs and add public entry
-    std::unordered_map<std::string, std::string> sessionLogs;
-    sessionLogs["public"] = "";
-    
-    //outbound msgs
-    std::deque<Message> outgoing;
-
-    //initialize a random generator
-    std::random_device                  rand_dev;//seed for mt19937
-    std::mt19937                        generator(rand_dev());
-}
-
-SessionManager::~SessionManager(){
-    //all class objects are destroyed automatically when out of scope
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
     outgoing.clear();
-    sessionLogs.clear();
+    chatLogs.clear();
+    
     for (auto& message : incoming) {
-        //create session request
-        if (message.text.find("/create") != std::string::npos) {
-            createSession(message.connection.id);
-            std::cout << "Request for create.\n";
+        CommandType command = commandChecker.checkString(message.text);
 
-        //join session request
-        } else if (message.text.find("/join") != std::string::npos) {
-            //parse string for id number
-            std::string sessionID = parseSecondWord(message.text);
-            joinSession(message.connection.id, sessionID);
-            std::cout << "Request for join.\n";
-        
-        //close session request
-        } else if (message.text.find("/close") != std::string::npos){
-            
-        } else if (message.text.find("/chowner") != std::string::npos) {
-
-        } else {
-            //connection in public chat
-            if(connectionMap.find(message.connection.id) == connectionMap.end()){
-                std::ostringstream publicStr;
-                publicStr << message.connection.id << "> " << message.text << "\n";
-                sessionLogs["public"] += publicStr.str();
-            }
-            //TODO: perform sort by connectionMap and deliver to sorted messages to session by sessionMap
-            //if not in connectionMap, append to public chat log
+        switch(command) {
+            case CommandType::Create: 
+                createSession(message.connection.id);
+                std::cout << "Request for create.\n";
+                break;
+            case CommandType::Join:
+                joinSession(message.connection.id, commandChecker.getArgument());
+                std::cout << "Request for join.\n";
+                break;
+            default:
+                sortMessage(message);
         }
+        
     }
-  
+    //Send sorted messages out to sessions. Since server execution is sequential, control is also passed
+    //to each session to execute its game turn
+    for(auto& pair : sessionMap){
+        //first = session ID, second = session object
+        pair.second.receive(msgsForSession[pair.first]);
+    }
   
 }
 
-void SessionManager::createSession(const uintptr_t& connectionID) {
+void SessionManager::sortMessage(const Message& message){
+    if(connectionSessionMap.find(message.connection.id) == connectionSessionMap.end()){
+        std::ostringstream publicStr;
+        publicStr << message.connection.id << "> " << message.text << "\n";
+        chatLogs["public"] += publicStr.str();
+    } else {
+        SessionID sid = connectionSessionMap[message.connection.id];
+        msgsForSession[sid].push_back(message);
+    }
+}
+
+void SessionManager::createSession(const ConnectionID& connectionID) {
     //check if connection is already in a session
-    if(connectionMap.find(connectionID) != connectionMap.end()){
+    if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
         outgoing.push_back({connectionID, "You are already in a session. Open a new connection to create another session.\n"});
         return;
     }
 
     //generate new session id
-    std::string sessionID = generateID();
+    SessionID sessionID = generateID();
     //ensure unique session ID
     while(sessionMap.find(sessionID) != sessionMap.end()){
         sessionID = generateID();
     }
     //create new session and map to session id
     sessionMap[sessionID] = Session{sessionID};
-    connectionMap[connectionID] = sessionID;
+    connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Session created. Session ID: " << sessionID << "\n";
     outgoing.push_back({connectionID, outStr.str()});
     return;
 }
 
-void SessionManager::joinSession(const uintptr_t& connectionID, const std::string& sessionID) {
+void SessionManager::joinSession(const ConnectionID& connectionID, const std::string& sessionID) {
     
     //check if connection is already in a session
-    if(connectionMap.find(connectionID) != connectionMap.end()){
+    if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
         outgoing.push_back({connectionID,
                             "You are already in a session. Open a new connection to join another session.\n"});
         return;
@@ -111,7 +89,7 @@ void SessionManager::joinSession(const uintptr_t& connectionID, const std::strin
         return;
     }
 
-    connectionMap[connectionID] = sessionID;
+    connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Connected to session: " << sessionID << "\n";
     outgoing.push_back({connectionID, outStr.str()});
@@ -121,48 +99,47 @@ void SessionManager::joinSession(const uintptr_t& connectionID, const std::strin
 const std::deque<Message>& SessionManager::outboundMessages(const std::vector<Connection>& clients){
     for(auto& client : clients){
         //public client
-        if(connectionMap.find(client.id) == connectionMap.end()){
-            outgoing.push_back({client.id, sessionLogs["public"]});
+        if(connectionSessionMap.find(client.id) == connectionSessionMap.end()){
+            outgoing.push_back({client.id, chatLogs["public"]});
         } else { //session client
-            outgoing.push_back({client.id, sessionLogs[connectionMap[client.id]]});
+            outgoing.push_back({client.id, chatLogs[connectionSessionMap[client.id]]});
         }
     }
     return outgoing;
 }
 
 //generates a random alphanumeric string for session id of specified length
-std::string SessionManager::generateID(){
+SessionID SessionManager::generateID(){
     std::string alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::uniform_int_distribution<int>  distr(0, alphanum.size() - 1);
-    std::string out;
+    SessionID id;
     for (unsigned i = 0; i < SESSION_ID_LEN; i++) {
-        out += alphanum[distr(generator)];
+        id += alphanum[distr(generator)];
     }
-    return out;
+    return id;
 }
 
-// void SessionManager::addOwner(const Connection& ownerC)
-// {
-    
-// }
+void SessionManager::removeConnection(const ConnectionID& connectionID){
+    connectionSessionMap.erase(connectionID);
+}
 
-// void SessionManager::addPlayer(const Connection& playerC)
-// {
+//----------------CommandChecker Class---------------------
+CommandChecker::CommandChecker(){
+    commandMap["/create"] = CommandType::Create;
+    commandMap["/join"] = CommandType::Join;
+}
 
-// }
+//checks first word of string and returns CommandType and updates argument accordingly
+CommandType CommandChecker::checkString(const std::string& message){
+    argument = "";
+    std::istringstream iss(message);
+    std::string firstWord;
+    iss >> firstWord;
+    if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
+    iss >> argument;
+    return commandMap[firstWord];
+}
 
-// void SessionManager::broadCast(const std::string& s)
-// {
-
-// }
-
-
-// void SessionManager::sendMsg(const unsigned int player, const std::string& s)
-// {
-
-// }
-
-// void SessionManager::receiveMsg(std::deque<Message>& messages)
-// {
-
-// }
+std::string CommandChecker::getArgument(){
+    return argument;
+}

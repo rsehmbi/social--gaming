@@ -39,6 +39,7 @@ onDisconnect(Connection c) {
   std::cout << "Connection lost: " << c.id << "\n";
   auto eraseBegin = std::remove(std::begin(clients), std::end(clients), c);
   clients.erase(eraseBegin, std::end(clients));
+  manager.removeConnection(c.id);
 }
 
 std::string
