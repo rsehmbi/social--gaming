@@ -20,7 +20,7 @@ public:
     void setGameType(std::string Type);
     void getUserInput(std::string Input);
     std::string getGameType();
-    void assesGameType();
+    void assessGameType();
 
 private:
     std::string name;

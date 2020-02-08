@@ -32,7 +32,7 @@ void GameConfiguration::setGameType(std::string gameType)
 // Game Type to process the input needed from Owner of the game
 // For Example : Questions for quiz game
 // Numbers of round for a different game
-void GameConfiguration::assesGameType(){
+void GameConfiguration::assessGameType(){
   //  if (this->Setup.find("integer").
 }
 
