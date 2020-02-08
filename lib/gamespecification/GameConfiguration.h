@@ -20,7 +20,7 @@ public:
     void setGameType(std::string Type);
     void getUserInput(std::string Input);
     std::string getGameType();
-    void AssesGameType();
+    void assesGameType();
 
 private:
     std::string name;
@@ -37,16 +37,16 @@ struct Setup
     std::unordered_map<prompt,value> setupPair;
     prompt promptMessage;
     value inputValue;
-    Setup(value a, prompt b) :inputValue(a), promptMessage(b) {}
+    Setup(value &value1, prompt &prompt1) :inputValue(value1), promptMessage(prompt1) {}
 
-    void updateSetup(value a, prompt b)
+    void updateSetup(value &value1, prompt &prompt1)
     {
         this-> inputValue = a;
         this-> promptMessage = b;
         this->setupPair[this->promptMessage] = this->inputValue;
     }
 
-    void updateUserSetup(value a, prompt b)
+    void updateUserSetup(value &value1, prompt &prompt1)
     {
         this->setupPair[this->promptMessage] = this->inputValue;
         this->setupPair[this->promptMessage] = this->inputValue;
