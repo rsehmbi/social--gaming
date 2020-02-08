@@ -12,8 +12,8 @@ struct Message{
 class Messages{
     public:
         Messages();
-        std::vector<std::string> getMessages();
-        void addMessage(Message message);
+        const std::vector<std::string> getMessages();
+        void addMessage(const Message& message);
         std::vector<Message> getUpdate(); // only return updated messages
     private:
         std::vector<Message> messages;
