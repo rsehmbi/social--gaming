@@ -1,7 +1,7 @@
 #include "include/Rule.h"
 
 using game::Rule;
-using game::ruleContainer;
+using game::RuleContainer;
 using game::GlobalMessageRule;
 
 Rule::Rule() {
@@ -9,25 +9,25 @@ Rule::Rule() {
     // because it is called by the constructors of subclasses
 }
 
-Rule::Rule(ruleContainer& rule) : rule(rule) {}
+Rule::Rule(RuleContainer& rule) : rule(rule) {}
 
-void Rule::setRule(ruleContainer& rule) {
+void Rule::setRule(RuleContainer& rule) {
     this->rule = rule;
 }
 
-ruleContainer& Rule::getRule() {
+RuleContainer& Rule::getRule() {
     return this->rule;
 }
 
 // GlobalMessageRule class
-GlobalMessageRule::GlobalMessageRule(ruleContainer& rule) {
+GlobalMessageRule::GlobalMessageRule(RuleContainer& rule) {
     this->rule = rule;
 }
 
-void GlobalMessageRule::setRule(ruleContainer& rule) {
+void GlobalMessageRule::setRule(RuleContainer& rule) {
     this->rule = rule;
 }
 
-ruleContainer& GlobalMessageRule::getRule() {
+RuleContainer& GlobalMessageRule::getRule() {
     return this->rule;
 }

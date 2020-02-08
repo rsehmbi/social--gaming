@@ -7,7 +7,7 @@
 namespace game {
 
     // Type defenition for ruleContainer struct
-    struct ruleContainer {
+    struct RuleContainer {
         std::map<std::string, std::string> ruleInformation;
     };
 
@@ -16,21 +16,21 @@ namespace game {
     class Rule {
     public:
         Rule();
-        Rule(ruleContainer& rule);
+        Rule(RuleContainer& rule);
 
-        virtual ruleContainer& getRule();
-        virtual void setRule(ruleContainer& rule);
+        virtual RuleContainer& getRule();
+        virtual void setRule(RuleContainer& rule);
 
     protected:
-        ruleContainer rule;
+        RuleContainer rule;
     };
 
     class GlobalMessageRule : public Rule {
     public:
-        GlobalMessageRule(ruleContainer& rule);
+        GlobalMessageRule(RuleContainer& rule);
 
-        ruleContainer& getRule();
-        void setRule(ruleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
     };
 }
 
