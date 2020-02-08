@@ -13,9 +13,12 @@ namespace activegame {
             // This game template was one of the pre-determined games uplodaded to the server from the server owner
             // and is considered a "blank-slate" game, i.e. this is a game with a un-modified state. 
             ActiveGame(game game);
-        private:
-            game gameProperty;
 
+            game::Configurations getConfigs() const;
+            game::GameRules getGameRules() const;
+            game::Constants getConstants() const;
+            game::GameState getState();
+        private:
             game::Configurations configurations;
             game::GameRules rules;
             game::Constants constants;
