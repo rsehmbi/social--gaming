@@ -10,12 +10,12 @@ public:
 
 private:
     
-    game::Configurations m_configurations;
+    game::Configurations configurations;
 
-    game::GameRules m_gameRules;
+    game::GameRules gameRules;
 
-    game::Constants m_constants;
+    game::Constants constants;
 
-    game::GameState m_gameState;
+    game::GameState gameState;
 };
 }

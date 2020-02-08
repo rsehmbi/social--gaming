@@ -15,8 +15,9 @@ private:
 
     game::GameRules convertGameRules(const nlohmann::json& jsonRules);
 
-    game::Variables convertVariables(const nlohmann::json& jsonVariables);
-
     game::Constants convertConstants(const nlohmann::json& jsonConstants);
+
+    game::Variables convertState(const nlohmann::json& gameVariables, 
+        const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
 };
 }
