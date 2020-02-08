@@ -20,7 +20,6 @@ public:
     void setGameType(std::string Type);
     void getUserInput(std::string Input);
     std::string getGameType();
-    //std::unordered_map<boost::variant<int,bool,std::string>>,std::string> Setup;
     void AssesGameType();
 
 private:
@@ -32,29 +31,24 @@ private:
 };
 #endif //SOCIALGAMING_GAMECONFIGURATION_H
 
-template <class kind, class prompt>
-struct setup
+template <class value, class prompt>
+struct Setup
 {
-    std::unordered_map<kind,prompt> setupPair;
-    kind x;
-    prompt y;
+    std::unordered_map<prompt,value> setupPair;
+    prompt promptMessage;
+    value inputValue;
+    Setup(value a, prompt b) :inputValue(a), promptMessage(b) {}
 
-    setup(kind a, prompt b) :x(a), y(b) {}
-    void updateSetup(kind a, prompt b)
+    void updateSetup(value a, prompt b)
     {
-        this-> x = a;
-        this-> y = b;
-        this->setupPair[x] = y;
-        std::cout<< this->setupPair[a] << std::endl;
-        std::cout<<a<<std::endl;
-        std::cout<<b<<std::endl;
+        this-> inputValue = a;
+        this-> promptMessage = b;
+        this->setupPair[this->promptMessage] = this->inputValue;
     }
 
-    void updateUserSetup(kind a, prompt b)
+    void updateUserSetup(value a, prompt b)
     {
-        std::cin >> b;
-        this->setupPair[this->x] = b;
-        std::cout << b <<std::endl;
-        setupPair[a] = b ;
+        this->setupPair[this->promptMessage] = this->inputValue;
+        this->setupPair[this->promptMessage] = this->inputValue;
     }
 };
