@@ -10,8 +10,8 @@ void GameRules::addRule(Rule& rule) {
     rules.push_back(rule);
 }
 
-// Gets game rules based on JSON file
-// Calls interpreter to do so
+// Gets game rules from JSON file
+// Will be moved to a separate convertor class
 void GameRules::getRulesByConverting(nlohmann::json jsonRules) {
 
 }
