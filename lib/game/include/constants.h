@@ -17,6 +17,7 @@ namespace constants{
         //std::list<nodes::Nodes> listOfConstants;
         std::string constantName;
     public:
+        //Converts Constants from Json to C++ vector
         void ingestConstants(json &data, std::vector<nodes::Nodes> &listOfConstants);
     };
 }
