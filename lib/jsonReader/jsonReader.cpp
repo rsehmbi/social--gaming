@@ -2,23 +2,18 @@
 
 using json = nlohmann::json;
 
-
-json jsonReader::jsonReader::createGame(std::string_view specJsonPath, std::string_view configJsonPath){
-    json jsonSpecs = readGameSpecification(specJsonPath);
+json jsonReader::jsonReader::gameJsonFromFiles(std::string_view specJsonPath, std::string_view configJsonPath){
+    json jsonSpecs = readGameSpecFromFile(specJsonPath);
     if (jsonSpecs != nullptr){
-        json jsonGame = readGameConfiguration(jsonSpecs, configJsonPath);
-        if (ValidateGameJson(jsonGame)){
+        json jsonGame = readGameConfigFromFile(jsonSpecs, configJsonPath);
+        if (isValidGameJson(jsonGame)){
             return jsonGame;
-        } else {
-            return nullptr ;
         }
-        return jsonGame;
-    } else{
-        return nullptr;
     }
+    return nullptr;
 }
 
-json jsonReader::jsonReader::readGameSpecification(std::string_view jsonSpecPath){
+json jsonReader::jsonReader::readGameSpecFromFile(std::string_view jsonSpecPath){
     try{
         std::ifstream inStream(std::string(jsonSpecPath).c_str());
         if (inStream.is_open()) {
@@ -28,47 +23,42 @@ json jsonReader::jsonReader::readGameSpecification(std::string_view jsonSpecPath
         } else {
             LOG(ERROR) << "Could not open specs file. Error: " << strerror(errno);
         }
-        return nullptr;
     } catch (const std::exception& e){
         LOG(ERROR) << "Caught exception with message: " << e.what();
     }
     return nullptr;
 }
 
-json jsonReader::jsonReader::readGameConfiguration(json jsonSpecs, std::string_view jsonConfigPath){
-    try{
-        if(jsonConfigPath.empty()){
-            json configuration = {};
-            jsonSpecs["configuration"] = jsonConfig["configuration"];
-            return jsonSpecs;
-        } else {
+json jsonReader::jsonReader::readGameConfigFromFile(json& jsonSpecObject, std::string_view jsonConfigPath){
+    if(!jsonConfigPath.empty()){
+        try{
             std::ifstream inStream(std::string(jsonConfigPath).c_str());
             if (inStream.is_open()) {
                 json jsonConfig;
                 inStream >> jsonConfig;
-                jsonSpecs["configuration"] = jsonConfig["configuration"];
-                return jsonSpecs;
+                jsonSpecObject["configuration"] = jsonConfig["configuration"];
+                return jsonSpecObject;
             } else {
-                LOG(ERROR) << "Could not open configs file. Error:" << e.what();
+                LOG(ERROR) << "Could not open configs file. Error:" << strerror(errno);
             }
-            return nullptr;
-        } 
-    } catch (const std::exception& e){
+        } catch (const std::exception& e){
          LOG(ERROR) << "Caught exception with message: " << e.what();
+        } 
     } 
-    return nullptr;
+    
+    return jsonSpecObject;
 }
 
-bool jsonReader::jsonReader::validateGameJson(const json& jsonGame){
+bool jsonReader::jsonReader::isValidGameJson(const json& jsonGame){
     if (jsonGame == nullptr)
         return false;
 
     // Very basic case is if the game doesn't have configurations or rules.
-    if (!jsonGame.contains["configuarations"] || !jsonGame.contains["rules"])
+    if (!jsonGame.contains["rules"])
         return false;
 
     if (jsonGame["Configurations"].contains["setup"]){
-        if (!validateConfigurationSetups(jsonGame["Configurations"]["setup"])){
+        if (!isValidConfigurationSetups(jsonGame["Configurations"]["setup"])){
             return false;
         }
     }
@@ -79,26 +69,27 @@ bool jsonReader::jsonReader::validateGameJson(const json& jsonGame){
 
 }
 
-bool jsonReader::jsonReader::validateConfigurationSetups(const json& setups){
+bool jsonReader::jsonReader::isValidConfigurationSetups(const json& setups){
     if (setups.is_null() || !setups.is_object()){
-        return false;
+        return true;
+    }
 
-        std::unordered_set <std::string> possible_kinds = 
-            {"integer", "string", "boolean", "question-answer", "multiple-choice"};
-        for (const auto& setups : setup){
-            if (setup.is_object()){
-                if (setup.contains("kind") && !setup["kind"].is_string()){
-                    return false;
-                }
+    std::unordered_set <std::string> possible_kinds = 
+        {"integer", "string", "boolean", "question-answer", "multiple-choice"};
+    for (const auto& setup : setups){
+        if (setup.is_object()){
+            if (setup.contains("kind") && !setup["kind"].is_string()){
+                return false;
+            }
 
-                if (setup.contains("prompt") && !setup["prompt"].is_string()){
-                    return false;
-                }
+            if (setup.contains("prompt") && !setup["prompt"].is_string()){
+                return false;
+            }
 
-                if ( !possible_kinds.contains(setup["kind"] ){
-                    return false;
-                }
+            if (possible_kinds.find(setup["kind"].get<std::string>()) == possible_kinds.end()){
+                return false;
             }
         }
     }
+    return true;
 }
