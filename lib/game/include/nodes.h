@@ -2,7 +2,7 @@
 #define SOCIAL_GAMING_NODES_H
 
 #include <string>
-#include <list>
+#include <vector>
 #include <map>
 
 using nlohmann::json;
@@ -11,7 +11,7 @@ namespace nodes{
     class Nodes {
     public:
         std::string constantName;
-        std::list<std::map<std::string, std::string>> listOfAttributes;
+        std::vector<std::map<std::string, std::string>> listOfAttributes;
 
 
 

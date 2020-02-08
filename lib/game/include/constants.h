@@ -2,7 +2,7 @@
 #define SOCIAL_GAMING_CONSTANTS_H
 
 #include <string>
-#include <list>
+#include <vector>
 #include <map>
 #include "include/nodes.h"
 #include "nodes.cpp"
@@ -17,7 +17,7 @@ namespace constants{
         //std::list<nodes::Nodes> listOfConstants;
         std::string constantName;
     public:
-        void ingestConstants(const json &data);
+        void ingestConstants(json &data, std::vector<nodes::Nodes> &listOfConstants);
     };
 }
 
