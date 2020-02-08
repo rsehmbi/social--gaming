@@ -1,6 +1,6 @@
 #include "game.h"
 
-game::game(game::configurations configs, game::gameRules rules, game::constants consts, game::gameState state) 
-    : m_configurations(configs), m_rules(rules), m_constants(consts), m_state(state)
+game::Game(game::Configurations configurations, game::GameRules gameRules, game::Constants constants, game::GameState gameState) 
+    : m_configurations(configs), m_gameRules(rules), m_constants(consts), m_gameState(state)
 {
-};
+}

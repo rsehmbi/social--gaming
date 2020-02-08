@@ -31,9 +31,9 @@ std::vector<Connection> clients;
 SessionManager manager;
 
 // List of all the availableGames created when server is initialized.
-std::vector <game::game> games;
+std::vector <game::Game> games;
 
-std::vector <game::game> 
+std::vector <game::Game> 
 createGames(const std::vector<std::string_view>& specPaths);
 
 
@@ -115,17 +115,17 @@ main(int argc, char* argv[]) {
   return 0;
 }
 
-std::vector <game::game> 
+std::vector <game::Game> 
 createGames(const std::vector<std::string_view>& specPaths){
   jsonReader::jsonReader jReader;
-  gameConverter::gameConverter converter;
+  gameConverter::GameConverter converter;
   
-  std::vector <game::game> availableGames;
+  std::vector <game::Game> availableGames;
 
   for (const auto& specPath : specPaths){
     nlohmann::json jsonGame = jReader.gameJsonFromFiles(specPath, "");
     if (jsonGame != nullptr){
-      game::game game = converter.createGame(jsonGame);
+      game::Game game = converter.createGame(jsonGame);
       availableGames.push_back(game);
     }
   }

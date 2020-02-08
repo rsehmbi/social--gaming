@@ -2,14 +2,7 @@
 #define GAMESESSION_H
 
 #include <string>
-
-#include "nlohmann/json.hpp"
-
 #include "Users.h"
-#include "JsonReader.h"
-// #include "Game.h"
-
-using json = nlohmann::json;
 
 class GameSession {
 
@@ -59,12 +52,6 @@ public:
 
     json getUpdate();
 
-
-
-    // pass in the specs and configs to create a game session which has a game and configurations.
-    GameSession(std::string_view specifications, std::string_view configurations);
-
-
 private:
 
     json gameConfiguration;
@@ -74,8 +61,6 @@ private:
 
     std::vector<users::Users> Audience;
     std::vector<users::Users> Players;
-
-    Game::game createGame(const json& jsonGameObject);
 
 };
 
