@@ -97,5 +97,3 @@ json GameSession::getUpdate() {
     //Return the json object for the updates.
     //return json o;
 }
-
-

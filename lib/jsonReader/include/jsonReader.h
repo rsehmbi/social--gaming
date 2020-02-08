@@ -4,8 +4,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <unordered_set>
+
 #include <nlohmann/json.hpp>
-#include <glog/logging>
+#include <glog/logging.h>
 
 
 namespace jsonReader {
@@ -20,17 +22,18 @@ namespace jsonReader {
     class jsonReader {
     public:
 
-        nlohmann::json createGame(std::string_view specJsonPath, std::string_view configJsonPath);
+        nlohmann::json gameJsonFromFiles(std::string_view specJsonPath, std::string_view configJsonPath);
+
+        nlohmann::json gameJsonFromJson(std::string_view specJson, std::string_view configJson);
 
     private:
-        nlohmann::json readGameSpecification(std::string_view path);
+        nlohmann::json readGameSpecFromFile(std::string_view path);
 
-        nlohmann::json readGameConfiguration(nlohmann::json jsonGame, std::string_view path);
+        nlohmann::json readGameConfigFromFile(nlohmann::json& jsonSpecObject, std::string_view path);
 
-        bool validateGameJson(const nlohmann::json& jsonGame);
+        bool isValidGameJson(const nlohmann::json& jsonGame);
 
-        bool validateConfigurationSetups(const json& setups)
-    
+        bool isValidConfigurationSetups(const nlohmann::json& setups);
     };
 }
 
