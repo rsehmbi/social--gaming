@@ -1,7 +1,7 @@
 #include <vector>
 #include "variables.h"
 #include "player.h"
-#include "messages.h
+#include "messages.h"
 #include <nlohmann/json.hpp>
 
 namespace game{
