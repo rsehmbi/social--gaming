@@ -8,6 +8,11 @@ public:
 
     game(game::configurations configs, game::gameRules rules, game::constants consts, game::gameState state);
 
+    game::configurationss getConfigurations();
+    game::gameRules getRules();
+    game::constants getConstants();
+    game::gameState getGameState();
+
 private:
     
     game::configurations m_configurations;
