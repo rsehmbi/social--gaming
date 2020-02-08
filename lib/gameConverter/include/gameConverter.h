@@ -2,21 +2,21 @@
 #include "game.h"
 
 namespace gameConverter{
-class gameConverter{
+class GameConverter{
 
 public:
 
     // Creates a game object from jsonGame.
-    game::game createGame(const nlohmann::json& jsonGame);
+    game::Game createGame(const nlohmann::json& jsonGame);
 
 private:
     
-    game::configurations convertConfigurations(const nlohmann::json& jsonConfigs);
+    game::Configurations convertConfigurations(const nlohmann::json& jsonConfigs);
 
-    game::gameRules convertGameRules(const nlohmann::json& jsonRules);
+    game::GameRules convertGameRules(const nlohmann::json& jsonRules);
 
-    game::variables convertVariables(const nlohmann::json& jsonVariables);
+    game::Variables convertVariables(const nlohmann::json& jsonVariables);
 
-    game::constants convertConstants(const nlohmann::json& jsonConstants);
+    game::Constants convertConstants(const nlohmann::json& jsonConstants);
 };
 }

@@ -2,25 +2,25 @@
 #include "gameRules.h"
 
 namespace game{
-class game{
+class Game{
 
 public:
 
-    game(game::configurations configs, game::gameRules rules, game::constants consts, game::gameState state);
+    Game(game::Configurations configurations, game::GameRules gameRules, game::Constants constants, game::GameState gameState);
 
-    game::configurationss getConfigurations();
-    game::gameRules getRules();
-    game::constants getConstants();
-    game::gameState getGameState();
+    game::Configurationss getConfigurations();
+    game::GameRules getRules();
+    game::Constants getConstants();
+    game::GameState getGameState();
 
 private:
     
-    game::configurations m_configurations;
+    game::Configurations m_configurations;
 
-    game::gameRules m_rules;
+    game::GameRules m_gameRules;
 
-    game::constants m_constants;
+    game::Constants m_constants;
 
-    game::gameState m_state;
+    game::GameState m_gameState;
 };
 }

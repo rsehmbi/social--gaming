@@ -2,9 +2,9 @@
 #include "game.h"
 
 using activegame::ActiveGame;
-using game::game;
+using game::Game;
 
-ActiveGame::ActiveGame(game game)
+ActiveGame::ActiveGame(Game game)
     :gameProperty{game} {
         this->configurations = game.getConfigurations();
         this->rules = game.getRules();

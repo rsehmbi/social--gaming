@@ -3,7 +3,7 @@
 
 #include "game.h"
 
-using game::game;
+using game::Game;
 
 namespace activegame {
     
@@ -16,10 +16,10 @@ namespace activegame {
         private:
             game gameProperty;
 
-            game::configurations configurations;
-            game::gameRules rules;
-            game::constants constants;
-            game::gameState state;
+            game::Configurations configurations;
+            game::GameRules rules;
+            game::Constants constants;
+            game::GameState state;
     };
 }
 

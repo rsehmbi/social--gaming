@@ -1,22 +1,22 @@
 #include "game.h"
 
-game::game(game::configurations configs, game::gameRules rules, game::constants consts, game::gameState state) 
-    : m_configurations(configs), m_rules(rules), m_constants(consts), m_state(state)
+game::Game(game::Configurations configurations, game::GameRules gameRules, game::Constants constants, game::GameState gameState) 
+    : m_configurations(configs), m_gameRules(rules), m_constants(consts), m_gameState(state)
 {
 }
 
-game::configurations game::getConfigurations() {
+game::Configurations game::getConfigurations() {
     return this->m_configurations;
 }
 
-game::gameRules game::getRules() {
+game::GameRules game::getRules() {
     return this->m_rules;
 }
 
-game::constants game::getConstants() {
+game::Constants game::getConstants() {
     return this->m_constants;
 }
 
-game::gameState game::getGameState() {
+game::GameState game::getGameState() {
     return this->m_state;
 }
