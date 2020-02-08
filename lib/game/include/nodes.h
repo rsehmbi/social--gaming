@@ -7,11 +7,13 @@
 
 using nlohmann::json;
 
+typedef std::map<std::string, std::string> mapStringToString;
+
 namespace nodes{
     class Nodes {
     public:
         std::string constantName;
-        std::vector<std::map<std::string, std::string>> listOfAttributes;
+        std::vector<mapStringToString> listOfAttributes;
 
 
 
