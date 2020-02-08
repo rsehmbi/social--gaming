@@ -11,22 +11,22 @@ namespace users {
 
     public:
         //Default Constructor
-        Users(std::string& playername, int& playerNum, int& PlayerID, bool& isPlayer);
+        Users(std::string& playername, int playerNum, int PlayerID, bool isPlayer);
 
         //Getters and Setters to access and change the private variables
         void setPlayerName(std::string& playerName);
 
         std::string getPlayerName() const;
 
-        void setPlayerNum(int& id);
+        void setPlayerNum(int id);
 
         int getPlayerNum();
 
-        void setPlayerID(int& id);
+        void setPlayerID(int id);
 
         int getPlayerID();
 
-        void setIsPlayer(bool& player);
+        void setIsPlayer(bool isPlayer);
 
         bool getIsPlayer();
 

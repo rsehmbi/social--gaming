@@ -4,7 +4,7 @@
 
 using users::Users;
 
-Users::Users(std::string& playername, int& playerNum, int& playerID, bool& isPlayer)
+Users::Users(std::string& playername, int playerNum, int playerID, bool isPlayer)
     : playerName{playerName},
       playerNum{playerNum},
       playerID{playerID},
@@ -21,24 +21,24 @@ std::string Users::getPlayerName() const {
     return this->playerName;
 }
 
-void Users::setPlayerNum(int& num){
-    this->playerNum=num;
+void Users::setPlayerNum(int num){
+    this->playerNum = num;
 }
 
 int Users::getPlayerNum(){
     return this->playerNum;
 }
 
-void Users::setPlayerID(int& id){
-    this->playerID=id;
+void Users::setPlayerID(int id){
+    this->playerID = id;
 }
 
 int Users::getPlayerID(){
     return this->playerID;
 }
 
-void Users::setIsPlayer(bool& player){
-    this->isPlayer=player;
+void Users::setIsPlayer(bool isPlayer){
+    this->isPlayer = isPlayer;
 }
 
 bool Users::getIsPlayer(){
