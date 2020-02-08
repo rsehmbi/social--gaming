@@ -1,7 +1,8 @@
 #ifndef GAMESESSION_H
 #define GAMESESSION_H
 
-using json = nlohmann::json;
+#include <string>
+#include "Users.h"
 
 class GameSession {
 
@@ -60,7 +61,6 @@ private:
 
     std::vector<users::Users> Audience;
     std::vector<users::Users> Players;
-
 
 };
 

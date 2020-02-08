@@ -4,16 +4,16 @@
 
 using users::Users;
 
-//Destructor
-Users::~Users(){
-    this->NumOfWins=0;
-    this->playerNum=0;
-    this->playerID=0;
-    this->isOwner=false;
+Users::Users(std::string& playername, int playerNum, int playerID, bool isPlayer)
+    : playerName{playerName},
+      playerNum{playerNum},
+      playerID{playerID},
+      isPlayer{isPlayer} {
+
 }
 
 //Getters and Setters to access and change the private variables
-void Users::setPlayerName(std::string playerName){
+void Users::setPlayerName(std::string& playerName){
     this->playerName = playerName;
 }
 
@@ -22,7 +22,7 @@ std::string Users::getPlayerName() const {
 }
 
 void Users::setPlayerNum(int num){
-    this->playerNum=num;
+    this->playerNum = num;
 }
 
 int Users::getPlayerNum(){
@@ -30,28 +30,21 @@ int Users::getPlayerNum(){
 }
 
 void Users::setPlayerID(int id){
-    this->playerID=id;
+    this->playerID = id;
 }
 
 int Users::getPlayerID(){
     return this->playerID;
 }
 
-void Users::setIsOwner(bool owner){
-    this->isOwner=owner;
+void Users::setIsPlayer(bool isPlayer){
+    this->isPlayer = isPlayer;
 }
 
-bool Users::getIsOwner(){
-    return this->isOwner;
+bool Users::getIsPlayer(){
+    return this->isPlayer;
 }
 
-int Users::getNumOfWins() {
-    return this->NumOfWins;
-}
-
-void Users::setNumOfWins(int updatedNum) {
-    this->NumOfWins = updatedNum;
-}
 //Class Functions to be created after server format is setup
 void connectToServer(std::string *passcode);
 

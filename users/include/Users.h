@@ -1,28 +1,20 @@
 #ifndef SOCIAL_GAMING_USERS_H
 #define SOCIAL_GAMING_USERS_H
 
-#include <string>
-
 namespace users {
     class Users {
     private:
         std::string playerName;
         int playerNum; //Are you player #1,2,3 or 4
         int playerID;   //unique identifier
-        bool isOwner; //if player is the Owner of game
-        int NumOfWins;
-
+        bool isPlayer; // True if User is an player of a game, false if they are an audience member
 
     public:
         //Default Constructor
-        Users(std::string playername, int playerNum, int PlayerID, bool isOwner, int NumOfWins) : playerName(
-                playername), playerNum(playerNum), playerID(PlayerID), isOwner(isOwner), NumOfWins(NumOfWins) {};
-
-        //Destructor
-        ~Users();
+        Users(std::string& playername, int playerNum, int PlayerID, bool isPlayer);
 
         //Getters and Setters to access and change the private variables
-        void setPlayerName(std::string playerName);
+        void setPlayerName(std::string& playerName);
 
         std::string getPlayerName() const;
 
@@ -34,9 +26,9 @@ namespace users {
 
         int getPlayerID();
 
-        void setIsOwner(bool owner);
+        void setIsPlayer(bool isPlayer);
 
-        bool getIsOwner();
+        bool getIsPlayer();
 
         //Class Functions
         void connectToServer(std::string *passcode);
