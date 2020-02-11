@@ -1,20 +1,24 @@
-#include "SessionManager.h"
 #include <string.h>
 #include <sstream>
 #include <iostream>
 #include <chrono>
+#include <SessionManager.h>
+
 
 #define SESSION_ID_LEN 10
 
 //----------Session Manager Class----------------------
 SessionManager::SessionManager() : 
-generator(std::chrono::high_resolution_clock::now().time_since_epoch().count()) {
-
+        generator(std::chrono::high_resolution_clock::now().time_since_epoch().count()){
+    gamePrompt = "\nThe server supports the following games:\nGame 1\nGame 2\nGame 3\nGame 4\n\n Type /create [game name] to create session.\n";
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
     outgoing.clear();
     chatLogs.clear();
+    for(auto& sessionMsg : msgsForSession){
+        sessionMsg.second.clear();
+    }
     
     for (auto& message : incoming) {
         CommandType command = commandChecker.checkString(message.text);
@@ -22,10 +26,12 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
         switch(command) {
             case CommandType::Create: 
                 createSession(message.connection.id);
+                //console debugging message
                 std::cout << "Request for create.\n";
                 break;
             case CommandType::Join:
                 joinSession(message.connection.id, commandChecker.getArgument());
+                //console debugging message
                 std::cout << "Request for join.\n";
                 break;
             default:
@@ -37,7 +43,11 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
     //to each session to execute its game turn
     for(auto& pair : sessionMap){
         //first = session ID, second = session object
-        pair.second.receive(msgsForSession[pair.first]);
+        //append session output messages to outgoing
+        MessageBatch sessionOut = pair.second.processGameTurn(msgsForSession[pair.first]);
+        for(auto& item : sessionOut){
+            outgoing.push_back(item);
+        }
     }
   
 }
@@ -62,12 +72,10 @@ void SessionManager::createSession(const ConnectionID& connectionID) {
 
     //generate new session id
     SessionID sessionID = generateID();
-    //ensure unique session ID
-    while(sessionMap.find(sessionID) != sessionMap.end()){
-        sessionID = generateID();
-    }
+    
     //create new session and map to session id
-    sessionMap[sessionID] = Session{sessionID};
+    sessionMap.emplace(sessionID, GameSession(sessionID));
+
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Session created. Session ID: " << sessionID << "\n";
@@ -102,7 +110,7 @@ const std::deque<Message>& SessionManager::outboundMessages(const std::vector<Co
         if(connectionSessionMap.find(client.id) == connectionSessionMap.end()){
             outgoing.push_back({client.id, chatLogs["public"]});
         } else { //session client
-            outgoing.push_back({client.id, chatLogs[connectionSessionMap[client.id]]});
+            // outgoing.push_back({client.id, chatLogs[connectionSessionMap[client.id]]});
         }
     }
     return outgoing;
@@ -113,9 +121,15 @@ SessionID SessionManager::generateID(){
     std::string alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::uniform_int_distribution<int>  distr(0, alphanum.size() - 1);
     SessionID id;
-    for (unsigned i = 0; i < SESSION_ID_LEN; i++) {
-        id += alphanum[distr(generator)];
+    
+    //ensure unique session ID
+    do {
+        for (unsigned i = 0; i < SESSION_ID_LEN; i++) {
+            id += alphanum[distr(generator)];
+        }
     }
+    while(sessionMap.find(id) != sessionMap.end());
+
     return id;
 }
 
@@ -123,7 +137,21 @@ void SessionManager::removeConnection(const ConnectionID& connectionID){
     connectionSessionMap.erase(connectionID);
 }
 
+std::string SessionManager::getGamesList(){
+    return gamePrompt;
+}
+
+// void SessionManager::sessionBroadCast(SessionID, std::string text){
+
+// }
+
+// void SessionManager::msgConnection(Message msg){
+//     outgoing.push_back(msg);
+// }
+
 //----------------CommandChecker Class---------------------
+
+
 CommandChecker::CommandChecker(){
     commandMap["/create"] = CommandType::Create;
     commandMap["/join"] = CommandType::Join;

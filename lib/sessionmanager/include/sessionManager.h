@@ -6,27 +6,9 @@
 
 #include <deque>
 #include <unordered_map>
-#include <Server.h>
 #include <random>
-#include <iterator>
+#include <GameSession.h>
 
-using networking::Server;
-using networking::Connection;
-using networking::Message;
-
-
-//abstract implementation from session class
-using SessionMessages = std::deque<Message>;
-using SessionID = std::string;
-using ConnectionID = uintptr_t;
-
-//----------stub Session struct for testing----//
-struct Session
-{
-    SessionID sessionID;
-    void receive(SessionMessages& messages){};
-};
-//----------stub Session struct for testing----//
 
 //Some info:
 //server receives and send deque<Messages>
@@ -69,15 +51,17 @@ class SessionManager {
 
         const std::deque<Message>& outboundMessages(const std::vector<Connection>& clients);
 
-        // //broadcast message to all players in current session
-        void sessionBroadCast(SessionID, std::string text);
+        //broadcast message to all players in current session
+        // void sessionBroadCast(SessionID, std::string text);
 
         //private message to a connection
-        void msgConnection(Message& message);
+        // void msgConnection(Message& message);
 
         //Removes connection info from internal database. Called by onDisconnect in main
         void removeConnection(const ConnectionID& connectionID);
 
+        //function for printer out available games
+        std::string getGamesList();
 
     private:
 
@@ -85,13 +69,14 @@ class SessionManager {
         std::unordered_map<ConnectionID, SessionID> connectionSessionMap;
 
         //a map of session id to sessions objects
-        std::unordered_map<SessionID, Session> sessionMap;
+        std::unordered_map<SessionID, GameSession> sessionMap;
 
         //chat logs for each session
+        //TODO: can remove this since session manager does not need to keep track of session chatlogs
         std::unordered_map<SessionID, std::string> chatLogs;
 
         //batches of msgs to be sent to each session id
-        std::unordered_map<SessionID, SessionMessages> msgsForSession;
+        std::unordered_map<SessionID, MessageBatch> msgsForSession;
 
         //outbound deque of messages
         std::deque<Message> outgoing;
@@ -113,6 +98,10 @@ class SessionManager {
         std::mt19937 generator;
 
         CommandChecker commandChecker;
+
+        // std::vector<Game> gameList;
+
+        std::string gamePrompt;
 
 };
 

@@ -6,9 +6,8 @@
 //  for details.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "Server.h"
-#include "SessionManager.h"
-
+#include <Server.h>
+#include <SessionManager.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -20,18 +19,22 @@
 using networking::Server;
 using networking::Connection;
 using networking::Message;
-
+using networking::MessageBatch;
 
 std::vector<Connection> clients;
 
 //session manager object that manages session messages
 SessionManager manager;
 
+Server* serverPtr;
 
 void
 onConnect(Connection c) {
     std::cout << "New connection found: " << c.id << "\n";
     clients.push_back(c);
+    std::deque<Message> onConnectMsg;
+    onConnectMsg.push_back({c.id, manager.getGamesList()});
+    serverPtr->send(onConnectMsg);
 }
 
 void
@@ -66,9 +69,10 @@ main(int argc, char* argv[]) {
   }
 
   unsigned short port = std::stoi(argv[1]);
-    //server that the social gaming platform will be using
+  //server that the social gaming platform will be using
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
-
+  //ptr for onConnect to be able to reference itself
+  serverPtr = &server;
     //main server loop
     while (true) {
         
@@ -88,16 +92,15 @@ main(int argc, char* argv[]) {
 
         //send off to session manager
         manager.processMessages(incoming);
-        
         auto outgoing = manager.outboundMessages(clients);
 
         server.send(outgoing);
 
         if (errorWhileUpdating) {
             break;
-    }
+        }
 
-    sleep(1);
+        sleep(1);
     }
 
   return 0;
