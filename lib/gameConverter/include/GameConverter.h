@@ -1,5 +1,5 @@
-#include <nlohmann/json.hpp>
-#include "game.h"
+#include "json.hpp"
+#include "Game.h"
 
 namespace gameConverter{
 class GameConverter{
@@ -17,7 +17,7 @@ private:
 
     game::Constants convertConstants(const nlohmann::json& jsonConstants);
 
-    game::Variables convertState(const nlohmann::json& gameVariables, 
+    game::GameState convertState(const nlohmann::json& gameVariables, 
         const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
 };
 }

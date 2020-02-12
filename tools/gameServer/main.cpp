@@ -7,10 +7,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "Server.h"
-#include "SessionManager.h"
-#include "jsonReader.h"
-#include "game.h"
-#include "gameConverter.h"
+#include "sessionManager.h"
+#include "JsonReader.h"
+#include "GameConverter.h"
 
 #include <fstream>
 #include <iostream>
@@ -126,7 +125,9 @@ createGames(const std::vector<std::string_view>& specPaths){
   for (const auto& specPath : specPaths){
     nlohmann::json jsonGame = jReader.gameJsonFromFiles(specPath, "");
     if (jsonGame != nullptr){
-      game::Game game = converter.createGame(jsonGame);
+      converter.createGame(jsonGame);
+      // game::Game game = converter.createGame(jsonGame);
+      game::Game game = game;
       availableGames.push_back(game);
     }
   }

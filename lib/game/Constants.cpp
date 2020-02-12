@@ -4,7 +4,7 @@
 #include "include/nodes.h"
 #include <vector>
 
-using constants::Constants;
+using game::Constants;
 using nodes::Nodes;
 
 //Converts Constants from Json to C++ vector

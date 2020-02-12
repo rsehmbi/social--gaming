@@ -1,4 +1,4 @@
-#include "include/jsonReader.h"
+#include "JsonReader.h"
 
 using json = nlohmann::json;
 
@@ -54,10 +54,10 @@ bool jsonReader::jsonReader::isValidGameJson(const json& jsonGame){
         return false;
 
     // Very basic case is if the game doesn't have configurations or rules.
-    if (!jsonGame.contains["rules"])
+    if (!jsonGame.contains("rules"))
         return false;
 
-    if (jsonGame["Configurations"].contains["setup"]){
+    if (jsonGame["Configurations"].contains("setup")){
         if (!isValidConfigurationSetups(jsonGame["Configurations"]["setup"])){
             return false;
         }

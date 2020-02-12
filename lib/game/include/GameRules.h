@@ -1,8 +1,8 @@
 #ifndef GAMERULES_H
 #define GAMERULES_H
 
-#include "../interpreter/include/json.hpp"
-#include "include/Rule.h"
+#include "json.hpp"
+#include "Rule.h"
 #include <vector>
 
 namespace game {
