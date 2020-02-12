@@ -26,7 +26,7 @@ class CommandChecker{
     public:
         CommandChecker();
         //checks first word of string and returns CommandType. Also updates argument variable accordingly
-        CommandType checkString(const std::string& message);
+        CommandType checkString(const Message& message);
         
         //Returns current value of argument variable
         std::string getArgument();
@@ -88,7 +88,7 @@ class SessionManager {
         void createSession(const ConnectionID& id);
 
         //join a session
-        void joinSession(const ConnectionID& connectionID, const std::string& sessionID);
+        void joinSession(const ConnectionID& connectionID, const SessionID& sessionID);
 
         //generate a session id for session creation
         std::string generateID();

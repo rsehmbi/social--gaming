@@ -21,7 +21,7 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
     }
     
     for (auto& message : incoming) {
-        CommandType command = commandChecker.checkString(message.text);
+        CommandType command = commandChecker.checkString(message);
 
         switch(command) {
             case CommandType::Create: 
@@ -83,7 +83,7 @@ void SessionManager::createSession(const ConnectionID& connectionID) {
     return;
 }
 
-void SessionManager::joinSession(const ConnectionID& connectionID, const std::string& sessionID) {
+void SessionManager::joinSession(const ConnectionID& connectionID, const SessionID& sessionID) {
     
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
@@ -158,9 +158,9 @@ CommandChecker::CommandChecker(){
 }
 
 //checks first word of string and returns CommandType and updates argument accordingly
-CommandType CommandChecker::checkString(const std::string& message){
+CommandType CommandChecker::checkString(const Message& message){
     argument = "";
-    std::istringstream iss(message);
+    std::istringstream iss(message.text);
     std::string firstWord;
     iss >> firstWord;
     if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
