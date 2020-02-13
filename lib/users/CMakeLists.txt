@@ -1,9 +1,9 @@
 
-add_library(sessionmanager
-  src/SessionManager.cpp
+add_library(users
+  src/Users.cpp
 )
 
-target_include_directories(sessionmanager
+target_include_directories(users
   PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -11,16 +11,15 @@ target_include_directories(sessionmanager
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_target_properties(sessionmanager
+set_target_properties(users
                       PROPERTIES
                       LINKER_LANGUAGE CXX
                       CXX_STANDARD 17
 )
 
-target_link_libraries(sessionmanager networking gamesession)
+#target_link_libraries(users gamesession)
 
-
-install(TARGETS sessionmanager
+install(TARGETS users
   ARCHIVE DESTINATION lib
 )
 
