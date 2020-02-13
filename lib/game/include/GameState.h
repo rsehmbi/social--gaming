@@ -1,3 +1,6 @@
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
+
 #include <vector>
 #include "Variables.h"
 #include "player.h"
@@ -20,3 +23,5 @@ class GameState{
         game::Variables getVariables(const nlohmann::json& jsonVariables);
 };
 }
+
+#endif
