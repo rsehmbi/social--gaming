@@ -4,14 +4,13 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "include/nodes.h"
-#include "nodes.cpp"
-#include "include/json.hpp"
+#include "nodes.h"
+#include "json.hpp"
 
 using nlohmann::json;
 
 
-namespace constants{
+namespace game{
     class Constants {
     private:
         //std::list<nodes::Nodes> listOfConstants;

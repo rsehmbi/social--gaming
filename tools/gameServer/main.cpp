@@ -8,9 +8,9 @@
 
 #include "Server.h"
 #include "SessionManager.h"
-#include "jsonReader.h"
-#include "game.h"
-#include "gameConverter.h"
+#include "JsonReader.h"
+#include "GameConverter.h"
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -41,7 +41,7 @@ std::vector <game::Game> games = createGames(specPaths);
 //TODO: manager needs to take list of reference game objects created from json files
 
 //eg. SessionManager manager(games);
-SessionManager manager();
+SessionManager manager;
 
 void
 onConnect(Connection c) {
@@ -82,6 +82,7 @@ main(int argc, char* argv[]) {
               << "  e.g. " << argv[0] << " 4002 ./webchat.html\n";
     return 1;
   }
+
 
   unsigned short port = std::stoi(argv[1]);
   //server that the social gaming platform will be using
@@ -133,8 +134,8 @@ createGames(const std::vector<std::string_view>& specPaths){
   for (const auto& specPath : specPaths){
     nlohmann::json jsonGame = jReader.gameJsonFromFiles(specPath, "");
     if (jsonGame != nullptr){
-      game::Game game = converter.createGame(jsonGame);
-      availableGames.push_back(game);
+      game::Game createdGame = converter.createGame(jsonGame);
+      availableGames.push_back(createdGame);
     }
   }
   return availableGames;

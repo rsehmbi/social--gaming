@@ -2,7 +2,7 @@
 #define RULE_H
 
 #include <map>
-#include "../interpreter/include/json.hpp"
+#include "json.hpp"
 
 namespace game {
 

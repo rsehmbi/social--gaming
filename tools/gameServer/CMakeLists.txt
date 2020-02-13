@@ -13,13 +13,21 @@ set_target_properties(main
 find_package(Threads REQUIRED)
 
 target_link_libraries(main
-  networking
-  ${CMAKE_THREAD_LIBS_INIT}
+    networking
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 target_link_libraries(main
-  sessionmanager
-  ${CMAKE_THREAD_LIBS_INIT}
+    sessionmanager
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+target_link_libraries(main 
+    jsonReader
+)
+
+target_link_libraries(main 
+    gameConverter
 )
 
 install(TARGETS main

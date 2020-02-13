@@ -8,7 +8,7 @@ class Player{
     private:
         int id;
         std::string name;
-        std::vector<game::Elements> elements;
-}
+        // std::vector<game::Elements> elements;
+};
 }
 

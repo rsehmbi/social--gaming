@@ -1,13 +1,13 @@
-#ifndef JSONPARSER_H
-#define JSONPARSER_H
+#ifndef JSONREADER_H
+#define JSONREADER_H
 
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <unordered_set>
 
-#include <nlohmann/json.hpp>
 #include <glog/logging.h>
+#include "json.hpp"
 
 
 namespace jsonReader {
