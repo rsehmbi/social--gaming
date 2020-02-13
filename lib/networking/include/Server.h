@@ -160,7 +160,11 @@ private:
   std::unique_ptr<ServerImpl,ServerImplDeleter> impl;
 };
 
-
+//abstract implementation
+using MessageBatch = std::deque<Message>;
+using SessionID = std::string;
+using ConnectionID = uintptr_t;
+using SessionID = std::string;
 }
 
 

@@ -1,9 +1,9 @@
 
-add_library(sessionmanager
-  src/SessionManager.cpp
+add_library(gamesession
+  src/GameSession.cpp
 )
 
-target_include_directories(sessionmanager
+target_include_directories(gamesession
   PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -11,16 +11,15 @@ target_include_directories(sessionmanager
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_target_properties(sessionmanager
+set_target_properties(gamesession
                       PROPERTIES
                       LINKER_LANGUAGE CXX
                       CXX_STANDARD 17
 )
 
-target_link_libraries(sessionmanager networking gamesession)
+target_link_libraries(gamesession sessionmanager)
 
-
-install(TARGETS sessionmanager
+install(TARGETS gamesession
   ARCHIVE DESTINATION lib
 )
 
