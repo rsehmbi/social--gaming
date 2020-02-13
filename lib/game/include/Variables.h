@@ -10,7 +10,7 @@ class Variables{
         Variables();
         Variables(const std::vector<game::Element>& variables);
 
-        game::Element getVariables();
+        const std::vector<Element> getVariables();
     private:
         std::vector<Element> variables;
 };
