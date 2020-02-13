@@ -1,12 +1,15 @@
-#include "variables.h"
+#include "Variables.h"
 
-game::Variables::Variables(){
+using game::Variables;
+
+
+Variables::Variables(){
 
     // TODO : implementation
 
 }
 
-game::Variables::Variables(const std::vector<Element>& variables){
+Variables::Variables(const std::vector<Element>& variables){
 
     // TODO : implementation
 

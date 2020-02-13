@@ -1,12 +1,13 @@
-#include "gameState.h"
+#include "GameState.h"
 
+using game::GameState;
 
-game::GameState::GameState(){
+GameState::GameState(){
 
     // TODO : implement constructor.
 }
 
-game::GameState::GameState(const nlohmann::json& jsonVariables){
+GameState::GameState(const nlohmann::json& jsonVariables){
 
     // TODO : implement constructor.
     

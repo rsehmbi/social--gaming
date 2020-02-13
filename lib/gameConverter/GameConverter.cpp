@@ -1,8 +1,14 @@
 #include "GameConverter.h"
 
+using gameConverter::GameConverter;
+using game::Game;
+using game::Configurations;
+using game::Constants;
+using game::GameState;
+using game::GameRules;
 
-game::Game
-gameConverter::GameConverter::createGame(const nlohmann::json& jsonGame){
+Game
+GameConverter::createGame(const nlohmann::json& jsonGame){
 
     game::Configurations configs = convertConfigurations(jsonGame["configurations"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
@@ -14,8 +20,8 @@ gameConverter::GameConverter::createGame(const nlohmann::json& jsonGame){
     return createdGame;
 }
 
-game::Configurations 
-gameConverter::GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
+Configurations 
+GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
     
     // TODO : create congurations from json.
 
@@ -23,8 +29,8 @@ gameConverter::GameConverter::convertConfigurations(const nlohmann::json& jsonCo
     return configurations;
 }
 
-game::GameRules 
-gameConverter::GameConverter::convertGameRules(const nlohmann::json& jsonRules){
+GameRules 
+GameConverter::convertGameRules(const nlohmann::json& jsonRules){
 
     // TODO : create GameRules from json.
 
@@ -32,8 +38,8 @@ gameConverter::GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     return gameRules;
 }
 
-game::Constants 
-gameConverter::GameConverter::convertConstants(const nlohmann::json& jsonConstants){
+Constants 
+GameConverter::convertConstants(const nlohmann::json& jsonConstants){
 
     // TODO : create Constants from json.
     
@@ -41,8 +47,8 @@ gameConverter::GameConverter::convertConstants(const nlohmann::json& jsonConstan
     return constants;
 }
 
-game::GameState 
-gameConverter::GameConverter::convertState(const nlohmann::json& gameVariables, 
+GameState 
+GameConverter::convertState(const nlohmann::json& gameVariables, 
     const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
     
      // TODO : create GameState from json.

@@ -1,7 +1,11 @@
 #include "Game.h"
 #include "GameRules.h"
 
-using namespace game;
+using game::Game;
+using game::Configurations;
+using game::GameRules;
+using game::Constants;
+using game::GameState;
 
 Game::Game()
 {
