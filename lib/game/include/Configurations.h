@@ -21,9 +21,9 @@ public:
     std::string getGameName()const;
     bool hasAudience()const;
     void setAudienceConfiguration(bool hasAudience);
-    void setMinNoOfPlayers(int &minNoOfPlayers) const;
-    void setMaxNoOfPlayers(int &maxNoOfPlayers) const;
-    void setGameType(std::string &Type) const;
+    void setMinNoOfPlayers(int &minNoOfPlayers);
+    void setMaxNoOfPlayers(int &maxNoOfPlayers);
+    void setGameType(std::string &Type);
     void getUserInput(std::string &Input);
     std::string getGameType();
     void assessGameType();
@@ -64,7 +64,4 @@ void operator()(QuestionAnswer &t){
    //
 }
 
-void operator()(MultipleChoice &t){
-   //
-}
 };

@@ -11,12 +11,12 @@ Configurations::Configurations(std::string name,bool audience,int minNoOfPlayers
 name(name),audience(audience),minNoOfPlayers(minNoOfPlayers),maxNoOfPlayers(maxNoOfPlayers){
 }
 
-void Configurations::setMinNoOfPlayers(int &minNoOfPlayers) const {
-    minNoOfPlayers = minNoOfPlayers;
+void Configurations::setMinNoOfPlayers(int &minNoOfPlayers) {
+    this->minNoOfPlayers = minNoOfPlayers;
 }
 
-void Configurations::setMaxNoOfPlayers(int &maxNoOfPlayers) const {
-    maxNoOfPlayers = maxNoOfPlayers;
+void Configurations::setMaxNoOfPlayers(int &maxNoOfPlayers)  {
+    this->maxNoOfPlayers = maxNoOfPlayers;
 }
 std::string Configurations::getGameName() const{
     return this->name;
@@ -29,9 +29,9 @@ bool Configurations::hasAudience() const{
     return this->audience;
 }
 
-void Configurations::setGameType(std::string &gameType) const
+void Configurations::setGameType(std::string &gameType) 
 {
-    gameType = gameType;
+    this->gameType = gameType;
 }
 
 // Game Type to process the input needed from Owner of the game
