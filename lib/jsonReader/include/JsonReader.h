@@ -23,7 +23,7 @@ namespace jsonReader {
     public:
 
         // static constant keys used to validate data from json.
-        static inline const std::string str_configurations = "configurations";
+        static inline const std::string str_configurations = "configuration";
         static inline const std::string str_rules = "rules";
         static inline const std::string str_setup = "setup";
         static inline const std::string str_kind = "kind";
