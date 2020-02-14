@@ -8,9 +8,8 @@
 
 #include "Server.h"
 #include "SessionManager.h"
-#include "jsonReader.h"
-#include "game.h"
-#include "gameConverter.h"
+#include "JsonReader.h"
+#include "GameConverter.h"
 
 #include <fstream>
 #include <iostream>
@@ -23,24 +22,40 @@
 using networking::Server;
 using networking::Connection;
 using networking::Message;
-
+using networking::MessageBatch;
 
 std::vector<Connection> clients;
+Server* serverPtr;
 
-//session manager object that manages session messages
-SessionManager manager;
+//struct to hold the path of config and specs file.
+struct fileNames{
+  std::string specFileName;
+  std::string configFileName;
+};
+
+//forward declaration
+std::vector <game::Game> createGames(const std::vector<fileNames>& specPaths);
+
+// This vector needs to contain the list of all the paths to the game specs.
+std::vector<fileNames> gamePaths = std::vector<fileNames>{{"exampleSpecs.json", "exampleConfigs.json"}};
 
 // List of all the availableGames created when server is initialized.
 std::vector <game::Game> games;
 
-std::vector <game::Game> 
-createGames(const std::vector<std::string_view>& specPaths);
 
+//session manager object that manages session messages
+//TODO: manager needs to take list of reference game objects created from json files
+
+//eg. SessionManager manager(games);
+SessionManager manager;
 
 void
 onConnect(Connection c) {
     std::cout << "New connection found: " << c.id << "\n";
     clients.push_back(c);
+    std::deque<Message> onConnectMsg;
+    onConnectMsg.push_back({c.id, manager.getGamesList()});
+    serverPtr->send(onConnectMsg);
 }
 
 void
@@ -74,13 +89,19 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
+  google::InitGoogleLogging(argv[0]);
+  google::SetLogDestination(google::INFO, "./logs/info");
+
+  LOG(INFO) << "Server started";
+
+  games = createGames(gamePaths);
+
   unsigned short port = std::stoi(argv[1]);
-    //server that the social gaming platform will be using
+  //server that the social gaming platform will be using
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
 
-  // This vector needs to contain the list of all the paths to the game specs.
-  std::vector<std::string_view> specPaths = std::vector<std::string_view>{"./../../examplesSpecs.json"};
-  games = createGames(specPaths);
+  //ptr for onConnect to be able to reference itself
+  serverPtr = &server;
 
     //main server loop
     while (true) {
@@ -101,34 +122,37 @@ main(int argc, char* argv[]) {
 
         //send off to session manager
         manager.processMessages(incoming);
-        
         auto outgoing = manager.outboundMessages(clients);
 
         server.send(outgoing);
 
         if (errorWhileUpdating) {
             break;
-    }
+        }
 
-    sleep(1);
+        sleep(1);
     }
 
   return 0;
 }
 
 std::vector <game::Game> 
-createGames(const std::vector<std::string_view>& specPaths){
+createGames(const std::vector<fileNames>& fileNames){
   jsonReader::jsonReader jReader;
   gameConverter::GameConverter converter;
   
   std::vector <game::Game> availableGames;
 
-  for (const auto& specPath : specPaths){
-    nlohmann::json jsonGame = jReader.gameJsonFromFiles(specPath, "");
+  for (const auto& files : fileNames){
+    nlohmann::json jsonGame = jReader.gameJsonFromFiles(files.specFileName, files.configFileName);
     if (jsonGame != nullptr){
-      game::Game game = converter.createGame(jsonGame);
-      availableGames.push_back(game);
+      game::Game createdGame = converter.createGame(jsonGame);
+      availableGames.push_back(createdGame);
     }
   }
+
+  LOG(INFO) << "created games: " << availableGames.size();
+  google::FlushLogFiles(google::INFO);
+
   return availableGames;
 }

@@ -2,7 +2,7 @@
 #define INTERPRETER_H
 
 #include <string>
-#include "include/dsl.h"
+#include "../../jsonReader/include/dsl.h"
 #include "json.hpp"
 
 using nlohmann::json;
