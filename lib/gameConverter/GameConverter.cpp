@@ -23,8 +23,15 @@ GameConverter::createGame(const nlohmann::json& jsonGame){
 Configurations 
 GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
     game::Configurations configurations(jsonConfigs["name"],jsonConfigs["audience"],jsonConfigs["player count"]["min"],jsonConfigs["player count"]["max"]);
+    for ( auto it: jsonConfigs["setup"].items() )
+    {
+        // Errors are not handled yet.
+        // Also assuming the prompt as key, there are good chances prompt might refer to string prompt to ask user
+        // Will Update as Requirements become more clear
+        configurations.setup[it.key()]  = it.value();
+        configurations.prompt = it.key();
+    }
     google::FlushLogFiles(google::INFO);
-    LOG(INFO) << configurations.getGameName();
     return configurations;
 }
 
