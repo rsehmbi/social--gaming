@@ -10,13 +10,14 @@ using game::GameRules;
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
 
+    LOG(INFO) << "creating game from json";
     game::Configurations configs = convertConfigurations(jsonGame["configurations"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
     game::Constants constants = convertConstants(jsonGame["constants"]);
-    game::GameState gameState = convertState(jsonGame["variables"], jsonGame["per_player"], jsonGame["per_audience"]);
+    game::GameState gameState = convertState(jsonGame["variables"], jsonGame["per-player"], jsonGame["per-audience"]);
 
     game::Game createdGame {configs, gameRules, constants, gameState};
-
+    
     return createdGame;
 }
 

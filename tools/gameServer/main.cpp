@@ -27,14 +27,20 @@ using networking::MessageBatch;
 std::vector<Connection> clients;
 Server* serverPtr;
 
+//struct to hold the path of config and specs file.
+struct fileNames{
+  std::string specFileName;
+  std::string configFileName;
+};
+
 //forward declaration
-std::vector <game::Game> createGames(const std::vector<std::string_view>& specPaths);
+std::vector <game::Game> createGames(const std::vector<fileNames>& specPaths);
 
 // This vector needs to contain the list of all the paths to the game specs.
-std::vector<std::string_view> specPaths = std::vector<std::string_view>{"./../../examplesSpecs.json"};
+std::vector<fileNames> gamePaths = std::vector<fileNames>{{"exampleSpecs.json", "exampleConfigs.json"}};
 
 // List of all the availableGames created when server is initialized.
-std::vector <game::Game> games = createGames(specPaths);
+std::vector <game::Game> games;
 
 
 //session manager object that manages session messages
@@ -83,6 +89,12 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
+  google::InitGoogleLogging(argv[0]);
+  google::SetLogDestination(google::INFO, "./logs/info");
+
+  LOG(INFO) << "Server started";
+
+  games = createGames(gamePaths);
 
   unsigned short port = std::stoi(argv[1]);
   //server that the social gaming platform will be using
@@ -125,18 +137,22 @@ main(int argc, char* argv[]) {
 }
 
 std::vector <game::Game> 
-createGames(const std::vector<std::string_view>& specPaths){
+createGames(const std::vector<fileNames>& fileNames){
   jsonReader::jsonReader jReader;
   gameConverter::GameConverter converter;
   
   std::vector <game::Game> availableGames;
 
-  for (const auto& specPath : specPaths){
-    nlohmann::json jsonGame = jReader.gameJsonFromFiles(specPath, "");
+  for (const auto& files : fileNames){
+    nlohmann::json jsonGame = jReader.gameJsonFromFiles(files.specFileName, files.configFileName);
     if (jsonGame != nullptr){
       game::Game createdGame = converter.createGame(jsonGame);
       availableGames.push_back(createdGame);
     }
   }
+
+  LOG(INFO) << "created games: " << availableGames.size();
+  google::FlushLogFiles(google::INFO);
+
   return availableGames;
 }

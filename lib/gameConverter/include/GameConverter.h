@@ -1,6 +1,8 @@
 #include "json.hpp"
 #include "Game.h"
 
+#include <glog/logging.h>
+
 namespace gameConverter{
 class GameConverter{
 
