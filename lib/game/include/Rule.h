@@ -9,6 +9,11 @@ namespace game {
     // Type defenition for ruleContainer struct
     struct RuleContainer {
         std::map<std::string, std::string> ruleInformation;
+        RuleContainer* subRules;
+
+        void add(std::string item, std::string value) {
+            ruleInformation[item] = value;
+        }
     };
 
     // The Rule class is responsible for holding information relevent
@@ -27,6 +32,7 @@ namespace game {
 
     class GlobalMessageRule : public Rule {
     public:
+        GlobalMessageRule();
         GlobalMessageRule(RuleContainer& rule);
 
         RuleContainer& getRule();

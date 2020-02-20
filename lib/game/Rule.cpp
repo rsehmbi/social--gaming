@@ -20,6 +20,10 @@ RuleContainer& Rule::getRule() {
 }
 
 // GlobalMessageRule class
+GlobalMessageRule::GlobalMessageRule() {
+    
+}
+
 GlobalMessageRule::GlobalMessageRule(RuleContainer& rule) {
     this->rule = rule;
 }

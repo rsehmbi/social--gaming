@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "include/GameRules.h"
-#include "include/Rule.h"
+#include "GameRules.h"
+#include "Rule.h"
 
 using game::Rule;
 using game::GameRules;
@@ -9,6 +9,7 @@ using game::RuleContainer;
 using game::GlobalMessageRule;
 
 void testGlobalMessage();
+void printRules(GameRules rules);
 
 int main() {
     testGlobalMessage();
@@ -47,8 +48,12 @@ void testGlobalMessage() {
     rules.addRule(globalMessageRule1);
     rules.addRule(globalMessageRule2);
 
-    // Print out rules
-    auto ruleList = rules.getRules();
+    printRules(rules);
+    
+}
+
+void printRules(GameRules rules) {
+  auto ruleList = rules.getRules();
     for(auto rule: ruleList) {
         RuleContainer ruleCont = rule.getRule();
         for(auto mapElem : ruleCont.ruleInformation) {
