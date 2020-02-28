@@ -68,8 +68,6 @@ private:
 
   std::unique_ptr<ClientImpl> impl;
 };
-
-
 }
 
 

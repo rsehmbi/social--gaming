@@ -6,8 +6,11 @@
 //  for details.
 /////////////////////////////////////////////////////////////////////////////
 
-#include <Server.h>
-#include <SessionManager.h>
+#include "Server.h"
+#include "SessionManager.h"
+#include "JsonReader.h"
+#include "GameConverter.h"
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -22,11 +25,29 @@ using networking::Message;
 using networking::MessageBatch;
 
 std::vector<Connection> clients;
+Server* serverPtr;
+
+//struct to hold the path of config and specs file.
+struct fileNames{
+  std::string specFileName;
+  std::string configFileName;
+};
+
+//forward declaration
+std::vector <game::Game> createGames(const std::vector<fileNames>& specPaths);
+
+// This vector needs to contain the list of all the paths to the game specs.
+std::vector<fileNames> gamePaths = std::vector<fileNames>{{"exampleSpecs.json", "exampleConfigs.json"}};
+
+// List of all the availableGames created when server is initialized.
+std::vector <game::Game> games;
+
 
 //session manager object that manages session messages
-SessionManager manager;
+//TODO: manager needs to take list of reference game objects created from json files
 
-Server* serverPtr;
+//eg. SessionManager manager(games);
+SessionManager manager;
 
 void
 onConnect(Connection c) {
@@ -68,11 +89,20 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
+  google::InitGoogleLogging(argv[0]);
+  google::SetLogDestination(google::INFO, "./logs/info");
+
+  LOG(INFO) << "Server started";
+
+  games = createGames(gamePaths);
+
   unsigned short port = std::stoi(argv[1]);
   //server that the social gaming platform will be using
   Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
+
   //ptr for onConnect to be able to reference itself
   serverPtr = &server;
+
     //main server loop
     while (true) {
         
@@ -104,4 +134,25 @@ main(int argc, char* argv[]) {
     }
 
   return 0;
+}
+
+std::vector <game::Game> 
+createGames(const std::vector<fileNames>& fileNames){
+  jsonReader::jsonReader jReader;
+  gameConverter::GameConverter converter;
+  
+  std::vector <game::Game> availableGames;
+
+  for (const auto& files : fileNames){
+    nlohmann::json jsonGame = jReader.gameJsonFromFiles(files.specFileName, files.configFileName);
+    if (jsonGame != nullptr){
+      game::Game createdGame = converter.createGame(jsonGame);
+      availableGames.push_back(createdGame);
+    }
+  }
+
+  LOG(INFO) << "created games: " << availableGames.size();
+  google::FlushLogFiles(google::INFO);
+
+  return availableGames;
 }
