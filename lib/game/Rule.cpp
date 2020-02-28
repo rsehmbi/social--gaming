@@ -2,36 +2,20 @@
 
 using game::Rule;
 using game::RuleContainer;
-using game::GlobalMessageRule;
+using game::RuleType;
 
-Rule::Rule() {
-    // This constructor is required to be explicity declared
-    // because it is called by the constructors of subclasses
-}
-
-Rule::Rule(RuleContainer& rule) : rule(rule) {}
-
-void Rule::setRule(RuleContainer& rule) {
-    this->rule = rule;
-}
-
-RuleContainer& Rule::getRule() {
-    return this->rule;
-}
-
-// GlobalMessageRule class
-GlobalMessageRule::GlobalMessageRule() {
+Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
     
 }
 
-GlobalMessageRule::GlobalMessageRule(RuleContainer& rule) {
-    this->rule = rule;
+void Rule::setRuleContainer(RuleContainer& ruleContainer) {
+    this->ruleContainer = ruleContainer;
 }
 
-void GlobalMessageRule::setRule(RuleContainer& rule) {
-    this->rule = rule;
+RuleContainer& Rule::getRuleContainer() {
+    return this->ruleContainer;
 }
 
-RuleContainer& GlobalMessageRule::getRule() {
-    return this->rule;
+RuleType Rule::getRuleType() const {
+    return this->ruleType;
 }

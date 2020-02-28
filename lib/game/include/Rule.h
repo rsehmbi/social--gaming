@@ -1,10 +1,29 @@
-#ifndef RULE_H
-#define RULE_H
+
+#pragma once
 
 #include <map>
 #include "json.hpp"
 
 namespace game {
+    
+    enum class RuleType {
+        GlobalMessage,
+        Extend,
+        Reverse,
+        Shuffle,
+        Sort,
+        Deal,
+        Discard,
+        ListAttributes,
+        Add,
+        NumericalAttributes,
+        Timer,
+        InputChoice,
+        InputText,
+        InputVote,
+        Message,
+        Scores,
+    };
 
     // Type defenition for ruleContainer struct
     struct RuleContainer {
@@ -20,24 +39,18 @@ namespace game {
     // to executing a rule
     class Rule {
     public:
-        Rule();
-        Rule(RuleContainer& rule);
+        Rule(RuleType ruleType, RuleContainer& rule);
 
-        virtual RuleContainer& getRule();
-        virtual void setRule(RuleContainer& rule);
+        RuleType getRuleType() const;
+        
+        RuleContainer& getRuleContainer() const;
 
-    protected:
-        RuleContainer rule;
+        void setRuleContainer(RuleContainer& rule);
+
+    private:
+        RuleContainer ruleContainer;
+
+        RuleType ruleType;
     };
 
-    class GlobalMessageRule : public Rule {
-    public:
-        GlobalMessageRule();
-        GlobalMessageRule(RuleContainer& rule);
-
-        RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
-    };
 }
-
-#endif
