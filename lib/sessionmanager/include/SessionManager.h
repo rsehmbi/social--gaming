@@ -49,13 +49,8 @@ class SessionManager {
 
         void processMessages(const std::deque<Message>& incoming);
 
+        //create and output messages after processMessages has proccessed messages
         const std::deque<Message>& outboundMessages(const std::vector<Connection>& clients);
-
-        //broadcast message to all players in current session
-        // void sessionBroadCast(SessionID, std::string text);
-
-        //private message to a connection
-        // void msgConnection(Message& message);
 
         //Removes connection info from internal database. Called by onDisconnect in main
         void removeConnection(const ConnectionID& connectionID);

@@ -7,21 +7,38 @@ GameSession::GameSession(SessionID id) :
         sessionID{id} {
 }
 
-//Entry point for session manager to pass execution to a game session.
-//Session manager passes the messages from clients of this session to processGameTurn
-//and lets the game execute its next turn. Function should use this turn to perform
-//all its game logic that can be performed until further input from players are required.
-//use mgrPtr->sessionBroadCast and mgrPtr->msgConnection to send msgs to clients
 MessageBatch GameSession::processGameTurn(const MessageBatch& inMsgs){
-    // void msgConnection(Message& message);
-    // void sessionBroadCast(id, Message msg);
-    MessageBatch outMsgs;
-    //FOR TESTING: send msg back to each player.
+    outMsgs.clear();
+    //-----------perform game turn-------
+
+    //FOR TESTING: send msg back to each player
     for(auto& msg : inMsgs){
         std::ostringstream out;
         out << msg.connection.id << "> " << msg.text << "\n";
         outMsgs.push_back({msg.connection.id, out.str()});
     }
+    //broadcast test
+    sessionBroadCast("broadcast test\n");
+
+    
+    //-----------end of perform game turn-------
     return outMsgs;
 }
 
+void GameSession::sessionBroadCast(const std::string& text){
+    for(const auto& connectionid : connections){
+        msgConnection(connectionid, text);
+    }
+}
+
+void GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
+    outMsgs.push_back({target, msg});
+}
+
+void GameSession::disconnect(const ConnectionID& cid){
+    connections.erase(cid);
+}
+
+void GameSession::connect(const ConnectionID& cid){
+    connections.insert(cid);
+}
