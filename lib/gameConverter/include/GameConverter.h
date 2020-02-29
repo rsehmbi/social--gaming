@@ -16,10 +16,15 @@ private:
     game::Configurations convertConfigurations(const nlohmann::json& jsonConfigs);
 
     game::GameRules convertGameRules(const nlohmann::json& jsonRules);
+    game::Rule constructRuleObject(const nlohmann::json& jsonRuleName);
+    game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
 
     game::Constants convertConstants(const nlohmann::json& jsonConstants);
 
     game::GameState convertState(const nlohmann::json& gameVariables, 
         const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
+
+    friend class gameConverterTester;
+
 };
 }
