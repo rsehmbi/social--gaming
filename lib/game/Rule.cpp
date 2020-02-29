@@ -12,7 +12,7 @@ void Rule::setRuleContainer(RuleContainer& ruleContainer) {
     this->ruleContainer = ruleContainer;
 }
 
-RuleContainer& Rule::getRuleContainer() {
+RuleContainer& Rule::getRuleContainer() const {
     return this->ruleContainer;
 }
 
