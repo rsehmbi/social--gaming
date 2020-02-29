@@ -6,9 +6,18 @@
 
 namespace game {
 
-    // Type defenition for ruleContainer struct
-    struct ruleContainer {
+    typedef std::string listName;
+    typedef int Count;
+
+    // Type defenition for RuleContaine struct
+    struct RuleContainer {
         std::map<std::string, std::string> ruleInformation;
+        RuleContainer* subRules;
+
+        void add(std::string item, std::string value) {
+            ruleInformation[item] = value;
+        }
+
     };
 
     // The Rule class is responsible for holding information relevent
@@ -16,21 +25,56 @@ namespace game {
     class Rule {
     public:
         Rule();
-        Rule(ruleContainer& rule);
+        Rule(RuleContainer& rule);
 
-        virtual ruleContainer& getRule();
-        virtual void setRule(ruleContainer& rule);
+        virtual RuleContainer& getRule();
+        virtual void setRule(RuleContainer& rule);
 
     protected:
-        ruleContainer rule;
+        RuleContainer rule;
     };
 
     class GlobalMessageRule : public Rule {
     public:
-        GlobalMessageRule(ruleContainer& rule);
+        GlobalMessageRule(RuleContainer& rule);
 
-        ruleContainer& getRule();
-        void setRule(ruleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    };
+
+    class Shuffle: public Rule {
+    public:
+        Shuffle(RuleContainer& rule);
+
+        void shuffleList(listName &list);
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+    private:
+        listName list;
+    };
+
+    // Sorts a list in ascending order
+    class Sort: public Rule {
+    public:
+        Sort(RuleContainer &rule);
+
+        void sortList(listName &list);
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+    private:
+        listName list;
+    };
+
+    class Deal:public Rule {
+        Deal (RuleContainer &rule);
+
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+        void dealList(listName From, listName To, Count count);
+    private:
+        Count count;
+        listName From;
+        listName To;
     };
 }
 
