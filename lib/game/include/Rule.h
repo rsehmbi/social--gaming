@@ -1,10 +1,29 @@
-#ifndef RULE_H
-#define RULE_H
+
+#pragma once
 
 #include <map>
 #include "json.hpp"
 
 namespace game {
+    
+    enum class RuleType {
+        GlobalMessage,
+        Extend,
+        Reverse,
+        Shuffle,
+        Sort,
+        Deal,
+        Discard,
+        ListAttributes,
+        Add,
+        NumericalAttributes,
+        Timer,
+        InputChoice,
+        InputText,
+        InputVote,
+        Message,
+        Scores,
+    };
 
     typedef std::string listName;
     typedef int Count;
@@ -17,21 +36,30 @@ namespace game {
         void add(std::string item, std::string value) {
             ruleInformation[item] = value;
         }
-
     };
 
     // The Rule class is responsible for holding information relevent
     // to executing a rule
     class Rule {
     public:
-        Rule();
-        Rule(RuleContainer& rule);
 
-        virtual RuleContainer& getRule();
-        virtual void setRule(RuleContainer& rule);
+        Rule() {
+    // This constructor is required to be explicity declared
+    // because it is called by the constructors of subclasses
+        }
 
-    protected:
-        RuleContainer rule;
+        Rule(RuleType ruleType, RuleContainer& rule);
+
+        RuleType getRuleType() const;
+        
+        RuleContainer& getRuleContainer();
+
+        void setRuleContainer(RuleContainer& rule);
+
+    private:
+        RuleContainer ruleContainer;
+
+        RuleType ruleType;
     };
 
     class GlobalMessageRule : public Rule {
@@ -76,6 +104,5 @@ namespace game {
         listName From;
         listName To;
     };
-}
 
-#endif
+}

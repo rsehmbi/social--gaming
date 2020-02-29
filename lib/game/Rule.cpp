@@ -6,33 +6,22 @@ using game::GlobalMessageRule;
 using game::Shuffle;
 using game::Sort;
 using game::Deal;
+using game::RuleType;
 
-Rule::Rule() {
-    // This constructor is required to be explicity declared
-    // because it is called by the constructors of subclasses
+Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
+    
 }
 
-Rule::Rule(RuleContainer& rule) : rule(rule) {}
-
-void Rule::setRule(RuleContainer& rule) {
-    this->rule = rule;
+void Rule::setRuleContainer(RuleContainer& ruleContainer) {
+    this->ruleContainer = ruleContainer;
 }
 
-RuleContainer& Rule::getRule() {
-    return this->rule;
+RuleContainer& Rule::getRuleContainer(){
+    return this->ruleContainer;
 }
 
-// GlobalMessageRule class
-GlobalMessageRule::GlobalMessageRule(RuleContainer& rule) {
-    this->rule = rule;
-}
-
-void GlobalMessageRule::setRule(RuleContainer& rule) {
-    this->rule = rule;
-}
-
-RuleContainer& GlobalMessageRule::getRule() {
-    return this->rule;
+RuleType Rule::getRuleType() const {
+    return this->ruleType;
 }
 
 //Shuffle
@@ -89,5 +78,4 @@ void Deal::setRule(RuleContainer  & rule)
 }
 void Deal::dealList(listName From, listName To, Count count)
 {
-
 }
