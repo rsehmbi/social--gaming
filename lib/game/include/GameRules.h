@@ -16,6 +16,8 @@ namespace game {
         
         // Used for testing only
         const std::vector<Rule>& getRules();
+
+        std::string toString();
         
     private:
         std::vector<Rule> rules;
