@@ -1,10 +1,17 @@
 #include <GameSession.h>
 
+#include <sstream>
+#include <iostream>
+
+using user::User;
+using user::UserType;
+
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
 
-GameSession::GameSession(SessionID id) : 
-        sessionID{id} {
+GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId) 
+    :   sessionID{id},
+        owner{User {"", -1, ownerConnectionId, UserType::Owner} } {
 }
 
 MessageBatch GameSession::processGameTurn(const MessageBatch& inMsgs){
@@ -18,7 +25,7 @@ MessageBatch GameSession::processGameTurn(const MessageBatch& inMsgs){
         outMsgs.push_back({msg.connection.id, out.str()});
     }
     //broadcast test
-    sessionBroadCast("broadcast test\n");
+    sessionBroadCast("broadcast test: " + sessionID + "\n");
 
     
     //-----------end of perform game turn-------
@@ -42,3 +49,4 @@ void GameSession::disconnect(const ConnectionID& cid){
 void GameSession::connect(const ConnectionID& cid){
     connections.insert(cid);
 }
+

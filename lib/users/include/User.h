@@ -1,20 +1,30 @@
 #ifndef SOCIAL_GAMING_USERS_H
 #define SOCIAL_GAMING_USERS_H
 
-namespace users {
-    class Users {
+#include <Server.h>
+#include <string>
+
+using networking::ConnectionID;
+
+namespace user {
+
+enum UserType { Player, Owner, Audience };
+
+class User {
+
     private:
         std::string playerName;
         int playerNum; //Are you player #1,2,3 or 4
-        int playerID;   //unique identifier
-        bool isPlayer; // True if User is an player of a game, false if they are an audience member
+        ConnectionID connectionID;   //unique identifier
+        enum UserType userType; // Type of the user: { Player, Owner, Audience }
 
     public:
+
         //Default Constructor
-        Users(std::string& playername, int playerNum, int PlayerID, bool isPlayer);
+        User(std::string_view _playerName, int _playerNum, ConnectionID _connectionID, UserType _userType);
 
         //Getters and Setters to access and change the private variables
-        void setPlayerName(std::string& playerName);
+        void setPlayerName(std::string_view playerName);
 
         std::string getPlayerName() const;
 
@@ -22,13 +32,17 @@ namespace users {
 
         int getPlayerNum();
 
-        void setPlayerID(int id);
+        void setConnectionID(ConnectionID id);
 
-        int getPlayerID();
+        ConnectionID getConnectionID();
 
         void setIsPlayer(bool isPlayer);
 
         bool getIsPlayer();
+
+        void setUserType(UserType _userType);
+
+        UserType getUserType();
 
         //Class Functions
         void connectToServer(std::string *passcode);
