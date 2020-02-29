@@ -4,33 +4,28 @@
 using user::User;
 using user::UserType;
 
-User::User(std::string_view _playerName, int _playerNum, ConnectionID _connectionID, UserType _userType)
-    : playerName{_playerName},
-      playerNum{_playerNum},
+User::User(std::string_view _username, int _id, ConnectionID _connectionID, UserType _userType)
+    : username{_username},
+      id{_id},
       connectionID{_connectionID},
       userType{_userType} {
-
 }
 
 //Getters and Setters to access and change the private variables
-void User::setPlayerName(std::string_view playerName){
-    this->playerName = playerName;
+void User::setName(std::string_view _username){
+    this->username = _username;
 }
 
-std::string User::getPlayerName() const {
-    return this->playerName;
+std::string User::getName() const {
+    return this->username;
 }
 
-void User::setPlayerNum(int num){
-    this->playerNum = num;
+void User::setId(int _id){
+    this->id = _id;
 }
 
-int User::getPlayerNum(){
-    return this->playerNum;
-}
-
-void User::setConnectionID(ConnectionID connectionID){
-    this->connectionID = connectionID;
+int User::getId(){
+    return this->id;
 }
 
 ConnectionID User::getConnectionID(){
@@ -44,12 +39,3 @@ void User::setUserType(UserType _userType){
 UserType User::getUserType(){
     return this->userType;
 }
-
-//Class Functions to be created after server format is setup
-void connectToServer(std::string *passcode);
-
-void sendPlayerInfo(std::string *playerName, int playerID);
-
-void sendResponse(std::string *msg);
-
-void receiveResponse(std::string *msg);

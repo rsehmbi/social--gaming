@@ -10,6 +10,9 @@ using networking::SessionID;
 using networking::MessageBatch;
 using networking::ConnectionID; 
 
+using user::User;
+using user::UserType;
+
 class GameSession{
 
     public:
@@ -30,9 +33,14 @@ class GameSession{
         //add user to game session
         void connect(const ConnectionID& cid);
 
+        // Filters the users that are players.
+        std::vector<user::User> getPlayers();
+
     private:
 
         SessionID sessionID;
+
+        int maxPlayersAllowed;
 
         std::unordered_set<ConnectionID> connections;
 
@@ -44,5 +52,11 @@ class GameSession{
 
         void sessionBroadCast(const std::string& text);
 
-        void msgConnection(const ConnectionID& target, const std::string& msg);
+        void msgConnection(const ConnectionID& target, const std::string& msg);  
+
+        std::vector<User> getUsersWithType(const UserType& userType);
+
+        std::vector<User> getAudience();
+
+        int getUserCountWithType(const UserType& userType);
 };

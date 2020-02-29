@@ -13,50 +13,35 @@ enum UserType { Player, Owner, Audience };
 class User {
 
     private:
-        std::string playerName;
-        int playerNum; //Are you player #1,2,3 or 4
+        std::string username;
+        int id; // Unique id of the player.
         ConnectionID connectionID;   //unique identifier
         enum UserType userType; // Type of the user: { Player, Owner, Audience }
 
     public:
 
         //Default Constructor
-        User(std::string_view _playerName, int _playerNum, ConnectionID _connectionID, UserType _userType);
+        User(std::string_view _username, int _id, ConnectionID _connectionID, UserType _userType);
 
         //Getters and Setters to access and change the private variables
-        void setPlayerName(std::string_view playerName);
+        void setName(std::string_view _username);
 
-        std::string getPlayerName() const;
+        std::string getName() const;
 
-        void setPlayerNum(int id);
+        void setId(int id);
 
-        int getPlayerNum();
-
-        void setConnectionID(ConnectionID id);
+        int getId();
 
         ConnectionID getConnectionID();
-
-        void setIsPlayer(bool isPlayer);
-
-        bool getIsPlayer();
 
         void setUserType(UserType _userType);
 
         UserType getUserType();
 
         //Class Functions
-        void connectToServer(std::string *passcode);
-
-        void sendPlayerInfo(std::string *playerName, int playerID);
-
-        void sendResponse(std::string *msg);
-
-        void receiveResponse(std::string *msg);
-
         int getNumOfWins();
 
         void setNumOfWins();
-
     };
 }
 
