@@ -73,7 +73,7 @@ void SessionManager::createSession(const ConnectionID& connectionID) {
     SessionID sessionID = generateID();
     
     //create new session and map to session id
-    sessionMap.emplace(sessionID, sessionID);
+    sessionMap.emplace(sessionID, GameSession{ sessionID, connectionID });
 
     //update records and inform connection of status
     connectionSessionMap[connectionID] = sessionID;

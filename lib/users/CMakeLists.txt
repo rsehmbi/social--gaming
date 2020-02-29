@@ -1,9 +1,7 @@
 
-add_library(users
-  src/Users.cpp
-)
+add_library(user User.cpp)
 
-target_include_directories(users
+target_include_directories(user
   PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -11,15 +9,15 @@ target_include_directories(users
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-set_target_properties(users
+set_target_properties(user
                       PROPERTIES
                       LINKER_LANGUAGE CXX
                       CXX_STANDARD 17
 )
 
-#target_link_libraries(users gamesession)
+target_link_libraries(user networking)
 
-install(TARGETS users
+install(TARGETS user
   ARCHIVE DESTINATION lib
 )
 
