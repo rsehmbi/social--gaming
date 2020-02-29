@@ -19,6 +19,8 @@ set_target_properties(gamesession
 
 target_link_libraries(gamesession sessionmanager)
 
+target_link_libraries(gamesession user)
+
 install(TARGETS gamesession
   ARCHIVE DESTINATION lib
 )

@@ -10,26 +10,34 @@ using game::GameState;
 using game::GameRules;
 using game::RuleType;
 
+
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
 
-    LOG(INFO) << "creating game from json";
-    game::Configurations configs = convertConfigurations(jsonGame["configurations"]);
+    LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
+    game::Configurations configs = convertConfigurations(jsonGame["configuration"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
     game::Constants constants = convertConstants(jsonGame["constants"]);
     game::GameState gameState = convertState(jsonGame["variables"], jsonGame["per-player"], jsonGame["per-audience"]);
 
     game::Game createdGame {configs, gameRules, constants, gameState};
-    
     return createdGame;
 }
 
 Configurations 
 GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
-    
-    // TODO : create congurations from json.
-
-    game::Configurations configurations;
+    game::Configurations configurations(jsonConfigs["name"],jsonConfigs["audience"],jsonConfigs["player count"]["min"],jsonConfigs["player count"]["max"]);
+    for ( auto config: jsonConfigs["setup"].items() )
+    {
+        // Errors are not handled yet.
+        // Also assuming the prompt as key, there are good chances prompt might refer to string prompt to ask user
+        // Will Update as Requirements become more clear
+        configurations.setup[config.key()]  = config.value();
+        configurations.prompt = config.key();
+        std::ostringstream outStr;
+        outStr << "Connected to session: " << config.key() << "\n";
+    }
+    google::FlushLogFiles(google::INFO);
     return configurations;
 }
 
@@ -84,3 +92,4 @@ GameConverter::convertState(const nlohmann::json& gameVariables,
     game::GameState gameState;
     return gameState;
 }
+

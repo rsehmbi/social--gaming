@@ -29,6 +29,10 @@ namespace game {
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
 
     // Type defenition for ruleContainer struct
+    typedef std::string listName;
+    typedef int Count;
+
+    // Type defenition for RuleContaine struct
     struct RuleContainer {
         std::map<std::string, std::string> ruleInformation;
         RuleContainer* subRules;
@@ -42,6 +46,12 @@ namespace game {
     // to executing a rule
     class Rule {
     public:
+
+        Rule() {
+    // This constructor is required to be explicity declared
+    // because it is called by the constructors of subclasses
+        }
+
         Rule(RuleType ruleType, RuleContainer& rule);
 
         RuleType getRuleType() const;
@@ -57,6 +67,49 @@ namespace game {
         RuleContainer ruleContainer;
 
         RuleType ruleType;
+    };
+
+    class GlobalMessageRule : public Rule {
+    public:
+        GlobalMessageRule(RuleContainer& rule);
+
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    };
+
+    class Shuffle: public Rule {
+    public:
+        Shuffle(RuleContainer& rule);
+
+        void shuffleList(listName &list);
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+    private:
+        listName list;
+    };
+
+    // Sorts a list in ascending order
+    class Sort: public Rule {
+    public:
+        Sort(RuleContainer &rule);
+
+        void sortList(listName &list);
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+    private:
+        listName list;
+    };
+
+    class Deal:public Rule {
+        Deal (RuleContainer &rule);
+
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+        void dealList(listName From, listName To, Count count);
+    private:
+        Count count;
+        listName From;
+        listName To;
     };
 
 }

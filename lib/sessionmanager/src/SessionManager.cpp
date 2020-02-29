@@ -43,11 +43,10 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
     //to each session to execute its game turn
     for(auto& pair : sessionMap){
         //first = session ID, second = session object
-        //append session output messages to outgoing
+        //Pass session messages to each session and append (by moving) session output messages
+        //to outgoing messages for server to send
         MessageBatch sessionOut = pair.second.processGameTurn(msgsForSession[pair.first]);
-        for(auto& item : sessionOut){
-            outgoing.push_back(item);
-        }
+        outgoing.insert(outgoing.end(), sessionOut.begin(), sessionOut.end());
     }
   
 }
@@ -74,12 +73,16 @@ void SessionManager::createSession(const ConnectionID& connectionID) {
     SessionID sessionID = generateID();
     
     //create new session and map to session id
-    sessionMap.emplace(sessionID, GameSession(sessionID));
+    sessionMap.emplace(sessionID, GameSession{ sessionID, connectionID });
 
+    //update records and inform connection of status
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Session created. Session ID: " << sessionID << "\n";
     outgoing.push_back({connectionID, outStr.str()});
+
+    //tell the session object to add connection to its record
+    sessionMap.at(sessionID).connect(connectionID);
     return;
 }
 
@@ -97,20 +100,22 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Session
         return;
     }
 
+    //update records and inform connection of status
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Connected to session: " << sessionID << "\n";
     outgoing.push_back({connectionID, outStr.str()});
+    
+    //tell the session object to add connection to its record
+    sessionMap.at(sessionID).connect(connectionID);
     return;
 }
 
 const std::deque<Message>& SessionManager::outboundMessages(const std::vector<Connection>& clients){
     for(auto& client : clients){
-        //public client
+        //public clients
         if(connectionSessionMap.find(client.id) == connectionSessionMap.end()){
             outgoing.push_back({client.id, chatLogs["public"]});
-        } else { //session client
-            // outgoing.push_back({client.id, chatLogs[connectionSessionMap[client.id]]});
         }
     }
     return outgoing;
@@ -121,6 +126,7 @@ SessionID SessionManager::generateID(){
     std::string alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     std::uniform_int_distribution<int>  distr(0, alphanum.size() - 1);
     SessionID id;
+    id.reserve(SESSION_ID_LEN);
     
     //ensure unique session ID
     do {
@@ -134,20 +140,16 @@ SessionID SessionManager::generateID(){
 }
 
 void SessionManager::removeConnection(const ConnectionID& connectionID){
+    if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
+        SessionID sessionid = connectionSessionMap[connectionID];
+        sessionMap.at(sessionid).disconnect(connectionID);
+    }
     connectionSessionMap.erase(connectionID);
 }
 
 std::string SessionManager::getGamesList(){
     return gamePrompt;
 }
-
-// void SessionManager::sessionBroadCast(SessionID, std::string text){
-
-// }
-
-// void SessionManager::msgConnection(Message msg){
-//     outgoing.push_back(msg);
-// }
 
 //----------------CommandChecker Class---------------------
 
