@@ -24,7 +24,6 @@ private:
     game::GameState convertState(const nlohmann::json& gameVariables, 
         const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
 
-    friend class gameConverterTester; // TO DO: Remove once ConverGameRulesTest is completed
     friend class ConvertGameRulesTest;
 
 };
