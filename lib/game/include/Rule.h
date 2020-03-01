@@ -26,7 +26,10 @@ namespace game {
     };
 
     typedef std::string listName;
+    typedef std::string Mode;
+    typedef std::string VariableName;
     typedef int Count;
+    typedef int TimerLength;
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
@@ -105,4 +108,27 @@ namespace game {
         listName To;
     };
 
+    class Timer: public Rule {
+    public:
+        Timer(RuleContainer &rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+    private:
+        TimerLength timeLength;
+        Mode mode;
+        RuleContainer ruleContainer;
+        RuleType ruleType;
+    };
+
+    class Add: public Rule {
+    public:
+        Add(RuleContainer &rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer  & rule);
+    private:
+        VariableName to;
+        VariableName value;
+        RuleContainer ruleContainer;
+        RuleType ruleType;
+    };
 }
