@@ -46,7 +46,7 @@ void Shuffle::setRule(RuleContainer& rule)
 }
 
 //Sort 
-void Sort::sortList(listName& lis)
+void Sort::sortList(listName& list)
 {
 
 }
