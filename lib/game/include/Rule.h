@@ -25,11 +25,13 @@ namespace game {
         Scores,
     };
 
-    typedef std::string listName;
+    typedef std::string ListName;
     typedef std::string Mode;
     typedef std::string VariableName;
     typedef int Count;
     typedef int TimerLength;
+    typedef std::string Input;
+
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
@@ -77,11 +79,11 @@ namespace game {
     public:
         Shuffle(RuleContainer& rule);
 
-        void shuffleList(listName& list);
+        void shuffleList(ListName& list);
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
     private:
-        listName list;
+        ListName list;
     };
 
     // Sorts a list in ascending order
@@ -89,11 +91,11 @@ namespace game {
     public:
         Sort(RuleContainer &rule);
 
-        void sortList(listName& list);
+        void sortList(ListName& list);
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
     private:
-        listName list;
+        ListName list;
     };
 
     class Deal:public Rule {
@@ -101,11 +103,11 @@ namespace game {
 
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
-        void dealList(listName From, listName To, Count count);
+        void dealList(ListName From, ListName To, Count count);
     private:
         Count count;
-        listName From;
-        listName To;
+        ListName From;
+        ListName To;
     };
 
     class Timer: public Rule {
@@ -130,5 +132,43 @@ namespace game {
         VariableName value;
         RuleContainer ruleContainer;
         RuleType ruleType;
+    };
+    
+    class InputChoice: public Rule {
+    public:
+        InputChoice(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input choices;
+        Input result;
+        Count timeout;
+    };
+
+    class InputText: public Rule {
+    public:
+        InputText(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input result;
+        Count timeout;
+    };
+
+    class InputVote: public Rule {
+    public:
+        InputVote(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input vhoices;
+        Input result;
+        Count timeout;
     };
 }
