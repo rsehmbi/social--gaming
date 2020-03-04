@@ -25,6 +25,7 @@ GameConverter::createGame(const nlohmann::json& jsonGame){
 
 Configurations 
 GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
+    LOG(INFO) << "Creating Configurations from Json";
     game::Configurations configurations(jsonConfigs["name"],jsonConfigs["audience"],jsonConfigs["player count"]["min"],jsonConfigs["player count"]["max"]);
     for ( auto config: jsonConfigs["setup"].items() )
     {
@@ -42,28 +43,29 @@ GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
 
 GameRules 
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
+    LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
     
     // Loop through all the rules
-    for(auto jsonRule: jsonRules) {
-        auto ruleName = jsonRule["rule"];
+    // for(auto jsonRule: jsonRules) {
+    //     auto ruleName = jsonRule["rule"];
 
-        // Constructs appropriate rule object
-        // Example, if the rule name is "shuffle",
-        // then it will construct a shuffle rule object
-        // which is a subclass to the Rule class
-        Rule rule = constructRuleObject(ruleName);
+    //     // Constructs appropriate rule object
+    //     // Example, if the rule name is "shuffle",
+    //     // then it will construct a shuffle rule object
+    //     // which is a subclass to the Rule class
+    //     Rule rule = constructRuleObject(ruleName);
 
-        // Construct the rule container for the above object
-        // by adding the the key value pairs of the rule
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
+    //     // Construct the rule container for the above object
+    //     // by adding the the key value pairs of the rule
+    //     RuleContainer ruleContainer = constructRuleContainer(jsonRule);
 
-        // Assigns the rule container to the rule object
-       // rule.setRule(ruleContainer);
+    //     // Assigns the rule container to the rule object
+    //    // rule.setRule(ruleContainer);
 
-        // Adds rule to game rules
-        gameRules.addRule(rule);
-    }
+    //     // Adds rule to game rules
+    //     gameRules.addRule(rule);
+    // }
 
     return gameRules;
 }
@@ -72,13 +74,13 @@ Rule
 GameConverter::constructRuleObject(const nlohmann::json& jsonRuleName) {
     // TO DO: Implement this using enums and switch statements
     // TO DO: Add in all the remaing rules
-    // Rule returnObject;
+    Rule returnObject;
     // if (jsonRuleName == "global-message") {
     //     game::GlobalMessageRule globalMessageRule;
     //     returnObject = globalMessageRule;
     // }
 
-    // return returnObject;
+    return returnObject;
 }
 
 RuleContainer
