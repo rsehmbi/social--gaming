@@ -25,11 +25,33 @@ namespace game {
         Scores,
     };
 
-    typedef std::string listName;
-    typedef std::string Mode;
-    typedef std::string VariableName;
-    typedef int Count;
-    typedef int TimerLength;
+    enum class RuleFiels{
+        rule,
+        list,
+        element,
+        rules,
+        until,
+        cases,
+        target,
+        from,
+        to,
+        count,
+        roles,
+        value,
+        duration,
+        mode,
+        flag,
+        prompt,
+        result,
+        score,
+        ascending
+    };
+
+    using listName = std::string ;
+    using Mode = std::string ;
+    using VariableName = std::string ;
+    using Count = int;
+    using TimerLength = int;
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
