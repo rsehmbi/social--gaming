@@ -1,3 +1,5 @@
+#pragma once
+
 #include "json.hpp"
 #include "Game.h"
 using game::Configurations;
