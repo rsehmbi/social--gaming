@@ -7,6 +7,8 @@ using game::Shuffle;
 using game::Sort;
 using game::Deal;
 using game::RuleType;
+using game::Timer;
+using game::Add;
 
 Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
     
@@ -48,7 +50,7 @@ Shuffle::Shuffle(RuleContainer& rule)
 {
 
 }
-void Shuffle::shuffleList(listName &list)
+void Shuffle::shuffleList(listName& list)
 {
 
 }
@@ -57,13 +59,13 @@ RuleContainer& Shuffle::getRule()
 {
 
 }
-void Shuffle::setRule(RuleContainer  & rule)
+void Shuffle::setRule(RuleContainer& rule)
 {
 
 }
 
 //Sort 
-void Sort::sortList(listName &lis)
+void Sort::sortList(listName& list)
 {
 
 }
@@ -76,7 +78,7 @@ RuleContainer& Sort::getRule()
 {
 
 }
-void Sort::setRule(RuleContainer  & rule)
+void Sort::setRule(RuleContainer& rule)
 {
 
 }
@@ -91,10 +93,38 @@ RuleContainer& Deal::getRule()
 {
 
 }
-void Deal::setRule(RuleContainer  & rule)
+void Deal::setRule(RuleContainer& rule)
 {
 
 }
 void Deal::dealList(listName From, listName To, Count count)
 {
+}
+
+//Timer
+Timer::Timer(RuleContainer& rule) 
+{
+
+}
+RuleContainer& Timer::getRule()
+{
+
+}
+void Timer::setRule(RuleContainer& rule)
+{
+
+}
+
+//Add
+Add::Add(RuleContainer& rule) 
+{
+
+}
+RuleContainer& Add::getRule()
+{
+
+}
+void Add::setRule(RuleContainer& rule)
+{
+
 }

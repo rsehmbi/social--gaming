@@ -30,7 +30,10 @@ namespace game {
 
     // Type defenition for ruleContainer struct
     typedef std::string listName;
+    typedef std::string Mode;
+    typedef std::string VariableName;
     typedef int Count;
+    typedef int TimerLength;
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
@@ -81,9 +84,9 @@ namespace game {
     public:
         Shuffle(RuleContainer& rule);
 
-        void shuffleList(listName &list);
+        void shuffleList(listName& list);
         RuleContainer& getRule();
-        void setRule(RuleContainer  & rule);
+        void setRule(RuleContainer& rule);
     private:
         listName list;
     };
@@ -93,18 +96,18 @@ namespace game {
     public:
         Sort(RuleContainer &rule);
 
-        void sortList(listName &list);
+        void sortList(listName& list);
         RuleContainer& getRule();
-        void setRule(RuleContainer  & rule);
+        void setRule(RuleContainer& rule);
     private:
         listName list;
     };
 
     class Deal:public Rule {
-        Deal (RuleContainer &rule);
+        Deal (RuleContainer& rule);
 
         RuleContainer& getRule();
-        void setRule(RuleContainer  & rule);
+        void setRule(RuleContainer& rule);
         void dealList(listName From, listName To, Count count);
     private:
         Count count;
@@ -112,4 +115,27 @@ namespace game {
         listName To;
     };
 
+    class Timer: public Rule {
+    public:
+        Timer(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        TimerLength timeLength;
+        Mode mode;
+        RuleContainer ruleContainer;
+        RuleType ruleType;
+    };
+
+    class Add: public Rule {
+    public:
+        Add(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        VariableName to;
+        VariableName value;
+        RuleContainer ruleContainer;
+        RuleType ruleType;
+    };
 }

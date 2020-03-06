@@ -13,7 +13,6 @@ using game::RuleType;
 
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
-
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
     game::Configurations configs = convertConfigurations(jsonGame["configuration"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
@@ -26,6 +25,7 @@ GameConverter::createGame(const nlohmann::json& jsonGame){
 
 Configurations 
 GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
+    LOG(INFO) << "Creating Configurations from Json";
     game::Configurations configurations(jsonConfigs["name"],jsonConfigs["audience"],jsonConfigs["player count"]["min"],jsonConfigs["player count"]["max"]);
     for ( auto config: jsonConfigs["setup"].items() )
     {
@@ -43,6 +43,7 @@ GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
 
 GameRules 
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
+    LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
     
     // Loop through all the rules
