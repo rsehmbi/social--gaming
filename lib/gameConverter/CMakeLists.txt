@@ -23,8 +23,3 @@ set_target_properties(gameConverter
     LINKER_LANGUAGE CXX
     CXX_STANDARD 17
 )
-
-# Used to create gameConverterTester
-# TO DO: Create a separate testing library
-add_executable(gameConverterTester gameConverterTester.cpp)
-target_link_libraries(gameConverterTester gameConverter)

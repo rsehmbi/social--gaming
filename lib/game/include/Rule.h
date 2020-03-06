@@ -23,8 +23,12 @@ namespace game {
         InputVote,
         Message,
         Scores,
+        Error,
     };
 
+    RuleType matchRuleType(const nlohmann::json& jsonRuleName);
+
+    // Type defenition for ruleContainer struct
     typedef std::string listName;
     typedef std::string Mode;
     typedef std::string VariableName;
@@ -55,9 +59,12 @@ namespace game {
 
         RuleType getRuleType() const;
         
-        RuleContainer& getRuleContainer();
+        const RuleContainer& getRuleContainer() const;
 
         void setRuleContainer(RuleContainer& rule);
+
+        // Used for testing and debugging
+        std::string toString();
 
     private:
         RuleContainer ruleContainer;
