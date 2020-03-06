@@ -24,7 +24,7 @@ private:
     game::GameState convertState(const nlohmann::json& gameVariables, 
         const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
 
-    friend class gameConverterTester;
+    friend class ConvertGameRulesTest;
 
 };
 }

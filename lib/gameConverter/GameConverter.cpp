@@ -8,11 +8,11 @@ using game::Configurations;
 using game::Constants;
 using game::GameState;
 using game::GameRules;
+using game::RuleType;
 
 
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
-
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
     game::Configurations configs = convertConfigurations(jsonGame["configuration"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
@@ -46,41 +46,20 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
     
-    // Loop through all the rules
-    // for(auto jsonRule: jsonRules) {
-    //     auto ruleName = jsonRule["rule"];
-
-    //     // Constructs appropriate rule object
-    //     // Example, if the rule name is "shuffle",
-    //     // then it will construct a shuffle rule object
-    //     // which is a subclass to the Rule class
-    //     Rule rule = constructRuleObject(ruleName);
-
-    //     // Construct the rule container for the above object
-    //     // by adding the the key value pairs of the rule
-    //     RuleContainer ruleContainer = constructRuleContainer(jsonRule);
-
-    //     // Assigns the rule container to the rule object
-    //    // rule.setRule(ruleContainer);
-
-    //     // Adds rule to game rules
-    //     gameRules.addRule(rule);
-    // }
+//    // Loop through all the rules
+//    for(auto& jsonRule: jsonRules) {
+//        auto& ruleName = jsonRule["rule"];
+//
+//        // Construct the rule container to hold rule information
+//        // by adding the the key value pairs of the rule
+//        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
+//        Rule rule(game::matchRuleType(ruleName), ruleContainer);
+//
+//        // Adds rule to game rules
+//        gameRules.addRule(rule);
+//    }
 
     return gameRules;
-}
-
-Rule
-GameConverter::constructRuleObject(const nlohmann::json& jsonRuleName) {
-    // TO DO: Implement this using enums and switch statements
-    // TO DO: Add in all the remaing rules
-    Rule returnObject;
-    // if (jsonRuleName == "global-message") {
-    //     game::GlobalMessageRule globalMessageRule;
-    //     returnObject = globalMessageRule;
-    // }
-
-    return returnObject;
 }
 
 RuleContainer

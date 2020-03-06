@@ -23,6 +23,7 @@ namespace game {
         InputVote,
         Message,
         Scores,
+        Error,
     };
 
     enum class RuleFiels{
@@ -53,6 +54,8 @@ namespace game {
     using Count = int;
     using TimerLength = int;
 
+    RuleType matchRuleType(const nlohmann::json& jsonRuleName);
+
     // Type defenition for RuleContaine struct
     struct RuleContainer {
         std::map<std::string, std::string> ruleInformation;
@@ -77,9 +80,12 @@ namespace game {
 
         RuleType getRuleType() const;
         
-        RuleContainer& getRuleContainer();
+        const RuleContainer& getRuleContainer() const;
 
         void setRuleContainer(RuleContainer& rule);
+
+        // Used for testing and debugging
+        std::string toString();
 
     private:
         RuleContainer ruleContainer;
