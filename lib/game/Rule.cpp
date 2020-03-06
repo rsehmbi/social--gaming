@@ -28,7 +28,7 @@ RuleType Rule::getRuleType() const {
 
 std::string Rule::toString() {
     std::string rule = "";
-    for(auto mapElem : ruleContainer.ruleInformation) {
+    for(auto& mapElem : ruleContainer.ruleInformation) {
         rule += mapElem.first + ": " + mapElem.second + "\n";
     } 
     
