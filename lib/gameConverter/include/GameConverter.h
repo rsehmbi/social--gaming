@@ -1,30 +1,39 @@
+#pragma once
+
 #include "json.hpp"
 #include "Game.h"
-using game::Configurations;
 #include <glog/logging.h>
 
+using game::Configurations;
+
 namespace gameConverter{
-class GameConverter{
+    class GameConverter{
 
-public:
+        public:
 
-    // Creates a game object from jsonGame.
-    game::Game createGame(const nlohmann::json& jsonGame);
-
-private:
+            // Creates a game object from jsonGame.
+            game::Game createGame(const nlohmann::json& jsonGame);
     
-    game::Configurations convertConfigurations(const nlohmann::json& jsonConfigs);
+        private:
+            
+            game::Configurations convertConfigurations(const nlohmann::json& jsonConfigs);
+    
+            game::Constants convertConstants(const nlohmann::json& jsonConstants);
+    
+            game::GameRules convertGameRules(const nlohmann::json& jsonRules);
+            game::Rule constructRuleObject(const nlohmann::json& jsonRuleName);
+            game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
+    
+    
+            game::GameState convertState(const nlohmann::json& gameVariables, 
+                const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
+    
+    
+            game::Variables convertVariables(const nlohmann::json& gameVariables);
+    
+    
+            friend class ConvertGameRulesTest;
 
-    game::GameRules convertGameRules(const nlohmann::json& jsonRules);
-    game::Rule constructRuleObject(const nlohmann::json& jsonRuleName);
-    game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
+    };
 
-    game::Constants convertConstants(const nlohmann::json& jsonConstants);
-
-    game::GameState convertState(const nlohmann::json& gameVariables, 
-        const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
-
-    friend class ConvertGameRulesTest;
-
-};
 }
