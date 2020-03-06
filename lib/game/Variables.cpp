@@ -12,8 +12,3 @@ VariableVariant Variables::getVariable (const std::string& varName) const {
 
     return varMap.at(varName);
 }
-
-
-void Variables::insertVariable (const std::string& key, const listVariant& val){
-    varMap.emplace(key, val);
-}

@@ -13,6 +13,7 @@ namespace game {
     //(2) lists of values, or (3) literal strings, numbers, or booleans."
 
     //rock paper scissor game has variable winners; which can be list of winning id's
+    //add additional data types into variant as needed
     using listVariant = std::list<std::variant<PlayerID> >;
 
 
@@ -23,14 +24,10 @@ namespace game {
         public:
             VariableVariant getVariable(const std::string& variableName) const;
             
-            //generic template class for specialization, should return an error for unspecialized case
             template <class T>
             void insertVariable (const std::string& key, const T& val) {
-                std::cout << "insertVariable unspecialized type; implement for this new type!" << std::endl;
+                varMap.emplace(key, val);
             }
-
-            //specialization for type listVariant
-            void insertVariable (const std::string& key, const listVariant& val);
             
             
         private:
