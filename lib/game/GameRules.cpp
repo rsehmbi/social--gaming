@@ -18,7 +18,7 @@ const std::vector<Rule>& GameRules::getRules() {
 std::string GameRules::toString() {
     std::string strRuleList = "";
 
-    for(auto rule : rules) {
+    for(auto& rule : rules) {
         strRuleList += rule.toString();
     }
 

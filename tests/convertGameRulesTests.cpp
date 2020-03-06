@@ -21,9 +21,9 @@ private:
 
 void printRules(GameRules rules) {
     auto ruleList = rules.getRules();
-    for(auto rule: ruleList) {
+    for(auto& rule: ruleList) {
         RuleContainer ruleCont = rule.getRuleContainer();
-        for(auto mapElem : ruleCont.ruleInformation) {
+        for(auto& mapElem : ruleCont.ruleInformation) {
            std::cout << mapElem.first << " " << mapElem.second << " " << std::endl;
         } 
     }
