@@ -2,6 +2,7 @@
 #include "GameConverter.h"
 
 using game::Rule;
+using game::RuleType;
 using game::GameRules;
 using game::RuleContainer;
 using gameConverter::GameConverter;
@@ -29,7 +30,7 @@ void printRules(GameRules rules) {
 }
 
 TEST_F(ConvertGameRulesTest, GlobalMessage) {
-    nlohmann::json globalMessageRules = nlohmann::json::array({
+    nlohmann::json jsonGlobalMessageRules = nlohmann::json::array({
         {
             {"rule", "global-message"},
             {"value", "Round {round}. Choose your weapon!"}
@@ -40,15 +41,19 @@ TEST_F(ConvertGameRulesTest, GlobalMessage) {
         }
     });
 
-    GameRules rules = convertGameRules(globalMessageRules);
+    GameRules rules = convertGameRules(jsonGlobalMessageRules);
+    // Global message rule is the only rule in GameRules so it's at the front
+    Rule globalMessageRule = rules.getRules().front();
+
     std::string expectedOutput = 
         "rule: global-message\nvalue: Round {round}. Choose your weapon!\nrule: global-message\nvalue: You win!\n";
     
     EXPECT_EQ(expectedOutput, rules.toString());
+    EXPECT_EQ(RuleType::GlobalMessage, globalMessageRule.getRuleType());
 }
 
 TEST_F(ConvertGameRulesTest, Scores) {
-    nlohmann::json scoresRule = nlohmann::json::array({
+    nlohmann::json jsonScoresRule = nlohmann::json::array({
         { 
             {"rule", "scores"},
             {"score", "wins"},
@@ -56,7 +61,9 @@ TEST_F(ConvertGameRulesTest, Scores) {
         }
     });
 
-    GameRules rules = convertGameRules(scoresRule);
+    GameRules rules = convertGameRules(jsonScoresRule);
+    // Scores rule is the only rule in GameRules so it's at the front
+    Rule scoresRule = rules.getRules().front();
 
     // Keys are printed in alphabetic order instead
     // since they are stored in a map
@@ -64,5 +71,6 @@ TEST_F(ConvertGameRulesTest, Scores) {
         "ascending: false\nrule: scores\nscore: wins\n";
     
     EXPECT_EQ(expectedOutput, rules.toString());
+    EXPECT_EQ(RuleType::Scores, scoresRule.getRuleType());
 }
 }
