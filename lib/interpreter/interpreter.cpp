@@ -18,10 +18,15 @@ void Interpreter::processRules(json gameRules, json gameData){
     //calls processor to process rule block
 }
 
-json Interpreter::getNextRuleBlock(json ruleBlock){
-    return NULL;
+void Interpreter::executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName listName) {
+
 }
 
-bool Interpreter::hasNestedRules(json ruleBlock){
-    return false;
+void Interpreter::executeDeal(GameState &state, const Constants &constants, Configurations &configurations, ListName listName) {
+
 }
+
+void Interpreter::executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName listName) {
+
+}
+

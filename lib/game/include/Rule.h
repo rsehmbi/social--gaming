@@ -47,7 +47,7 @@ namespace game {
         ascending
     };
 
-    using listName = std::string ;
+    using ListName = std::string ;
     using Mode = std::string ;
     using VariableName = std::string ;
     using Count = int;
@@ -99,11 +99,11 @@ namespace game {
     public:
         Shuffle(RuleContainer& rule);
 
-        void shuffleList(listName& list);
+        void shuffleList(ListName& list);
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
     private:
-        listName list;
+        ListName list;
     };
 
     // Sorts a list in ascending order
@@ -111,11 +111,11 @@ namespace game {
     public:
         Sort(RuleContainer &rule);
 
-        void sortList(listName& list);
+        void sortList(ListName& list);
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
     private:
-        listName list;
+        ListName list;
     };
 
     class Deal:public Rule {
@@ -123,11 +123,11 @@ namespace game {
 
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
-        void dealList(listName From, listName To, Count count);
+        void dealList(ListName From, ListName To, Count count);
     private:
         Count count;
-        listName From;
-        listName To;
+        ListName From;
+        ListName To;
     };
 
     class Timer: public Rule {
