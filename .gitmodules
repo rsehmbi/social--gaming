@@ -1,3 +1,9 @@
 [submodule "tests/lib/googletest"]
 	path = tests/lib/googletest
 	url = https://github.com/google/googletest/
+[submodule "thirdparty/glog"]
+	path = thirdparty/glog
+	url = https://github.com/google/glog.git
+[submodule "thirdparty/gflags"]
+	path = thirdparty/gflags
+	url = https://github.com/gflags/gflags.git
