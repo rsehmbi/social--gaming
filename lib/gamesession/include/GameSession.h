@@ -1,13 +1,24 @@
 #pragma once
 
-#include <GameSessionInterface.h>
+#include <Server.h>
+#include <User.h>
 
-class GameSession : private GameSessionInterface{
+#include <unordered_set>
+#include <vector>
+
+using networking::SessionID;
+using networking::MessageBatch;
+using networking::ConnectionID; 
+
+using user::User;
+using user::UserType;
+
+class GameSession{
 
     public:
         //Initialized by the session manager, session manager will pass 
         //in game type argument containing game information
-        GameSession(SessionID id);
+        GameSession(SessionID id, ConnectionID ownerConnectionId);
         
         //Entry point for session manager to pass execution to a game session.
         //Session manager passes the messages from clients of this session to processGameTurn
@@ -22,16 +33,30 @@ class GameSession : private GameSessionInterface{
         //add user to game session
         void connect(const ConnectionID& cid);
 
+        // Filters the users that are players.
+        std::vector<user::User> getPlayers();
+
     private:
 
         SessionID sessionID;
 
+        int maxPlayersAllowed;
+
         std::unordered_set<ConnectionID> connections;
+
+        std::vector<user::User> sessionUsers;
+
+        user::User owner;
 
         MessageBatch outMsgs;
 
         void sessionBroadCast(const std::string& text);
 
-        void msgConnection(const ConnectionID& target, const std::string& msg);
-};
+        void msgConnection(const ConnectionID& target, const std::string& msg);  
 
+        std::vector<User> getUsersWithType(const UserType& userType);
+
+        std::vector<User> getAudience();
+
+        int getUserCountWithType(const UserType& userType);
+};

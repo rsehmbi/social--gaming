@@ -83,4 +83,9 @@ nlohmann::json scores(const nlohmann::json& h) {
     return returnObject;
 }
 
+nlohmann::json timer(const nlohmann::json& h) {
+    nlohmann::json returnObject;
+    return returnObject;
+}
+
 void updateStatus(){}; //function to propgate action back to user

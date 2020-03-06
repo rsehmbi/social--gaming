@@ -2,15 +2,18 @@
 
 using gameConverter::GameConverter;
 using game::Game;
+using game::Rule;
+using game::RuleContainer;
 using game::Configurations;
 using game::Constants;
 using game::GameState;
 using game::GameRules;
 using game::VariableType;
+using game::RuleType;
+
 
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
-
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
     game::Configurations configs = convertConfigurations(jsonGame["configuration"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
@@ -23,14 +26,17 @@ GameConverter::createGame(const nlohmann::json& jsonGame){
 
 Configurations 
 GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
+    LOG(INFO) << "Creating Configurations from Json";
     game::Configurations configurations(jsonConfigs["name"],jsonConfigs["audience"],jsonConfigs["player count"]["min"],jsonConfigs["player count"]["max"]);
-    for ( auto it: jsonConfigs["setup"].items() )
+    for ( auto config: jsonConfigs["setup"].items() )
     {
         // Errors are not handled yet.
         // Also assuming the prompt as key, there are good chances prompt might refer to string prompt to ask user
         // Will Update as Requirements become more clear
-        configurations.setup[it.key()]  = it.value();
-        configurations.prompt = it.key();
+        configurations.setup[config.key()]  = config.value();
+        configurations.prompt = config.key();
+        std::ostringstream outStr;
+        outStr << "Connected to session: " << config.key() << "\n";
     }
     google::FlushLogFiles(google::INFO);
     return configurations;
@@ -38,11 +44,36 @@ GameConverter::convertConfigurations(const nlohmann::json& jsonConfigs){
 
 GameRules 
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
-
-    // TODO : create GameRules from json.
-    
+    LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
+    
+    // Loop through all the rules
+    for(auto& jsonRule: jsonRules) {
+        auto& ruleName = jsonRule["rule"];
+
+        // Construct the rule container to hold rule information
+        // by adding the the key value pairs of the rule
+        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
+        Rule rule(game::matchRuleType(ruleName), ruleContainer);
+
+        // Adds rule to game rules
+        gameRules.addRule(rule);
+    }
+
     return gameRules;
+}
+
+RuleContainer
+GameConverter::constructRuleContainer(const nlohmann::json& jsonRule) {
+    RuleContainer ruleContainer;
+    
+    // Iterates through all key value pairs in the json rule object
+    // and adds them to the rule container
+    for (auto& item : jsonRule.items()) {
+        ruleContainer.add(item.key(), item.value());
+    }
+
+    return ruleContainer;
 }
 
 Constants 
@@ -112,3 +143,4 @@ game::Variables GameConverter::convertVariables(const nlohmann::json& gameVariab
     std::cout << "\nEnd of convert" << std::endl;
     return stateVariables;
 }
+

@@ -30,6 +30,8 @@ nlohmann::json globalMessage(const nlohmann::json& h);
 
 nlohmann::json scores(const nlohmann::json& h);
 
+nlohmann::json timer(const nlohmann::json& h);
+
 void updateStatus();
 
 private:

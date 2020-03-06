@@ -9,6 +9,8 @@
 #include <random>
 #include <GameSession.h>
 
+using networking::Message;
+using networking::Connection;
 
 //Some info:
 //server receives and send deque<Messages>
