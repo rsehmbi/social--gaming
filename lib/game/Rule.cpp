@@ -9,6 +9,9 @@ using game::Deal;
 using game::RuleType;
 using game::Timer;
 using game::Add;
+using game::InputChoice;
+using game::InputText;
+using game::InputVote;
 
 Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
     
@@ -134,3 +137,33 @@ void Add::setRule(RuleContainer& rule)
 {
 
 }
+
+//InputChoice
+InputChoice::InputChoice(RuleContainer& rule) 
+{}
+
+RuleContainer& InputChoice::getRule()
+{}
+
+void InputChoice::setRule(RuleContainer& rule)
+{}
+
+//InputText
+InputText::InputText(RuleContainer& rule) 
+{}
+
+RuleContainer& InputText::getRule()
+{}
+
+void InputText::setRule(RuleContainer& rule)
+{}
+
+//InputVote
+InputVote::InputVote(RuleContainer& rule) 
+{}
+
+RuleContainer& InputVote::getRule()
+{}
+
+void InputVote::setRule(RuleContainer& rule)
+{}

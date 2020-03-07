@@ -11,7 +11,8 @@ dsl::DSL() {
     // and creates a domain specific language
 }
 
-nlohmann::json DSL::add(json rule){
+
+nlohmann::json add(json rule){
     json returnObject;
     return returnObject["value"] =  rule["value"].get<int> + rule["to"].get<int>;
 }

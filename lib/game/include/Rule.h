@@ -50,9 +50,10 @@ namespace game {
 
     using ListName = std::string;
     using Mode = std::string ;
-    using VariableName = std::string ;
+    using VariableName = std::string;
     using Count = int;
     using TimerLength = int;
+    using Input = std::string;
 
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
 
@@ -158,5 +159,43 @@ namespace game {
         VariableName value;
         RuleContainer ruleContainer;
         RuleType ruleType;
+    };
+    
+    class InputChoice: public Rule {
+    public:
+        InputChoice(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input choices;
+        Input result;
+        Count timeout;
+    };
+
+    class InputText: public Rule {
+    public:
+        InputText(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input result;
+        Count timeout;
+    };
+
+    class InputVote: public Rule {
+    public:
+        InputVote(RuleContainer& rule);
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input vhoices;
+        Input result;
+        Count timeout;
     };
 }
