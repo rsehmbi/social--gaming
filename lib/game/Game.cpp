@@ -21,8 +21,13 @@ Game::Game(Configurations& configurations, GameRules& gameRules,
 {
 }
 
+void 
+Game::setConfigurations(Configurations& configurations) {
+    m_configurations = std::move(configurations);
+} 
+
 Configurations 
-Game::getConfigurations() {
+Game::getConfigurations() const{
     return m_configurations;
 }
 

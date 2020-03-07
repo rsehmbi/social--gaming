@@ -3,14 +3,17 @@
 #include <iostream>
 #include <chrono>
 #include <SessionManager.h>
+#include <boost/algorithm/string/join.hpp>
 
 
 #define SESSION_ID_LEN 10
 
+
 //----------Session Manager Class----------------------
 SessionManager::SessionManager() : 
-        generator(std::chrono::high_resolution_clock::now().time_since_epoch().count()){
-    gamePrompt = "\nThe server supports the following games:\nGame 1\nGame 2\nGame 3\nGame 4\n\n Type /create [game name] to create session.\n";
+    generator(std::chrono::high_resolution_clock::now().time_since_epoch().count())
+{
+    gamePrompt = "\nThe server supports the following games:\n";
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
@@ -121,6 +124,10 @@ const std::deque<Message>& SessionManager::outboundMessages(const std::vector<Co
     return outgoing;
 }
 
+void SessionManager::setAvailableGames(std::vector <GameMap> _availableGames){
+    availableGames = std::move(_availableGames);
+}
+
 //generates a random alphanumeric string for session id of specified length
 SessionID SessionManager::generateID(){
     std::string alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -148,7 +155,10 @@ void SessionManager::removeConnection(const ConnectionID& connectionID){
 }
 
 std::string SessionManager::getGamesList(){
-    return gamePrompt;
+    std::vector<std::string> names = getAvailableGamesNames();
+    std::string availableGamesPrompt = boost::algorithm::join(names, "\n");
+
+    return gamePrompt + availableGamesPrompt;
 }
 
 //----------------CommandChecker Class---------------------
@@ -172,4 +182,13 @@ CommandType CommandChecker::checkString(const Message& message){
 
 std::string CommandChecker::getArgument(){
     return argument;
+}
+
+std::vector <std::string> 
+SessionManager::getAvailableGamesNames(){
+    std::vector<std::string> gameNames;
+    std::transform(availableGames.begin(), availableGames.end(), std::back_inserter(gameNames),
+        [] (const GameMap& gameMap) { return gameMap.gameName; }
+    );
+    return gameNames;
 }

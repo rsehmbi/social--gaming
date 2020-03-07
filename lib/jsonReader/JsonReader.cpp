@@ -25,7 +25,7 @@ json jsonReader::jsonReader::readGameSpecFromFile(std::string_view jsonSpecPath)
             inStream >> jsonSpecs;
             return jsonSpecs;
         } else {
-            LOG(ERROR) << "Could not open specs file. Error: " << strerror(errno);
+            LOG(ERROR) << "Could not open specs file. Error: " << jsonSpecPath << ", " << strerror(errno);
         }
     } catch (const std::exception& e){
         LOG(ERROR) << "Caught exception with message: " << e.what();

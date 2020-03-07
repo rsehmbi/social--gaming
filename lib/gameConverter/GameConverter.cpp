@@ -48,17 +48,17 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     game::GameRules gameRules;
     
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules) {
-        auto& ruleName = jsonRule["rule"];
+    // for(auto& jsonRule: jsonRules.items()) {
+    //     auto& ruleName = jsonRule["rule"];
 
-        // Construct the rule container to hold rule information
-        // by adding the the key value pairs of the rule
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
-        Rule rule(game::matchRuleType(ruleName), ruleContainer);
+    //     // Construct the rule container to hold rule information
+    //     // by adding the the key value pairs of the rule
+    //     RuleContainer ruleContainer = constructRuleContainer(jsonRule);
+    //     Rule rule(game::matchRuleType(ruleName), ruleContainer);
 
-        // Adds rule to game rules
-        gameRules.addRule(rule);
-    }
+    //     // Adds rule to game rules
+    //     gameRules.addRule(rule);
+    // }
 
     return gameRules;
 }
