@@ -37,6 +37,9 @@ namespace interpreter{
 
         json getUpdate();
         void processRules(json gameRules, json gameData);
+        void shuffleList(ListName& list);
+        void sortList(ListName& list);
+        void dealList(ListName From, ListName To, Count count);
     };
 }
 

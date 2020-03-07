@@ -59,25 +59,13 @@ Shuffle::Shuffle(RuleContainer& rule)
 {
 
 }
-void Shuffle::shuffleList(ListName& list)
-{
-
-}
 
 RuleContainer& Shuffle::getRule()
 {
 
 }
-void Shuffle::setRule(RuleContainer& rule)
-{
-
-}
 
 //Sort 
-void Sort::sortList(ListName& list)
-{
-
-}
 Sort::Sort(RuleContainer& rule)
 {
 
@@ -87,10 +75,7 @@ RuleContainer& Sort::getRule()
 {
 
 }
-void Sort::setRule(RuleContainer& rule)
-{
 
-}
 
 //Deal
 Deal::Deal(RuleContainer& rule)
@@ -102,13 +87,7 @@ RuleContainer& Deal::getRule()
 {
 
 }
-void Deal::setRule(RuleContainer& rule)
-{
 
-}
-void Deal::dealList(ListName From, ListName To, Count count)
-{
-}
 
 //Timer
 Timer::Timer(RuleContainer& rule) 
@@ -116,10 +95,6 @@ Timer::Timer(RuleContainer& rule)
 
 }
 RuleContainer& Timer::getRule()
-{
-
-}
-void Timer::setRule(RuleContainer& rule)
 {
 
 }
@@ -133,19 +108,12 @@ RuleContainer& Add::getRule()
 {
 
 }
-void Add::setRule(RuleContainer& rule)
-{
-
-}
 
 //InputChoice
 InputChoice::InputChoice(RuleContainer& rule) 
 {}
 
 RuleContainer& InputChoice::getRule()
-{}
-
-void InputChoice::setRule(RuleContainer& rule)
 {}
 
 //InputText
@@ -155,9 +123,6 @@ InputText::InputText(RuleContainer& rule)
 RuleContainer& InputText::getRule()
 {}
 
-void InputText::setRule(RuleContainer& rule)
-{}
-
 //InputVote
 InputVote::InputVote(RuleContainer& rule) 
 {}
@@ -165,5 +130,3 @@ InputVote::InputVote(RuleContainer& rule)
 RuleContainer& InputVote::getRule()
 {}
 
-void InputVote::setRule(RuleContainer& rule)
-{}

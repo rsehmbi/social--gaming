@@ -90,3 +90,16 @@ void Interpreter::executeSort(GameState &state, const Constants &constants, Conf
         }
 }
 
+void Interpreter::shuffleList(ListName& list)
+{
+
+}
+
+void Interpreter::sortList(ListName& list)
+{
+
+}
+void Interpreter::dealList(ListName From, ListName To, Count count)
+{
+
+}

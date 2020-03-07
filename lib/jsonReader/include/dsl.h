@@ -16,7 +16,7 @@ public:
     // Takes in a configuration file and creates a DSL
     DSL();
 
-nlohmann::json add(json rule);
+nlohmann::json add(json& rule);
 
 nlohmann::json inputChoice(const nlohmann::json& h);
 

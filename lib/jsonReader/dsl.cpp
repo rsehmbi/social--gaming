@@ -12,7 +12,7 @@ dsl::DSL() {
 }
 
 
-nlohmann::json add(json rule){
+nlohmann::json add(json& rule){
     json returnObject;
     return returnObject["value"] =  rule["value"].get<int> + rule["to"].get<int>;
 }

@@ -165,7 +165,7 @@ namespace game {
     public:
         InputChoice(RuleContainer& rule);
         RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
+        //void setRule(RuleContainer& rule);
     private:
         Input to;
         Input prompt;
@@ -178,7 +178,7 @@ namespace game {
     public:
         InputText(RuleContainer& rule);
         RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
+        //void setRule(RuleContainer& rule);
     private:
         Input to;
         Input prompt;
@@ -190,11 +190,11 @@ namespace game {
     public:
         InputVote(RuleContainer& rule);
         RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
+        //void setRule(RuleContainer& rule);
     private:
         Input to;
         Input prompt;
-        Input vhoices;
+        Input choices;
         Input result;
         Count timeout;
     };
