@@ -5,4 +5,5 @@ add_subdirectory(gameConverter)
 add_subdirectory(game)
 add_subdirectory(gamesession)
 add_subdirectory(users)
+add_subdirectory(interpreter)
 

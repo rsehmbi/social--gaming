@@ -42,6 +42,12 @@ RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
     else if(jsonRuleName == "scores") {
         return RuleType::Scores;
     }
+    else if(jsonRuleName == "timer") {
+        return RuleType::Timer;
+    }
+    else if(jsonRuleName == "add") {
+        return RuleType::Add;
+    }
 
     return RuleType::Error;
 }
@@ -50,7 +56,7 @@ Shuffle::Shuffle(RuleContainer& rule)
 {
 
 }
-void Shuffle::shuffleList(listName& list)
+void Shuffle::shuffleList(ListName& list)
 {
 
 }
@@ -65,7 +71,7 @@ void Shuffle::setRule(RuleContainer& rule)
 }
 
 //Sort 
-void Sort::sortList(listName& list)
+void Sort::sortList(ListName& list)
 {
 
 }
@@ -97,7 +103,7 @@ void Deal::setRule(RuleContainer& rule)
 {
 
 }
-void Deal::dealList(listName From, listName To, Count count)
+void Deal::dealList(ListName From, ListName To, Count count)
 {
 }
 

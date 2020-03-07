@@ -7,31 +7,31 @@ using game::Configurations;
 Configurations::Configurations()
 {}
 
-Configurations::Configurations(std::string name,bool audience,int minNoOfPlayers,int maxNoOfPlayers):
-name(name),audience(audience),minNoOfPlayers(minNoOfPlayers),maxNoOfPlayers(maxNoOfPlayers){
-}
-
-void Configurations::setMinNoOfPlayers(int &minNoOfPlayers) {
-    this->minNoOfPlayers = minNoOfPlayers;
-}
-
-void Configurations::setMaxNoOfPlayers(int &maxNoOfPlayers)  {
-    this->maxNoOfPlayers = maxNoOfPlayers;
-}
-std::string Configurations::getGameName() const{
-    return this->name;
-}
-void Configurations::setAudienceConfiguration(bool hasAudience){
-    this->audience = hasAudience;
+Configurations::Configurations(std::string gameName,bool audience,int minNoOfPlayers,int maxNoOfPlayers):
+gameName(gameName),audience(audience),minNoOfPlayers(minNoOfPlayers),maxNoOfPlayers(maxNoOfPlayers){
 }
 
 bool Configurations::hasAudience() const{
     return this->audience;
 }
 
-void Configurations::setGameType(std::string &gameType) 
+std::string Configurations::getGameType()
 {
-    this->gameType = gameType;
+    return this->gameType;
+}
+
+int Configurations::getMinNoOfPlayers()
+{
+    return this->minNoOfPlayers;
+}
+
+int Configurations::getMaxNoOfPlayers(){
+    return this->maxNoOfPlayers;
+}
+
+std::string Configurations::getGameName() const
+{
+    return this->gameName;
 }
 
 // Game Type to process the input needed from Owner of the game
@@ -41,10 +41,5 @@ void Configurations::assessGameType(){
   //  if (this->Setup.find("integer").
 }
 
-// Consider we are getting input in the form of strings from user
-void Configurations::getUserInput(std::string &input)
-{
-
-}
 
 
