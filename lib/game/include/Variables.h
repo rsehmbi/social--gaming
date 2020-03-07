@@ -40,7 +40,6 @@ namespace game {
             void insertVariable (const std::string& key, const T& val, VariableType valType) {
                 Variable variable{val, valType};
                 varMap.emplace(key, variable);
-                // varNameTypeMap.emplace(key, valType);
             }
             
             
@@ -48,10 +47,5 @@ namespace game {
             //map of string name given in JSON to a specific variable. Use variant to hold different types
             //*for now just implementing for the rock paper scissor game which only has list variable
             std::unordered_map<std::string, Variable> varMap;
-
-            //maps variable name to its type to help rule functions to determine which type it is operating on
-            //eg: "winner" : ListType which means it is a std::vector<variant<...>>
-
-            // std::unordered_map<std::string, VariableType> varNameTypeMap; // don't need anymore
     };
 }
