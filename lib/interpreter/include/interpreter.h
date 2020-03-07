@@ -29,12 +29,14 @@ namespace interpreter{
     
     public:
 
-        void executeReverse(GameState &state, const Constants &constants, Configurations configurations, std::string listName);
-        void executeShuffle(GameState &state, const Constants &constants, Configurations configurations, std::string listName);
-        void executeSort(GameState &state, const Constants &constants, Configurations configurations, std::string listName);
+        void executeReverse(GameState &state, const Constants &constants, Configurations &configurations, std::string &listName);
+        void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, std::string &listName);
+        void executeSort(GameState &state, const Constants &constants, Configurations &configurations, std::string &listName);
         void executeDeal(GameState &state, const Constants &constants,
-                Configurations configurations, int count, int from, int to);
+                Configurations &configurations, int count, int from, int to);
 
+        void executeAdd(GameState &state, std::string& toVariable, std::string& value);
+        void executeTimer(GameState &state, std::string& value);
         json getUpdate();
         void processRules(json gameRules, json gameData);
     };
