@@ -9,33 +9,33 @@
 #include <cstring>
 #include "json.hpp"
 
- typedef std::string Prompt;
- typedef nlohmann::json QuestionAnswer,MultipleChoice;
- typedef boost::variant< int,std::string, bool,QuestionAnswer,MultipleChoice> Kind;
+using Prompt =  std::string;
+using MultipleChoice = nlohmann::json; 
+using QuestionAnswer = nlohmann::json;
+using Kind = boost::variant< int,std::string, bool,QuestionAnswer,MultipleChoice> ;
 
 namespace game{
 class Configurations{
 public:
-    Configurations();
-    Configurations(std::string name,bool audience,int minNoOfPlayers,int maxNoOfPlayers);
-    std::string getGameName()const;
-    bool hasAudience()const;
-    void setAudienceConfiguration(bool hasAudience);
-    void setMinNoOfPlayers(int &minNoOfPlayers);
-    void setMaxNoOfPlayers(int &maxNoOfPlayers);
-    void setGameType(std::string &Type);
-    void getUserInput(std::string &Input);
-    std::string getGameType();
-    void assessGameType();
-    Prompt prompt;
-    std::unordered_map< Prompt, Kind> setup;
+   Configurations();
+   Configurations(std::string name,bool audience,int minNoOfPlayers,int maxNoOfPlayers);
+
+   std::string getGameName()const;
+   int getMinNoOfPlayers();
+   int getMaxNoOfPlayers();
+   bool hasAudience()const;
+
+   std::string getGameType();
+   void assessGameType();
+   Prompt prompt;
+   std::unordered_map< Prompt, Kind> setup;
 
 private:
-    std::string name;
-    bool audience;
-    int minNoOfPlayers;
-    int maxNoOfPlayers;
-    std::string gameType;
+   std::string gameName;
+   bool audience;
+   int minNoOfPlayers;
+   int maxNoOfPlayers;
+   std::string gameType;
 };
 
 };

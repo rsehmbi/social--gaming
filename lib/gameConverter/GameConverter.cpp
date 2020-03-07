@@ -8,6 +8,7 @@ using game::Configurations;
 using game::Constants;
 using game::GameState;
 using game::GameRules;
+
 using game::VariableType;
 using game::RuleType;
 
@@ -45,7 +46,7 @@ GameRules
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
-    
+
     // Loop through all the rules
     for(auto& jsonRule: jsonRules) {
         auto& ruleName = jsonRule["rule"];
@@ -146,4 +147,3 @@ game::Variables GameConverter::convertVariables(const nlohmann::json& gameVariab
     std::cout << "\nEnd of convert" << std::endl;
     return stateVariables;
 }
-

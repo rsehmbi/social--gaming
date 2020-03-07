@@ -34,6 +34,7 @@ namespace gameConverter{
     
             friend class ConvertGameRulesTest;
 
+    friend class ConvertGameRulesTest;
     };
 
 }
