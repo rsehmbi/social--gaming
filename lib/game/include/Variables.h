@@ -32,6 +32,7 @@ namespace game {
     class Variables{
         public:
             VariableVariant getVariable(const std::string& variableName) const;
+            VariableType Variables::getVariableType(const std::string &varName) const;
             
             template <class T>
             void insertVariable (const std::string& key, const T& val, VariableType valType) {

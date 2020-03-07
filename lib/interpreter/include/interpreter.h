@@ -22,21 +22,18 @@ namespace interpreter{
     private:
         json gameRules;
         json gameData;  
-        std::unique_ptr<DSL> processor;
 
         json getNextRuleBlock(json jsonBlock);
         bool hasNestedRules(json ruleBlock);
         
     
     public:
-        Interpreter(json rules, json data);
-        ~Interpreter();
 
-        void executeReverse(GameState &state, const Constants &constants, Configurations configurations, ListName listName);
-        void executeShuffle(GameState &state, const Constants &constants, Configurations configurations, ListName listName);
-        void executeSort(GameState &state, const Constants &constants, Configurations configurations, ListName listName);
+        void executeReverse(GameState &state, const Constants &constants, Configurations configurations, std::string listName);
+        void executeShuffle(GameState &state, const Constants &constants, Configurations configurations, std::string listName);
+        void executeSort(GameState &state, const Constants &constants, Configurations configurations, std::string listName);
         void executeDeal(GameState &state, const Constants &constants,
-                Configurations configurations, Count count, From from, To to);
+                Configurations configurations, int count, int from, int to);
 
         json getUpdate();
         void processRules(json gameRules, json gameData);
