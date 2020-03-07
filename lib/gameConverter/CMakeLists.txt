@@ -6,7 +6,9 @@ add_library(gameConverter
 )
 
 target_link_libraries(gameConverter 
-    game
+    game 
+    glog::glog
+    gflags::gflags
 )
 
 target_include_directories(gameConverter

@@ -16,7 +16,7 @@ class GameState{
     public:
         // TODO : Remove default constructor once createGameState is done.
         GameState();
-        GameState(basic_json, basic_json, basic_json);
+        GameState(const basic_json&, const basic_json&, const basic_json&);
         game::Variables getUpdate(); //prototype function to return only updated data through json
     private:
         //TODO: need function to check for updated data

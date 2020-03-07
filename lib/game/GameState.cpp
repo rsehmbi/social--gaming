@@ -7,5 +7,5 @@ GameState::GameState(){
     // TODO : implement constructor.
 }
 
-GameState::GameState(basic_json var, basic_json pPlayer, basic_json pAudience):
+GameState::GameState(const basic_json& var, const basic_json& pPlayer, const basic_json& pAudience):
     variables(var), perPlayer(pPlayer){}

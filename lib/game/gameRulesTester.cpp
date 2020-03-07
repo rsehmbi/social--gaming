@@ -1,14 +1,15 @@
 #include <iostream>
 
-#include "include/GameRules.h"
-#include "include/Rule.h"
+#include "GameRules.h"
+#include "Rule.h"
 
 using game::Rule;
 using game::GameRules;
-using game::ruleContainer;
+using game::RuleContainer;
 using game::GlobalMessageRule;
 
 void testGlobalMessage();
+void printRules(GameRules rules);
 
 int main() {
     testGlobalMessage();
@@ -31,11 +32,11 @@ void testGlobalMessage() {
 
     // Create rule containers
     // Conversion will later be handled by a dedicated convertor class
-    ruleContainer globalMessageContainer1;
+    RuleContainer globalMessageContainer1;
     globalMessageContainer1.ruleInformation.insert(std::pair<std::string, std::string>("rule", "global-message"));
     globalMessageContainer1.ruleInformation.insert(std::pair<std::string, std::string>("value", "Round {round}. Choose your weapon!"));
 
-    ruleContainer globalMessageContainer2;
+    RuleContainer globalMessageContainer2;
     globalMessageContainer2.ruleInformation.insert(std::pair<std::string, std::string>("rule", "global-message"));
     globalMessageContainer2.ruleInformation.insert(std::pair<std::string, std::string>("value", "Tie game!"));
 
@@ -47,10 +48,14 @@ void testGlobalMessage() {
     rules.addRule(globalMessageRule1);
     rules.addRule(globalMessageRule2);
 
-    // Print out rules
-    auto ruleList = rules.getRules();
+    printRules(rules);
+    
+}
+
+void printRules(GameRules rules) {
+  auto ruleList = rules.getRules();
     for(auto rule: ruleList) {
-        ruleContainer ruleCont = rule.getRule();
+        RuleContainer ruleCont = rule.getRule();
         for(auto mapElem : ruleCont.ruleInformation) {
            std::cout << mapElem.first << " " << mapElem.second << " " << std::endl;
         } 

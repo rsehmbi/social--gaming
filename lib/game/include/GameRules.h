@@ -13,9 +13,10 @@ namespace game {
         GameRules();
 
         void addRule(Rule& rule);
-        
-        // Used for testing only
+    
+        // Used for testing and debugging
         const std::vector<Rule>& getRules();
+        std::string toString();
         
     private:
         std::vector<Rule> rules;
