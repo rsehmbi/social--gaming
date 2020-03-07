@@ -17,12 +17,12 @@ namespace game {
         public:
             PerAudience(const std::unordered_map<std::string, Variable>& varMap); 
             
-            void addNewAudience(const AudienceID&);
+            void addNewAudience(const AudienceID& id);
             
             //TODO: add setter for specific audience
         private:
             template <class T>
-            void insertVariable (const std::string&, const T&, VariableType); // needs to eachAudienceMap if insert after data initialized
+            void insertVariable (const std::string& key, const T& val, VariableType valType); // needs to eachAudienceMap if insert after data initialized
             
             std::unordered_map<std::string, Variable> varMap; //holds all variables for an audience
             std::unordered_map<AudienceID, std::unordered_map<std::string, Variable>> eachAudienceMap; //holds a list of unique AudienceID, each audience holds a varMap

@@ -5,7 +5,7 @@ using game::PlayerID;
 using game::Variable;
 
 PerPlayer::PerPlayer(const std::unordered_map<std::string, Variable>& variableMap):
-    varMap(variableMap){};
+    varMap{variableMap}{};
 
 void PerPlayer::insertVariable(const std::string& key, const T& val, VariableType valType){
     Variable variable{val, valType};

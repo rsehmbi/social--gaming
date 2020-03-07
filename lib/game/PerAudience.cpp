@@ -5,7 +5,7 @@ using game::AudienceID;
 using game::Variable;
 
 PerAudience:PerAudience(const std::unordered_map<std::string, Variable>& variableMap):
-    varMap(variableMap){};
+    varMap{variableMap}{};
 
 void PerAudience::insertVariable(const std::string& key, const T& val, VariableType valType){
     Variable variable{val, valType};

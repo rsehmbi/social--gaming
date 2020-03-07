@@ -17,12 +17,12 @@ namespace game {
         public:
             PerPlayer(const std::unordered_map<std::string, Variable>& varMap); 
             
-            void addNewPlayer(const PlayerID&);
+            void addNewPlayer(const PlayerID& id);
 
             //TODO: add setter for specific player
         private:
             template <class T>
-            void insertVariable (const std::string&, const T&, VariableType); // needs to update eachPlayerMap if inserted after data initialized
+            void insertVariable (const std::string& key, const T& val, VariableType valType); // needs to update eachPlayerMap if inserted after data initialized
             
             std::unordered_map<std::string, Variable> varMap; //holds all variables for a player
             std::unordered_map<PlayerID, std::unordered_map<std::string, Variable>> eachPlayerMap; //holds a list of unique PlayerID, each player holds a varMap
