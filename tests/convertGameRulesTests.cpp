@@ -73,4 +73,28 @@ TEST_F(ConvertGameRulesTest, Scores) {
     EXPECT_EQ(expectedOutput, rules.toString());
     EXPECT_EQ(RuleType::Scores, scoresRule.getRuleType());
 }
+
+// TO DO: Add specific cases for when the message is to a list
+// of recepients, a single player, or to an audience member
+TEST_F(ConvertGameRulesTest, Message) {
+    nlohmann::json jsonScoresRule = nlohmann::json::array({
+        { 
+            {"rule", "message"},
+            {"to", "person"},
+            {"value", "Your turn!"}
+        }
+    });
+
+    GameRules rules = convertGameRules(jsonScoresRule);
+    // Scores rule is the only rule in GameRules so it's at the front
+    Rule scoresRule = rules.getRules().front();
+
+    // Keys are printed in alphabetic order instead
+    // since they are stored in a map
+    std::string expectedOutput = 
+        "rule: message\nto: person\nvalue: Your turn!\n";
+    
+    EXPECT_EQ(expectedOutput, rules.toString());
+    EXPECT_EQ(RuleType::Message, scoresRule.getRuleType());
+}
 }

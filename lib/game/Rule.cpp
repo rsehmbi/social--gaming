@@ -42,6 +42,9 @@ RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
     else if(jsonRuleName == "scores") {
         return RuleType::Scores;
     }
+    else if(jsonRuleName == "message") {
+        return RuleType::Message;
+    }
 
     return RuleType::Error;
 }

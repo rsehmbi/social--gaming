@@ -43,6 +43,10 @@ namespace game {
         void add(std::string item, std::string value) {
             ruleInformation[item] = value;
         }
+
+        std::string get(std::string item) {
+            return ruleInformation[item];
+        }
     };
 
     // The Rule class is responsible for holding information relevent

@@ -11,7 +11,8 @@ namespace interpreter{
 
     class Interpreter{
     public:
-        GameState executeGlobalMessageRule(Rule rule, GameState state);
+        void executeGlobalMessageRule(Rule rule);
+        void executeMessageRule(Rule rule);
 
     private:
     };
