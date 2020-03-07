@@ -48,7 +48,7 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     game::GameRules gameRules;
 
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules.items()) {
+    for(auto& jsonRule: jsonRules) { ////**** removed .items()
         auto& ruleName = jsonRule["rule"];
 
         // Construct the rule container to hold rule information
@@ -138,12 +138,12 @@ game::Variables GameConverter::convertVariables(const nlohmann::json& gameVariab
                 LOG(INFO) << "unsupported valType";
         }
 
-        std::cout << std::get<int>(std::get<game::ListVariant>(stateVariables.getVariable(key))[0]) << std::endl;
+        // std::cout << std::get<int>(std::get<game::ListVariant>(stateVariables.getVariable(key))[0]) << std::endl; ////****
     }
 
     
     
-    // std::cout << std::get<int>(std::get<game::listVariant>(stateVariables.getVariable("winners"))[0]) << std::endl;
+    // std::cout << std::get<int>(std::get<game::listVariant>(stateVariables.getVariable("winners"))[0]) << std::endl; ////****
     std::cout << "\nEnd of convert" << std::endl;
     return stateVariables;
 }

@@ -14,7 +14,7 @@ namespace game {
     //rock paper scissor game has variable winners; which can be list of winning id's
     //vector is used because it is the representation inside JSON object
     //add additional data types into variant as needed
-    using ListVariant = std::vector<std::variant<PlayerID> >;
+    using ListVariant = std::vector<std::variant<PlayerID, int> >;
 
 
     //add additional data types into variant as needed
