@@ -227,13 +227,6 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
-//Value Computed by CMake
-SocialGaming_BINARY_DIR:STATIC=/home/josh/Desktop/School/CMPT373/social-gaming
-
-//Value Computed by CMake
-SocialGaming_SOURCE_DIR:STATIC=/home/josh/Desktop/School/CMPT373/social-gaming
-
-
 ########################
 # INTERNAL cache entries
 ########################
@@ -248,8 +241,7 @@ Boost_SYSTEM_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
-//This is the directory where this CMakeCache.txt was created
-CMAKE_CACHEFILE_DIR:INTERNAL=/home/josh/Desktop/School/CMPT373/social-gaming
+
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
