@@ -1,16 +1,23 @@
 #include "Variables.h"
 
 using game::Variables;
+using game::VariableVariant;
+using game::VariableType;
 
 
-Variables::Variables(){
+VariableVariant Variables::getVariable (const std::string& varName) const {
+    //for debugging, should not happen
+    if(varMap.find(varName) == varMap.end()){
+        std::cout << "Interal error: invalid variable error" << std::endl;
+    }
 
-    // TODO : implementation
-
+    return varMap.at(varName);
 }
 
-Variables::Variables(const std::vector<Element>& variables){
-
-    // TODO : implementation
-
+VariableType Variables::getVariableType(const std::string &varName) const {
+    if(varMap.find(varName) == varMap.end()){
+        std::cout << "Interal error: invalid variable error" << std::endl;
+    }
+    
+    return  varNameTypeMap.at(varName);
 }
