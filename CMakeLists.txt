@@ -18,5 +18,5 @@ add_subdirectory(lib)
 add_subdirectory(tools)
 add_subdirectory(thirdparty/glog)
 add_subdirectory(thirdparty/gflags)
-# add_subdirectory(tests)
+add_subdirectory(tests)
 
