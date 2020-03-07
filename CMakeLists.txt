@@ -20,3 +20,4 @@ add_subdirectory(thirdparty/glog)
 add_subdirectory(thirdparty/gflags)
 add_subdirectory(tests)
 
+install(DIRECTORY ${logs})

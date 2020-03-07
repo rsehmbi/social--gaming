@@ -23,30 +23,28 @@ using networking::Server;
 using networking::Connection;
 using networking::Message;
 using networking::MessageBatch;
+using game::Game;
 
 std::vector<Connection> clients;
 Server* serverPtr;
 
 //struct to hold the path of config and specs file.
-struct fileNames{
+struct fileNames {
   std::string specFileName;
   std::string configFileName;
 };
 
 //forward declaration
-std::vector <game::Game> createGames(const std::vector<fileNames>& specPaths);
+std::vector <GameMap> createGames(const std::vector<fileNames>& specPaths);
 
 // This vector needs to contain the list of all the paths to the game specs.
-std::vector<fileNames> gamePaths = std::vector<fileNames>{{"exampleSpecs.json", "exampleConfigs.json"}};
+std::vector<fileNames> gamePaths = std::vector<fileNames>{{"exampleSpecs.json", "exampleConfig.json"}};
 
 // List of all the availableGames created when server is initialized.
-std::vector <game::Game> games;
-
+std::vector <GameMap> availableGames;
 
 //session manager object that manages session messages
-//TODO: manager needs to take list of reference game objects created from json files
-
-//eg. SessionManager manager(games);
+// manager takes a list of reference game objects created from json files
 SessionManager manager;
 
 void
@@ -80,28 +78,29 @@ getHTTPMessage(const char* htmlLocation) {
   }
 }
 
-
 int
 main(int argc, char* argv[]) {
-  if (argc < 3) {
-    std::cerr << "Usage:\n  " << argv[0] << " <port> <html response>\n"
+    if (argc < 3) {
+        std::cerr << "Usage:\n  " << argv[0] << " <port> <html response>\n"
               << "  e.g. " << argv[0] << " 4002 ./webchat.html\n";
-    return 1;
-  }
+        return 1;
+    }
 
-  google::InitGoogleLogging(argv[0]);
-  google::SetLogDestination(google::INFO, "./logs/info");
+    //Initialize logging.
+    google::InitGoogleLogging(argv[0]);
+    google::SetLogDestination(google::INFO, "./logs/info");
 
-  LOG(INFO) << "Server started";
+    LOG(INFO) << "Server started";
 
-  games = createGames(gamePaths);
+    // Create games objects and save them in the session manager.
+    availableGames = createGames(gamePaths);
+    manager.setAvailableGames(availableGames);
 
-  unsigned short port = std::stoi(argv[1]);
-  //server that the social gaming platform will be using
-  Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
-
-  //ptr for onConnect to be able to reference itself
-  serverPtr = &server;
+    unsigned short port = std::stoi(argv[1]);
+    //server that the social gaming platform will be using
+    Server server{port, getHTTPMessage(argv[2]), onConnect, onDisconnect};
+    //ptr for onConnect to be able to reference itself
+    serverPtr = &server;
 
     //main server loop
     while (true) {
@@ -136,23 +135,25 @@ main(int argc, char* argv[]) {
   return 0;
 }
 
-std::vector <game::Game> 
+std::vector <GameMap> 
 createGames(const std::vector<fileNames>& fileNames){
-  jsonReader::jsonReader jReader;
-  gameConverter::GameConverter converter;
+    jsonReader::jsonReader jReader;
+    gameConverter::GameConverter converter;
   
-  std::vector <game::Game> availableGames;
-
-  for (const auto& files : fileNames){
-    nlohmann::json jsonGame = jReader.gameJsonFromFiles(files.specFileName, files.configFileName);
-    if (jsonGame != nullptr){
-      game::Game createdGame = converter.createGame(jsonGame);
-      availableGames.push_back(createdGame);
+    std::vector <GameMap> availableGames;
+    int gameId = 0;
+    for (const auto& files : fileNames){
+        nlohmann::json jsonGame = jReader.gameJsonFromFiles(files.specFileName, files.configFileName);
+        if (jsonGame != nullptr){
+            game::Game createdGame = converter.createGame(jsonGame);
+            std::string gameName = createdGame.getConfigurations().getGameName();
+            availableGames.push_back({gameId, gameName, createdGame});
+            gameId++;
+        }
     }
-  }
 
-  LOG(INFO) << "created games: " << availableGames.size();
-  google::FlushLogFiles(google::INFO);
+    LOG(INFO) << "created games: " << availableGames.size();
+    google::FlushLogFiles(google::INFO);
 
-  return availableGames;
+    return availableGames;
 }

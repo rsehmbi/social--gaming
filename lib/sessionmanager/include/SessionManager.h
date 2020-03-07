@@ -8,9 +8,19 @@
 #include <unordered_map>
 #include <random>
 #include <GameSession.h>
+#include "Game.h"
 
 using networking::Message;
 using networking::Connection;
+using game::Game;
+
+// struct to store the game and gameName to easily excess the gameName
+// when creating a new game.
+struct GameMap {
+    int gameId;
+    std::string gameName;
+    Game game;
+};
 
 //Some info:
 //server receives and send deque<Messages>
@@ -47,6 +57,7 @@ class CommandChecker{
 class SessionManager {
 
     public:
+        
         SessionManager();
 
         void processMessages(const std::deque<Message>& incoming);
@@ -59,6 +70,9 @@ class SessionManager {
 
         //function for printer out available games
         std::string getGamesList();
+
+        // set list of available games when the game session is created.
+        void setAvailableGames(std::vector <GameMap> availableGames);
 
     private:
 
@@ -96,9 +110,11 @@ class SessionManager {
 
         CommandChecker commandChecker;
 
-        // std::vector<Game> gameList;
-
         std::string gamePrompt;
+
+        std::vector<GameMap> availableGames; 
+
+        std::vector<std::string> getAvailableGamesNames();
 
 };
 

@@ -48,7 +48,7 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     game::GameRules gameRules;
 
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules) {
+    for(auto& jsonRule: jsonRules.items()) {
         auto& ruleName = jsonRule["rule"];
 
         // Construct the rule container to hold rule information
