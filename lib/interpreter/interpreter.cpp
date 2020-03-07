@@ -25,17 +25,14 @@ void Interpreter::executeReverse(GameState &state, const Constants &constants, C
                 std::get<ListVariant>(state.variables.getVariable(listName)).end());
                 break;
             case VariableType::BoolType:
-                //
                 break;
             case VariableType::StringType:
                 std::reverse(std::get <std::string> (state.variables.getVariable(listName)).begin()
                 ,std::get <std::string> (state.variables.getVariable(listName)).end());
                 break;
             case VariableType::MapType:
-                //
                 break;
             case VariableType::NumberType:
-                //
                 break;
         }
 
@@ -53,17 +50,14 @@ void Interpreter::executeShuffle(GameState &state, const Constants &constants, C
                 std::get<ListVariant>(state.variables.getVariable(listName)).end(),seed);
                 break;
             case VariableType::BoolType:
-                //
                 break;
             case VariableType::StringType:
                 std::shuffle(std::get <std::string> (state.variables.getVariable(listName)).begin()
                 ,std::get <std::string> (state.variables.getVariable(listName)).end(),seed);
                 break;
             case VariableType::MapType:
-                //
                 break;
             case VariableType::NumberType:
-                //
                 break;
         }
 
@@ -84,17 +78,14 @@ void Interpreter::executeSort(GameState &state, const Constants &constants, Conf
                 std::get<ListVariant>(state.variables.getVariable(listName)).end());
                 break;
             case VariableType::BoolType:
-                //
                 break;
             case VariableType::StringType:
                 std::sort(std::get <std::string> (state.variables.getVariable(listName)).begin()
                 ,std::get <std::string> (state.variables.getVariable(listName)).end());
                 break;
             case VariableType::MapType:
-                //
                 break;
             case VariableType::NumberType:
-                //
                 break;
         }
 }

@@ -26,7 +26,7 @@ namespace game {
         Error,
     };
 
-    enum class RuleFiels{
+    enum class RuleFields{
         rule,
         list,
         element,
@@ -48,7 +48,7 @@ namespace game {
         ascending
     };
 
-    using ListName = std::string ;
+    using ListName = std::string;
     using Mode = std::string ;
     using VariableName = std::string ;
     using Count = int;
