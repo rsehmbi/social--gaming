@@ -3,9 +3,10 @@
 #include <vector>
 #include <variant>
 #include <string>
-#include <player.h>
+#include <PerPlayer.h>
 #include <iostream>
 #include <unordered_map>
+#include <utility>
 
 namespace game {
     //From project spec: "Values may themselves be (1) maps from names to values, 
@@ -18,7 +19,9 @@ namespace game {
 
 
     //add additional data types into variant as needed
-    using VariableVariant = std::variant<ListVariant, std::string, int>;
+    using VariableVariant = std::variant<ListVariant, std::string, int>; 
+
+    using Variable = std::pair<VariableVariant, VariableType> // contains the variable value + that variable type, can be named better
 
 
     enum class VariableType {
@@ -35,18 +38,20 @@ namespace game {
             
             template <class T>
             void insertVariable (const std::string& key, const T& val, VariableType valType) {
-                varMap.emplace(key, val);
-                varNameTypeMap.emplace(key, valType);
+                Variable variable{val, valType};
+                varMap.emplace(key, variable);
+                // varNameTypeMap.emplace(key, valType);
             }
             
             
         private:
             //map of string name given in JSON to a specific variable. Use variant to hold different types
             //*for now just implementing for the rock paper scissor game which only has list variable
-            std::unordered_map<std::string, VariableVariant> varMap;
+            std::unordered_map<std::string, Variable> varMap;
 
             //maps variable name to its type to help rule functions to determine which type it is operating on
             //eg: "winner" : ListType which means it is a std::vector<variant<...>>
-            std::unordered_map<std::string, VariableType> varNameTypeMap;
+
+            // std::unordered_map<std::string, VariableType> varNameTypeMap; // don't need anymore
     };
 }

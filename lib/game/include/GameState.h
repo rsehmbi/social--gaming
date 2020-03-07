@@ -3,8 +3,8 @@
 
 #include <vector>
 #include "Variables.h"
-#include "player.h"
-#include "messages.h"
+#include "PerPlayer.h"
+#include "Messages.h"
 #include "json.hpp"
 
 namespace game{
@@ -21,9 +21,9 @@ class GameState{
     private:
         //TODO: need function to check for updated data
         game::Variables variables;
-        std::vector<game::Player> perPlayer;
-
-        game::Message messages;
+        game::PerPlayer perPlayer;
+        // game::PerAudience perAudience;
+        game::Messages messages;
         
 
         // game::Variables getJSONVariables(const nlohmann::json& jsonVariables);
