@@ -11,7 +11,6 @@ using game::GameRules;
 using game::VariableType;
 using game::RuleType;
 
-
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
@@ -53,7 +52,8 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
 
         // Construct the rule container to hold rule information
         // by adding the the key value pairs of the rule
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
+        RuleContainer initialContainer;
+        RuleContainer ruleContainer = constructRuleContainer(jsonRule, initialContainer);
         Rule rule(game::matchRuleType(ruleName), ruleContainer);
 
         // Adds rule to game rules
@@ -64,13 +64,16 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
 }
 
 RuleContainer
-GameConverter::constructRuleContainer(const nlohmann::json& jsonRule) {
-    RuleContainer ruleContainer;
-    
+GameConverter::constructRuleContainer(const nlohmann::json& jsonRule, RuleContainer& ruleContainer) {    
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        ruleContainer.add(item.key(), item.value());
+        if (item.value().size() == 1) {
+            ruleContainer.add(item.key(), item.value());
+        } else {
+            // If value contains nested JSON objects, use recursion to construct rule container.
+            constructRuleContainer(item.value(), ruleContainer);
+        }
     }
 
     return ruleContainer;
