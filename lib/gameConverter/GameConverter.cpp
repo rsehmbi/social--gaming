@@ -12,7 +12,6 @@ using game::GameRules;
 using game::VariableType;
 using game::RuleType;
 
-
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
@@ -48,30 +47,34 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
 
-//    // Loop through all the rules
-//    for(auto& jsonRule: jsonRules) {
-//        auto& ruleName = jsonRule["rule"];
-//
-//        // Construct the rule container to hold rule information
-//        // by adding the the key value pairs of the rule
-//        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
-//        Rule rule(game::matchRuleType(ruleName), ruleContainer);
-//
-//        // Adds rule to game rules
-//        gameRules.addRule(rule);
-//    }
+    // Loop through all the rules
+    for(auto& jsonRule: jsonRules) {
+        auto& ruleName = jsonRule["rule"];
+
+        // Construct the rule container to hold rule information
+        // by adding the the key value pairs of the rule
+        RuleContainer initialContainer;
+        RuleContainer ruleContainer = constructRuleContainer(jsonRule, initialContainer);
+        Rule rule(game::matchRuleType(ruleName), ruleContainer);
+
+        // Adds rule to game rules
+        gameRules.addRule(rule);
+    }
 
     return gameRules;
 }
 
 RuleContainer
-GameConverter::constructRuleContainer(const nlohmann::json& jsonRule) {
-    RuleContainer ruleContainer;
-    
+GameConverter::constructRuleContainer(const nlohmann::json& jsonRule, RuleContainer& ruleContainer) {    
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        ruleContainer.add(item.key(), item.value());
+        if (item.value().size() == 1) {
+            ruleContainer.add(item.key(), item.value());
+        } else {
+            // If value contains nested JSON objects, use recursion to construct rule container.
+            constructRuleContainer(item.value(), ruleContainer);
+        }
     }
 
     return ruleContainer;

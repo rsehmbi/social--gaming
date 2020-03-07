@@ -22,7 +22,7 @@ namespace gameConverter{
     
             game::GameRules convertGameRules(const nlohmann::json& jsonRules);
             game::Rule constructRuleObject(const nlohmann::json& jsonRuleName);
-            game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
+            game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule, game::RuleContainer& ruleContainer);
     
     
             game::GameState convertState(const nlohmann::json& gameVariables, 
