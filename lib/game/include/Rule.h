@@ -25,12 +25,12 @@ namespace game {
         Scores,
     };
 
-    typedef std::string ListName;
-    typedef std::string Mode;
-    typedef std::string VariableName;
-    typedef int Count;
-    typedef int TimerLength;
-    typedef std::string Input;
+    using ListName = std::string;
+    using Mode = std::string;
+    using VariableName = std::string;
+    using Count = int;
+    using TimerLength = int;
+    using Input = std::string;
 
 
     // Type defenition for RuleContaine struct
