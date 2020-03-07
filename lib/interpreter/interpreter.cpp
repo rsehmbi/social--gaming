@@ -16,9 +16,9 @@ void Interpreter::processRules(json gameRules, json gameData){
     //calls processor to process rule block
 }
 
-void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, std::string &listName)
+void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
-    VariableVariant VariableVariant = state.variables.getVariable(listName);
+    VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);
         switch (variableType) {
             case VariableType::ListType:
@@ -39,7 +39,7 @@ void Interpreter::executeReverse(GameState &state, const Constants &constants, C
 
 }
  
-void Interpreter::executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, std::string &listName)
+void Interpreter::executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
     VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);
@@ -65,12 +65,12 @@ void Interpreter::executeShuffle(GameState &state, const Constants &constants, C
 }
 
 void Interpreter::executeDeal(GameState &state, const Constants &constants,
-                Configurations configurations, int count, int from, int to) {
+                Configurations configurations, Count count, ListName &from, ListName &to) {
         // TO DO:
         // Need more information
 }
 
-void Interpreter::executeSort(GameState &state, const Constants &constants, Configurations &configurations, std::string &listName) {
+void Interpreter::executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName) {
     VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);
         switch (variableType) {
@@ -91,7 +91,7 @@ void Interpreter::executeSort(GameState &state, const Constants &constants, Conf
         }
 }
 
-void Interpreter::executeAdd(GameState& state, std::string& toVariable, std::string& value) {
+void Interpreter::executeAdd(GameState& state, VariableName& toVariable, VariableName& value) {
     VariableVariant variableVariant = state.variables.getVariable(toVariable);
     int intVariable = std::get<int>(std::get<game::ListVariant>(variableVariant);
 
@@ -107,7 +107,7 @@ void Interpreter::executeAdd(GameState& state, std::string& toVariable, std::str
     }
 }
 
-void Interpreter::executeTimer(GameState& state, std::string& value) {
+void Interpreter::executeTimer(GameState& state, VariableName& value) {
     // TODO: need to build bridge between game execution and server first
 }
 
