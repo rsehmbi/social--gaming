@@ -17,7 +17,7 @@
 SessionManager::SessionManager() : 
     generator(std::chrono::high_resolution_clock::now().time_since_epoch().count())
 {
-    gamePrompt = "\nThe server supports the following games:\n";
+    gamePrompt = "\nThe server supports following games:\n";
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
@@ -81,6 +81,7 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
     // Find the requested game.
     std::string gameName = message.text.substr(sizeof(CREATE_COMMAND));
     Game selectedGame;
+
     try {
         Game selectedGame = findSelectedGame(gameName);
     } catch (const std::invalid_argument& e){
@@ -93,7 +94,16 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
     SessionID sessionID = generateID();
     
     //create new session and map to session id
-    sessionMap.emplace(sessionID, GameSession{ sessionID, connectionID });
+    sessionMap.emplace(sessionID, 
+        GameSession{ 
+            sessionID, 
+            connectionID,
+            selectedGame.getGameState(),
+            selectedGame.getConfigurations(),
+            selectedGame.getConstants(),
+            selectedGame.getGameRules()
+        });
+
 
     //update records and inform connection of status
     connectionSessionMap[connectionID] = sessionID;
@@ -210,7 +220,7 @@ SessionManager::getAvailableGamesNames(){
     return gameNames;
 }
 
-Game
+Game&
 SessionManager::findSelectedGame(std::string gameName){
     boost::algorithm::trim(gameName);
 

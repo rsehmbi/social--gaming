@@ -5,26 +5,36 @@
 
 #include "Configurations.h"
 #include "Constants.h"
-#include "GameState.h"
 #include "GameRules.h"
+#include "Variables.h"
+
+using game::Variables;
 
 namespace game{
+
+struct GameState {
+    Variables gameVariables;
+    Variables perPlayer;
+    Variables perAudience;
+};
+
+
 class Game{
 
 public:
 
     Game();
 
-    Game(Configurations& configurations, GameRules& gameRules, 
-        Constants& constants, GameState& gameState);
+    Game(Configurations configurations, GameRules gameRules, 
+        Constants constants, GameState gameState);
 
     void setConfigurations(Configurations& configurations);
 
     Configurations getConfigurations() const;
     
-    GameRules getGameRules();
+    GameRules& getGameRules();
     
-    Constants getConstants();
+    Constants& getConstants();
     
     GameState getGameState();
 

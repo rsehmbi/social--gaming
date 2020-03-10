@@ -1,5 +1,6 @@
 #include <GameSession.h>
 
+#include <glog/logging.h>
 #include <sstream>
 #include <iostream>
 
@@ -7,11 +8,17 @@
 
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
-
-GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId) 
+GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, GameState _gameState, 
+    Configurations _configurations, const Constants& _constants, const GameRules& _rules)
     :   sessionID{id},
-        owner{User {"", -1, ownerConnectionId, UserType::Owner} } {
-}
+        owner{User {"", -1, ownerConnectionId, UserType::Owner} },
+        gameState(_gameState),
+        configurations(_configurations),
+        constants(_constants), 
+        rules(_rules) 
+    {
+        LOG(INFO) << "Session created with id: " << sessionID;
+    }
 
 MessageBatch 
 GameSession::processGameTurn(const MessageBatch& inMsgs){

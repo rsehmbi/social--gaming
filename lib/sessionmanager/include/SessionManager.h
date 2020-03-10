@@ -119,6 +119,6 @@ class SessionManager {
         std::vector<std::string> getAvailableGamesNames();
 
         // Find game from available games using the game.
-        Game findSelectedGame(std::string gameName);
+        Game& findSelectedGame(std::string gameName);
 };
 

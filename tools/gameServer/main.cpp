@@ -128,7 +128,8 @@ main(int argc, char* argv[]) {
         if (errorWhileUpdating) {
             break;
         }
-
+        
+        google::FlushLogFiles(google::INFO);
         sleep(1);
     }
 
