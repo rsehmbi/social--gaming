@@ -52,7 +52,7 @@ onConnect(Connection c) {
     std::cout << "New connection found: " << c.id << "\n";
     clients.push_back(c);
     std::deque<Message> onConnectMsg;
-    onConnectMsg.push_back({c.id, manager.getGamesList()});
+    onConnectMsg.push_back({{c.id}, manager.getGamesList()});
     serverPtr->send(onConnectMsg);
 }
 

@@ -96,7 +96,7 @@ class SessionManager {
         void sortMessage(const Message& message);
 
         //create a new session
-        void createSession(const ConnectionID& id);
+        void createSession(const ConnectionID& id, const Message& message);
 
         //join a session
         void joinSession(const ConnectionID& connectionID, const SessionID& sessionID);
@@ -112,9 +112,13 @@ class SessionManager {
 
         std::string gamePrompt;
 
+        // List of availableGames to choose from mapped to id and name.
         std::vector<GameMap> availableGames; 
 
+        // Helper function to find the names of available games from available games.
         std::vector<std::string> getAvailableGamesNames();
 
+        // Find game from available games using the game.
+        Game findSelectedGame(std::string gameName);
 };
 

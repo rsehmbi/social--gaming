@@ -1,12 +1,16 @@
 #include <string.h>
+#include <string_view>
 #include <sstream>
 #include <iostream>
 #include <chrono>
 #include <SessionManager.h>
 #include <boost/algorithm/string/join.hpp>
-
+#include <boost/algorithm/string/trim.hpp>
+#include <glog/logging.h>
 
 #define SESSION_ID_LEN 10
+#define CREATE_COMMAND "/create"
+#define JOIN_COMMAND "/join"
 
 
 //----------Session Manager Class----------------------
@@ -27,11 +31,13 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
         CommandType command = commandChecker.checkString(message);
 
         switch(command) {
-            case CommandType::Create: 
-                createSession(message.connection.id);
+            case CommandType::Create:
+            {
+                createSession(message.connection.id, message);
                 //console debugging message
-                std::cout << "Request for create.\n";
+                std::cout << "Request for create: " << "\n";
                 break;
+            }
             case CommandType::Join:
                 joinSession(message.connection.id, commandChecker.getArgument());
                 //console debugging message
@@ -65,11 +71,22 @@ void SessionManager::sortMessage(const Message& message){
     }
 }
 
-void SessionManager::createSession(const ConnectionID& connectionID) {
+void SessionManager::createSession(const ConnectionID& connectionID, const Message& message) {
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
-        outgoing.push_back({connectionID, "You are already in a session. Open a new connection to create another session.\n"});
+        outgoing.push_back({{connectionID}, "You are already in a session. Open a new connection to create another session.\n"});
         return;
+    }
+
+    // Find the requested game.
+    std::string gameName = message.text.substr(sizeof(CREATE_COMMAND));
+    Game selectedGame;
+    try {
+        Game selectedGame = findSelectedGame(gameName);
+    } catch (const std::invalid_argument& e){
+        LOG(ERROR) << "Caught exception while finding game. " << e.what();  
+        outgoing.push_back({{connectionID}, "The game name entered is not available. Please enter a valid name.\n"});
+        return ;              
     }
 
     //generate new session id
@@ -82,7 +99,7 @@ void SessionManager::createSession(const ConnectionID& connectionID) {
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Session created. Session ID: " << sessionID << "\n";
-    outgoing.push_back({connectionID, outStr.str()});
+    outgoing.push_back({{connectionID}, outStr.str()});
 
     //tell the session object to add connection to its record
     sessionMap.at(sessionID).connect(connectionID);
@@ -93,13 +110,13 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Session
     
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
-        outgoing.push_back({connectionID,
+        outgoing.push_back({{connectionID},
                             "You are already in a session. Open a new connection to join another session.\n"});
         return;
     }
     //check if sessionID exists
     if(sessionMap.find(sessionID) == sessionMap.end()){
-        outgoing.push_back({connectionID, "Invalid session ID\n"});
+        outgoing.push_back({{connectionID}, "Invalid session ID\n"});
         return;
     }
 
@@ -107,7 +124,7 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Session
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Connected to session: " << sessionID << "\n";
-    outgoing.push_back({connectionID, outStr.str()});
+    outgoing.push_back({{connectionID}, outStr.str()});
     
     //tell the session object to add connection to its record
     sessionMap.at(sessionID).connect(connectionID);
@@ -118,7 +135,7 @@ const std::deque<Message>& SessionManager::outboundMessages(const std::vector<Co
     for(auto& client : clients){
         //public clients
         if(connectionSessionMap.find(client.id) == connectionSessionMap.end()){
-            outgoing.push_back({client.id, chatLogs["public"]});
+            outgoing.push_back({{client.id}, chatLogs["public"]});
         }
     }
     return outgoing;
@@ -165,8 +182,8 @@ std::string SessionManager::getGamesList(){
 
 
 CommandChecker::CommandChecker(){
-    commandMap["/create"] = CommandType::Create;
-    commandMap["/join"] = CommandType::Join;
+    commandMap[CREATE_COMMAND] = CommandType::Create;
+    commandMap[JOIN_COMMAND] = CommandType::Join;
 }
 
 //checks first word of string and returns CommandType and updates argument accordingly
@@ -191,4 +208,19 @@ SessionManager::getAvailableGamesNames(){
         [] (const GameMap& gameMap) { return gameMap.gameName; }
     );
     return gameNames;
+}
+
+Game
+SessionManager::findSelectedGame(std::string gameName){
+    boost::algorithm::trim(gameName);
+
+    auto iter = std::find_if(availableGames.begin(), availableGames.end(), 
+        [&gameName](GameMap gameMap) { return gameMap.gameName == gameName; }
+    );
+
+    if (iter == availableGames.end()){
+        throw std::invalid_argument("No game available with name: " + gameName);
+    } 
+
+    return iter->game;
 }
