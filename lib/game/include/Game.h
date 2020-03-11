@@ -7,16 +7,17 @@
 #include "Constants.h"
 #include "GameRules.h"
 #include "Variables.h"
+#include "GameState.h"
 
 using game::Variables;
 
 namespace game{
 
-struct GameState {
-    Variables gameVariables;
-    Variables perPlayer;
-    Variables perAudience;
-};
+// struct GameState {
+//     Variables gameVariables;
+//     Variables perPlayer;
+//     Variables perAudience;
+// };
 
 
 class Game{

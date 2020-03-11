@@ -6,6 +6,13 @@
 #include "json.hpp"
 #include "Game.h"
 
+using game::ListName;////****
+using game::Mode;
+using game::VariableName;
+using game::Count;
+using game::TimerLength;
+using game::Input;////****
+
 using game::GameState;
 using game::Constants;
 using game::Configurations;

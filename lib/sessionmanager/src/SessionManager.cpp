@@ -37,7 +37,7 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
             {
                 createSession(message.connection.id, message);
                 //console debugging message
-                std::cout << "Request for create: " << "\n";
+                std::cout << "Request for create.\n";
                 break;
             }
             case CommandType::Join:
