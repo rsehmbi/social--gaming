@@ -46,17 +46,17 @@ GameRules
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
-
+    
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules) { ////**** removed .items()
-        auto& ruleName = jsonRule["rule"];
-
-        // Construct the rule container to hold rule information
-        // by adding the the key value pairs of the rule
-        RuleContainer initialContainer;
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule, initialContainer);
-        Rule rule(game::matchRuleType(ruleName), ruleContainer);
-
+    for(auto& jsonRule: jsonRules) {
+        Rule rule;
+        if(game::isNestedJsonRule(jsonRule)) {
+            rule = constructNestedRule(jsonRule);
+        }
+        else {
+            rule = constructRule(jsonRule);
+        }
+    
         // Adds rule to game rules
         gameRules.addRule(rule);
     }
@@ -64,16 +64,59 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     return gameRules;
 }
 
-RuleContainer
-GameConverter::constructRuleContainer(const nlohmann::json& jsonRule, RuleContainer& ruleContainer) {    
+Rule
+GameConverter::constructRule(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        if (item.value().size() == 1) {
+        ruleContainer.add(item.key(), item.value());
+    }
+
+    auto& ruleName = jsonRule["rule"];
+    Rule rule(game::matchRuleType(ruleName), ruleContainer);
+    return rule;
+}
+
+Rule
+GameConverter::constructNestedRule(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+    std::vector<Rule> nestedRules;
+
+    // Iterates through all key value pairs in the json rule object
+    // and adds them to the rule container
+    for (auto& item : jsonRule.items()) {
+        if (item.key() == "rules") {
+            // GameRules is just a wrapper for a vector of rules
+            // so we can call convertGameRules to convert the array
+            // of nested rules and then extract the vector
+            GameRules rules =  GameConverter::convertGameRules(item.value());
+            nestedRules = rules.getRules();
+        } 
+        else {
             ruleContainer.add(item.key(), item.value());
-        } else {
-            // If value contains nested JSON objects, use recursion to construct rule container.
-            constructRuleContainer(item.value(), ruleContainer);
+        }
+    }
+
+    auto& ruleName = jsonRule["rule"];
+    Rule rule(game::matchRuleType(ruleName), ruleContainer, nestedRules);
+    return rule;
+}
+
+// TO DO: Remove since it is no longer used
+RuleContainer
+GameConverter::constructRuleContainer(const nlohmann::json& jsonRule) { 
+    RuleContainer ruleContainer;
+
+    // Iterates through all key value pairs in the json rule object
+    // and adds them to the rule container
+    for (auto& item : jsonRule.items()) {
+        if (item.key() == "rules") {
+            // Do nothing
+        } 
+        else {
+            ruleContainer.add(item.key(), item.value());
         }
     }
 

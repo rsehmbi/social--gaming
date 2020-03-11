@@ -23,6 +23,7 @@ namespace game {
         InputVote,
         Message,
         Scores,
+        Foreach,
         Error,
     };
 
@@ -56,6 +57,7 @@ namespace game {
     using Input = std::string;
 
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
+    bool isNestedJsonRule(const nlohmann::json& jsonRule);
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
@@ -78,20 +80,25 @@ namespace game {
         }
 
         Rule(RuleType ruleType, RuleContainer& rule);
+        Rule(RuleType ruleType, RuleContainer& rule, std::vector<Rule>& nestedRules);
 
         RuleType getRuleType() const;
         
         const RuleContainer& getRuleContainer() const;
+        const std::vector<Rule>& getNestedRules();
 
         void setRuleContainer(RuleContainer& rule);
 
         // Used for testing and debugging
-        std::string toString();
+        virtual std::string toString();
 
     private:
         RuleContainer ruleContainer;
+        std::vector<Rule> nestedRules;
 
         RuleType ruleType;
+
+        bool hasNestedRules;
     };
 
     class GlobalMessageRule : public Rule {
