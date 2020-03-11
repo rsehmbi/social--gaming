@@ -24,6 +24,8 @@ namespace game {
         Message,
         Scores,
         Foreach,
+        ParallelFor,
+        When,
         Error,
     };
 
@@ -62,7 +64,6 @@ namespace game {
     // Type defenition for RuleContaine struct
     struct RuleContainer {
         std::map<std::string, std::string> ruleInformation;
-        RuleContainer* subRules;
 
         void add(std::string item, std::string value) {
             ruleInformation[item] = value;

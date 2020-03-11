@@ -73,6 +73,21 @@ RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
     else if(jsonRuleName == "foreach") {
         return RuleType::Foreach;
     }
+    else if(jsonRuleName == "parallelfor") {
+        return RuleType::ParallelFor;
+    }
+    else if(jsonRuleName == "input-choice") {
+        return RuleType::InputChoice;
+    }
+    else if(jsonRuleName == "discard") {
+        return RuleType::Discard;
+    }
+    else if(jsonRuleName == "when") {
+        return RuleType::When;
+    }
+    else if(jsonRuleName == "extend") {
+        return RuleType::Extend;
+    }
 
     return RuleType::Error;
 }
