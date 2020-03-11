@@ -40,11 +40,7 @@ const std::vector<Rule>& Rule::getNestedRules() {
 }
 
 std::string Rule::toString() {
-    std::string ruleStr = "";
-    
-    for(auto& mapElem : ruleContainer.ruleInformation) {
-        ruleStr += mapElem.first + ": " + mapElem.second + "\n";
-    }
+    std::string ruleStr = ruleContainer.toString();
     
     if(hasNestedRules) {
         ruleStr += "rules: \n{\n";

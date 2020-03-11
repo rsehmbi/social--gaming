@@ -46,7 +46,7 @@ GameRules
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
-    
+
     // Loop through all the rules
     for(auto& jsonRule: jsonRules) {
         Rule rule;
@@ -71,7 +71,7 @@ GameConverter::constructRule(nlohmann::json jsonRule) {
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        ruleContainer.add(item.key(), item.value());
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
     }
 
     auto& ruleName = jsonRule["rule"];
@@ -95,13 +95,29 @@ GameConverter::constructNestedRule(nlohmann::json jsonRule) {
             nestedRules = rules.getRules();
         } 
         else {
-            ruleContainer.add(item.key(), item.value());
+            addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
         }
     }
 
     auto& ruleName = jsonRule["rule"];
     Rule rule(game::matchRuleType(ruleName), ruleContainer, nestedRules);
     return rule;
+}
+
+void GameConverter::addJsonKeyValueToRuleContainer(RuleContainer& ruleContainer, nlohmann::json key, nlohmann::json value) {
+    std::string keyStr = key.get<std::string>();
+
+    if(value.type() == nlohmann::json::value_t::string) {
+        ruleContainer.add(keyStr, value.get<std::string>());
+    }
+    else if(value.type() == nlohmann::json::value_t::number_integer) {
+        ruleContainer.add(keyStr, value.get<int>());
+    }
+    else if(value.type() == nlohmann::json::value_t::boolean) {
+        ruleContainer.add(keyStr, value.get<bool>());
+    }
+
+    return;
 }
 
 // TO DO: Remove since it is no longer used
@@ -116,7 +132,7 @@ GameConverter::constructRuleContainer(const nlohmann::json& jsonRule) {
             // Do nothing
         } 
         else {
-            ruleContainer.add(item.key(), item.value());
+            addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
         }
     }
 

@@ -2,6 +2,7 @@
 #pragma once
 
 #include <map>
+#include <variant>
 #include "json.hpp"
 
 namespace game {
@@ -57,16 +58,26 @@ namespace game {
     using Count = int;
     using TimerLength = int;
     using Input = std::string;
+    using Value = std::variant<std::string, int, bool>;
 
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
     bool isNestedJsonRule(const nlohmann::json& jsonRule);
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
-        std::map<std::string, std::string> ruleInformation;
-
-        void add(std::string item, std::string value) {
+        std::map<std::string, std::variant<std::string, int, bool>> ruleInformation;
+        
+        void add(std::string item, Value value) {
             ruleInformation[item] = value;
+        }
+
+        std::string toString() {
+            std::string str = "";
+            for(auto& mapElem : ruleInformation) {
+                str += mapElem.first + ": " + std::get<std::string>(mapElem.second) + "\n";
+            }
+            
+            return str;
         }
     };
 

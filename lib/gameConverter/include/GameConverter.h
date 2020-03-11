@@ -25,6 +25,7 @@ namespace gameConverter{
             game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
             game::Rule constructRule(nlohmann::json jsonRule);
             game::Rule constructNestedRule(nlohmann::json jsonRule);
+            void addJsonKeyValueToRuleContainer(game::RuleContainer& ruleContainer, nlohmann::json key, nlohmann::json value);
     
     
             game::GameState convertState(const nlohmann::json& gameVariables, 
