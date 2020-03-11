@@ -17,7 +17,9 @@
 SessionManager::SessionManager() : 
     generator(std::chrono::high_resolution_clock::now().time_since_epoch().count())
 {
-    gamePrompt = "\nThe server supports following games:\n";
+    gamePrompt = "\nTo create a game use /create {Game name}.\n"
+        "To join existing game use /join {Session ID}."
+        "\n\nThe server supports following games:\n";
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
@@ -98,11 +100,12 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
         GameSession{ 
             sessionID, 
             connectionID,
-            selectedGame.getGameState(),
-            selectedGame.getConfigurations(),
             selectedGame.getConstants(),
-            selectedGame.getGameRules()
-        });
+            selectedGame.getGameRules(),
+            selectedGame.getGameState(),      
+            selectedGame.getConfigurations()
+        }
+    );
 
 
     //update records and inform connection of status
@@ -111,8 +114,6 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
     outStr << "Session created. Session ID: " << sessionID << "\n";
     outgoing.push_back({{connectionID}, outStr.str()});
 
-    //tell the session object to add connection to its record
-    sessionMap.at(sessionID).connect(connectionID);
     return;
 }
 

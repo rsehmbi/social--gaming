@@ -30,13 +30,13 @@ class User {
 
         void setId(int id);
 
-        int getId();
+        int getId() const;
 
-        ConnectionID getConnectionID();
+        ConnectionID getConnectionID() const;
 
         void setUserType(UserType _userType);
 
-        UserType getUserType();
+        UserType getUserType() const;
 
         //Class Functions
         int getNumOfWins();
