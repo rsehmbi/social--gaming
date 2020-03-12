@@ -2,16 +2,16 @@
 
 using game::Rule;
 using game::RuleContainer;
-using game::GlobalMessageRule;
-using game::Shuffle;
-using game::Sort;
-using game::Deal;
+// using game::GlobalMessageRule;
+// using game::Shuffle;
+// using game::Sort;
+// using game::Deal;
 using game::RuleType;
-using game::Timer;
-using game::Add;
-using game::InputChoice;
-using game::InputText;
-using game::InputVote;
+// using game::Timer;
+// using game::Add;
+// using game::InputChoice;
+// using game::InputText;
+// using game::InputVote;
 
 Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
     
@@ -29,14 +29,14 @@ RuleType Rule::getRuleType() const {
     return this->ruleType;
 }
 
-std::string Rule::toString() {
-    std::string rule = "";
-    for(auto& mapElem : ruleContainer.ruleInformation) {
-        rule += mapElem.first + ": " + mapElem.second + "\n";
-    } 
+// std::string Rule::toString() {
+//     std::string rule = "";
+//     for(auto& mapElem : ruleContainer.ruleInformation) {
+//         rule += mapElem.first + ": " + mapElem.second + "\n";
+//     } 
     
-    return rule;
-}
+//     return rule;
+// }
 
 RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
     if (jsonRuleName == "global-message") {
@@ -54,79 +54,79 @@ RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
 
     return RuleType::Error;
 }
-//Shuffle
-Shuffle::Shuffle(RuleContainer& rule)
-{
+// //Shuffle
+// Shuffle::Shuffle(RuleContainer& rule)
+// {
 
-}
+// }
 
-RuleContainer& Shuffle::getRule()
-{
+// RuleContainer& Shuffle::getRule()
+// {
 
-}
+// }
 
-//Sort 
-Sort::Sort(RuleContainer& rule)
-{
+// //Sort 
+// Sort::Sort(RuleContainer& rule)
+// {
 
-}
+// }
 
-RuleContainer& Sort::getRule()
-{
+// RuleContainer& Sort::getRule()
+// {
 
-}
-
-
-//Deal
-Deal::Deal(RuleContainer& rule)
-{
-
-}
-
-RuleContainer& Deal::getRule()
-{
-
-}
+// }
 
 
-//Timer
-Timer::Timer(RuleContainer& rule) 
-{
+// //Deal
+// Deal::Deal(RuleContainer& rule)
+// {
 
-}
-RuleContainer& Timer::getRule()
-{
+// }
 
-}
+// RuleContainer& Deal::getRule()
+// {
 
-//Add
-Add::Add(RuleContainer& rule) 
-{
+// }
 
-}
-RuleContainer& Add::getRule()
-{
 
-}
+// //Timer
+// Timer::Timer(RuleContainer& rule) 
+// {
 
-//InputChoice
-InputChoice::InputChoice(RuleContainer& rule) 
-{}
+// }
+// RuleContainer& Timer::getRule()
+// {
 
-RuleContainer& InputChoice::getRule()
-{}
+// }
 
-//InputText
-InputText::InputText(RuleContainer& rule) 
-{}
+// //Add
+// Add::Add(RuleContainer& rule) 
+// {
 
-RuleContainer& InputText::getRule()
-{}
+// }
+// RuleContainer& Add::getRule()
+// {
 
-//InputVote
-InputVote::InputVote(RuleContainer& rule) 
-{}
+// }
 
-RuleContainer& InputVote::getRule()
-{}
+// //InputChoice
+// InputChoice::InputChoice(RuleContainer& rule) 
+// {}
+
+// RuleContainer& InputChoice::getRule()
+// {}
+
+// //InputText
+// InputText::InputText(RuleContainer& rule) 
+// {}
+
+// RuleContainer& InputText::getRule()
+// {}
+
+// //InputVote
+// InputVote::InputVote(RuleContainer& rule) 
+// {}
+
+// RuleContainer& InputVote::getRule()
+// {}
 

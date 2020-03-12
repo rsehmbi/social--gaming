@@ -15,12 +15,12 @@ const std::vector<Rule>& GameRules::getRules() {
     return rules;
 }
 
-std::string GameRules::toString() {
-    std::string strRuleList = "";
+// std::string GameRules::toString() {
+//     std::string strRuleList = "";
 
-    for(auto& rule : rules) {
-        strRuleList += rule.toString();
-    }
+//     for(auto& rule : rules) {
+//         strRuleList += rule.toString();
+//     }
 
-    return strRuleList;
-}
+//     return strRuleList;
+// }

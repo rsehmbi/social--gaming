@@ -31,6 +31,7 @@ namespace game {
 
     class Variables{
         public:
+            //return references to variable held
             VariableVariant getVariable(const std::string& variableName) const;
             VariableType getVariableType(const std::string &varName) const;
             
@@ -38,6 +39,11 @@ namespace game {
             void insertVariable (const std::string& key, const T& val, VariableType valType) {
                 varMap.emplace(key, val);
                 varNameTypeMap.emplace(key, valType);
+            }
+
+            template <class T>
+            void updateVariable (const std::string& key, const T& val) {
+                varMap[key] = val;
             }
             
             

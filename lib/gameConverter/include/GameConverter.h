@@ -10,6 +10,7 @@ namespace gameConverter{
     class GameConverter{
 
         public:
+            GameConverter();
 
             // Creates a game object from jsonGame.
             game::Game createGame(const nlohmann::json& jsonGame);
@@ -30,6 +31,8 @@ namespace gameConverter{
     
     
             game::Variables convertVariables(const nlohmann::json& gameVariables);
+
+            std::unordered_map<std::string, game::RuleFields> ruleFieldMap;
     
     
             friend class ConvertGameRulesTest;
