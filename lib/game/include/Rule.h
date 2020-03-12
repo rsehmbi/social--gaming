@@ -153,8 +153,8 @@ namespace game {
         ListName To;
     };
 
-    class ListAttribute:public Rule {
-        ListAttribute (RuleContainer& rule);
+    class ListAttributes:public Rule {
+        ListAttributes (RuleContainer& rule);
 
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
