@@ -24,7 +24,6 @@ GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Con
 MessageBatch
 GameSession::processGameTurn(const MessageBatch& inMsgs){
     MessageBatch msgBuffer;
-    msgBuffer = std::move(outMsgs);
 
     //-----------perform game turn-------
 
@@ -34,6 +33,13 @@ GameSession::processGameTurn(const MessageBatch& inMsgs){
         out << msg.connection.id << "> " << msg.text << "\n";
         msgBuffer.push_back({{msg.connection.id}, out.str()});
     }
+
+    // send all the incoming messages out in the current tick.
+    std::transform(std::make_move_iterator(outMsgs.begin()), 
+        std::make_move_iterator(outMsgs.end()),
+        std::back_inserter(msgBuffer), 
+        [](auto&& msg) { return msg; });
+    outMsgs.clear();
 
     //-----------end of perform game turn-------
     return msgBuffer;
@@ -76,9 +82,9 @@ GameSession::connect(const ConnectionID& cid){
     if (cid == owner.getConnectionID())
         return ;
 
-    // TODO: Change this once configurations is corrected.
-    // int maxPlayersAllowed = configurations.getMaxNoOfPlayers();
-    int maxPlayersAllowed = 2;
+    // Max players allowed. if the number of session users is more than
+    // this they will be added as audience.
+    int maxPlayersAllowed = configurations.getMaxNoOfPlayers();
 
     UserType userType = getUserCountWithType(UserType::Player) < maxPlayersAllowed 
         ? UserType::Player : UserType::Audience;
