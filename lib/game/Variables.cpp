@@ -3,14 +3,14 @@
 using game::Variables;
 using game::VariableVariant;
 using game::VariableType;
+using game::VariablePair;
 
-
-VariableVariant Variables::getVariable (const std::string& varName) const {
+VariablePair Variables::getVariable (const std::string& varName) const {
     //for debugging, should not happen
     if(varMap.find(varName) == varMap.end()){
         std::cout << "Interal error: invalid variable error" << std::endl;
     }
-
+    
     return varMap.at(varName);
 }
 
@@ -19,5 +19,5 @@ VariableType Variables::getVariableType(const std::string &varName) const {
         std::cout << "Interal error: invalid variable error" << std::endl;
     }
     
-    return  varNameTypeMap.at(varName);
+    return  varMap.at(varName).second;
 }

@@ -11,14 +11,14 @@ using game::Variables;
 namespace game{
 struct Update{
     //content of new update to client
-}
+};
 
 struct GameState{
-    Variables variable;
+    Variables variables;
     Variables perPlayer;
     Variables perAudience;
     Update newUpdate;
-}
+};
 
 // class GameState{
 //     public:
