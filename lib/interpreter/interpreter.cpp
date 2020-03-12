@@ -72,6 +72,18 @@ void Interpreter::executeDeal(GameState &state, const Constants &constants,
         // Need more information
 }
 
+void Interpreter::executeDiscard(GameState &state, const Constants &constants,
+                Configurations &configurations, Count count, ListName &from) {
+                //checks if list not empty
+                //checks count smaller-equal list
+                //copy list into vector
+                //use erase function in vector
+}
+void Interpreter::executeListAttributes(GameState &state, const Constants &constants,
+                Configurations &configurations, ListName &list, ListType &type) {
+                    
+}
+
 void Interpreter::executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName) {
     VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);

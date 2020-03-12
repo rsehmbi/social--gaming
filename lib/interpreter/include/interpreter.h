@@ -42,6 +42,10 @@ namespace interpreter{
         void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeDeal(GameState &state, const Constants &constants,
                 Configurations &configurations, Count count, ListName &from, ListName &to);
+        void executeDiscard(GameState &state, const Constants &constants,
+                Configurations &configurations, Count count, ListName &from);
+        void executeListAttributes(GameState &state, const Constants &constants,
+                Configurations &configurations, ListName &list, ListType &type);
 
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);

@@ -149,7 +149,6 @@ namespace game {
     private:
         Count count;
         ListName From;
-        ListName To;
     };
 
     class ListAttributes:public Rule {
