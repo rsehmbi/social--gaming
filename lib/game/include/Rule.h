@@ -3,6 +3,7 @@
 
 #include <map>
 #include "json.hpp"
+#include <optional>
 
 namespace game {
     
@@ -196,6 +197,6 @@ namespace game {
         Input prompt;
         Input choices;
         Input result;
-        Count timeout;
+        std::optional<Count> timeout;
     };
 }

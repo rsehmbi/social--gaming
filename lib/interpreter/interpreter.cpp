@@ -115,3 +115,40 @@ void Interpreter::executeTimer(GameState& state, VariableName& value) {
     // TODO: need to build bridge between game execution and server first
 }
 
+void Interpreter::executeInputChoice(const Constants &constants, GameSession& session, Input& to, Input& prompt, 
+                                        Input& choices, Input& result, Count& timeout){
+    std::optional<Count> isTimeOut= timeout;
+    if (!isTimeOut){
+        for (auto player: session.getPlayers()){
+            if (player.getName==to){
+                session.msgConnection(player.getConnectionID, prompt);
+            }
+            //otherwise do nothing
+        }
+        /*
+        std::vector<game::Player>::iterator it=std::find_if(
+            state.playerList.begin(), state.playerList.end(), 
+            [](const game::Player& i, Input& to) {return true;});//i.getConnectionID()==to.getConnectionID();};
+        //PlayerID connection = state.playerList.getVariable(toVariable); 
+        session.msgConnection(it.getConnectionID(), prompt);
+
+/*
+GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
+    outMsgs.push_back({target, msg});
+}
+*/
+
+    }
+    else{
+        //TimeoutRoute
+    }
+}
+
+
+/*
+ Input to;
+        Input prompt;
+        Input choices;
+        Input result;
+        Count timeout;
+*/

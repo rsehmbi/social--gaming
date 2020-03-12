@@ -5,6 +5,7 @@
 #include "../../jsonReader/include/dsl.h"
 #include "json.hpp"
 #include "Game.h"
+#include "GameSession.h"
 
 using game::ListName;////****
 using game::Mode;
@@ -44,7 +45,9 @@ namespace interpreter{
 
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);
-        void processRules(json gameRules, json gameData);
+        void executeInputChoice(const Constants &constants, GameSession& session, Input& to, Input& prompt, Input& choices, Input& result, Count& timeout);
+
+        //void executeInputChoice ()
     };
 }
 

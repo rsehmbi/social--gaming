@@ -36,6 +36,10 @@ class GameSession{
         // Filters the users that are players.
         std::vector<user::User> getPlayers();
 
+        void sessionBroadCast(const std::string& text);
+
+        void msgConnection(const ConnectionID& target, const std::string& msg); 
+
     private:
 
         SessionID sessionID;
@@ -48,11 +52,7 @@ class GameSession{
 
         user::User owner;
 
-        MessageBatch outMsgs;
-
-        void sessionBroadCast(const std::string& text);
-
-        void msgConnection(const ConnectionID& target, const std::string& msg);  
+        MessageBatch outMsgs; 
 
         std::vector<User> getUsersWithType(const UserType& userType);
 
