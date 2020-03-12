@@ -24,7 +24,7 @@ void printRules(GameRules rules) {
     for(auto& rule: ruleList) {
         RuleContainer ruleCont = rule.getRuleContainer();
         for(auto& mapElem : ruleCont.ruleInformation) {
-           std::cout << mapElem.first << " " << mapElem.second << " " << std::endl;
+           std::cout << Rule::ruleFieldToString[mapElem.first] << " " << mapElem.second << " " << std::endl;
         } 
     }
 }
@@ -68,7 +68,7 @@ TEST_F(ConvertGameRulesTest, Scores) {
     // Keys are printed in alphabetic order instead
     // since they are stored in a map
     std::string expectedOutput = 
-        "ascending: false\nrule: scores\nscore: wins\n";
+        "rule: scores\nscore: wins\nascending: false\n";
     
     EXPECT_EQ(expectedOutput, rules.toString());
     EXPECT_EQ(RuleType::Scores, scoresRule.getRuleType());
