@@ -3,12 +3,12 @@
 #include <vector>
 #include <variant>
 #include <string>
-#include <PerPlayer.h>
 #include <iostream>
 #include <unordered_map>
 #include <utility>
 
 namespace game {
+    using PlayerID = std::variant<int, std::string>;
     //From project spec: "Values may themselves be (1) maps from names to values, 
     //(2) lists of values, or (3) literal strings, numbers, or booleans."
 
