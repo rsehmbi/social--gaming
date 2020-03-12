@@ -17,6 +17,16 @@ Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType)
     
 }
 
+std::unordered_map<game::RuleFields, std::string> Rule::ruleFieldToString = {
+    {RuleFields::rule, "rule"},
+    {RuleFields::value, "value"},
+    {RuleFields::score, "score"},
+    {RuleFields::ascending, "ascending"},
+    {RuleFields::to, "to"},
+    {RuleFields::duration, "duration"},
+    {RuleFields::mode, "mode"},
+};
+
 void Rule::setRuleContainer(RuleContainer& ruleContainer) {
     this->ruleContainer = ruleContainer;
 }
@@ -29,14 +39,14 @@ RuleType Rule::getRuleType() const {
     return this->ruleType;
 }
 
-// std::string Rule::toString() {
-//     std::string rule = "";
-//     for(auto& mapElem : ruleContainer.ruleInformation) {
-//         rule += mapElem.first + ": " + mapElem.second + "\n";
-//     } 
+std::string Rule::toString() {
+    std::string rule = "";
+    for(auto& mapElem : ruleContainer.ruleInformation) {
+        rule += Rule::ruleFieldToString[mapElem.first] + ": " + mapElem.second + "\n";
+    } 
     
-//     return rule;
-// }
+    return rule;
+}
 
 RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
     if (jsonRuleName == "global-message") {

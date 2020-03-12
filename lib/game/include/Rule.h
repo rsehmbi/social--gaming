@@ -85,13 +85,17 @@ namespace game {
 
             void setRuleContainer(RuleContainer& rule);
 
+            static std::unordered_map<RuleFields, std::string> ruleFieldToString;
+
             // Used for testing and debugging
             std::string toString();
 
         private:
             RuleType ruleType;
             RuleContainer ruleContainer;
+
     };
+}
 
 //     class GlobalMessageRule : public Rule {
 //     public:
@@ -197,4 +201,4 @@ namespace game {
 //         Input result;
 //         Count timeout;
 //     };
-}
+
