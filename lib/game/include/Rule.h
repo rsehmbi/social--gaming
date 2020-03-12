@@ -2,6 +2,7 @@
 #pragma once
 
 #include <map>
+#include <variant>
 #include "json.hpp"
 #include <optional>
 
@@ -50,6 +51,8 @@ namespace game {
     };
 
     using ListName = std::string;
+    using ElementType = std::variant<int, std::string, bool>;
+    using ListType = std::variant<ElementType, std::map<std::string, ElementType>>;
     using Mode = std::string ;
     using VariableName = std::string;
     using Count = int;
@@ -136,6 +139,28 @@ namespace game {
         Count count;
         ListName From;
         ListName To;
+    };
+
+    class Discard:public Rule {
+        Discard (RuleContainer& rule);
+
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+        void discardList(ListName From, ListName To, Count count);
+    private:
+        Count count;
+        ListName From;
+        ListName To;
+    };
+
+    class ListAttribute:public Rule {
+        ListAttribute (RuleContainer& rule);
+
+        RuleContainer& getRule();
+        void setRule(RuleContainer& rule);
+    private:
+        ListName list;
+        ElementType type;
     };
 
     class Timer: public Rule {
