@@ -9,6 +9,9 @@ using game::Deal;
 using game::RuleType;
 using game::Timer;
 using game::Add;
+using game::InputChoice;
+using game::InputText;
+using game::InputVote;
 
 Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
     
@@ -42,6 +45,12 @@ RuleType game::matchRuleType(const nlohmann::json& jsonRuleName) {
     else if(jsonRuleName == "scores") {
         return RuleType::Scores;
     }
+    else if(jsonRuleName == "timer") {
+        return RuleType::Timer;
+    }
+    else if(jsonRuleName == "add") {
+        return RuleType::Add;
+    }
 
     return RuleType::Error;
 }
@@ -50,25 +59,13 @@ Shuffle::Shuffle(RuleContainer& rule)
 {
 
 }
-void Shuffle::shuffleList(listName& list)
-{
-
-}
 
 RuleContainer& Shuffle::getRule()
 {
 
 }
-void Shuffle::setRule(RuleContainer& rule)
-{
-
-}
 
 //Sort 
-void Sort::sortList(listName& list)
-{
-
-}
 Sort::Sort(RuleContainer& rule)
 {
 
@@ -78,10 +75,7 @@ RuleContainer& Sort::getRule()
 {
 
 }
-void Sort::setRule(RuleContainer& rule)
-{
 
-}
 
 //Deal
 Deal::Deal(RuleContainer& rule)
@@ -93,13 +87,7 @@ RuleContainer& Deal::getRule()
 {
 
 }
-void Deal::setRule(RuleContainer& rule)
-{
 
-}
-void Deal::dealList(listName From, listName To, Count count)
-{
-}
 
 //Timer
 Timer::Timer(RuleContainer& rule) 
@@ -107,10 +95,6 @@ Timer::Timer(RuleContainer& rule)
 
 }
 RuleContainer& Timer::getRule()
-{
-
-}
-void Timer::setRule(RuleContainer& rule)
 {
 
 }
@@ -124,7 +108,25 @@ RuleContainer& Add::getRule()
 {
 
 }
-void Add::setRule(RuleContainer& rule)
-{
 
-}
+//InputChoice
+InputChoice::InputChoice(RuleContainer& rule) 
+{}
+
+RuleContainer& InputChoice::getRule()
+{}
+
+//InputText
+InputText::InputText(RuleContainer& rule) 
+{}
+
+RuleContainer& InputText::getRule()
+{}
+
+//InputVote
+InputVote::InputVote(RuleContainer& rule) 
+{}
+
+RuleContainer& InputVote::getRule()
+{}
+

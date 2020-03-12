@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include "json.hpp"
 
 #include "Configurations.h"
@@ -15,7 +18,9 @@ public:
     Game(Configurations& configurations, GameRules& gameRules, 
         Constants& constants, GameState& gameState);
 
-    Configurations getConfigurations();
+    void setConfigurations(Configurations& configurations);
+
+    Configurations getConfigurations() const;
     
     GameRules getGameRules();
     
@@ -34,3 +39,5 @@ private:
     GameState m_gameState;
 };
 }
+
+#endif

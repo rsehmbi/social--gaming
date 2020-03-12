@@ -15,7 +15,7 @@ namespace game {
     //rock paper scissor game has variable winners; which can be list of winning id's
     //vector is used because it is the representation inside JSON object
     //add additional data types into variant as needed
-    using ListVariant = std::vector<std::variant<PlayerID> >;
+    using ListVariant = std::vector<std::variant<PlayerID, int> >;
 
 
     //add additional data types into variant as needed
@@ -35,6 +35,7 @@ namespace game {
     class Variables{
         public:
             VariableVariant getVariable(const std::string& variableName) const;
+            VariableType getVariableType(const std::string &varName) const;
             
             template <class T>
             void insertVariable (const std::string& key, const T& val, VariableType valType) {

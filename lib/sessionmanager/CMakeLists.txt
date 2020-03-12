@@ -17,7 +17,7 @@ set_target_properties(sessionmanager
                       CXX_STANDARD 17
 )
 
-target_link_libraries(sessionmanager networking gamesession)
+target_link_libraries(sessionmanager networking gamesession game)
 
 
 install(TARGETS sessionmanager

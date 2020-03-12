@@ -26,14 +26,36 @@ namespace game {
         Error,
     };
 
-    RuleType matchRuleType(const nlohmann::json& jsonRuleName);
+    enum class RuleFields{
+        rule,
+        list,
+        element,
+        rules,
+        until,
+        cases,
+        target,
+        from,
+        to,
+        count,
+        roles,
+        value,
+        duration,
+        mode,
+        flag,
+        prompt,
+        result,
+        score,
+        ascending
+    };
 
-    // Type defenition for ruleContainer struct
-    typedef std::string listName;
-    typedef std::string Mode;
-    typedef std::string VariableName;
-    typedef int Count;
-    typedef int TimerLength;
+    using ListName = std::string;
+    using Mode = std::string ;
+    using VariableName = std::string;
+    using Count = int;
+    using TimerLength = int;
+    using Input = std::string;
+
+    RuleType matchRuleType(const nlohmann::json& jsonRuleName);
 
     // Type defenition for RuleContaine struct
     struct RuleContainer {
@@ -84,11 +106,11 @@ namespace game {
     public:
         Shuffle(RuleContainer& rule);
 
-        void shuffleList(listName& list);
+        void shuffleList(ListName& list);
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
     private:
-        listName list;
+        ListName list;
     };
 
     // Sorts a list in ascending order
@@ -96,11 +118,11 @@ namespace game {
     public:
         Sort(RuleContainer &rule);
 
-        void sortList(listName& list);
+        void sortList(ListName& list);
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
     private:
-        listName list;
+        ListName list;
     };
 
     class Deal:public Rule {
@@ -108,11 +130,11 @@ namespace game {
 
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
-        void dealList(listName From, listName To, Count count);
+        void dealList(ListName From, ListName To, Count count);
     private:
         Count count;
-        listName From;
-        listName To;
+        ListName From;
+        ListName To;
     };
 
     class Timer: public Rule {
@@ -137,5 +159,43 @@ namespace game {
         VariableName value;
         RuleContainer ruleContainer;
         RuleType ruleType;
+    };
+    
+    class InputChoice: public Rule {
+    public:
+        InputChoice(RuleContainer& rule);
+        RuleContainer& getRule();
+        //void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input choices;
+        Input result;
+        Count timeout;
+    };
+
+    class InputText: public Rule {
+    public:
+        InputText(RuleContainer& rule);
+        RuleContainer& getRule();
+        //void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input result;
+        Count timeout;
+    };
+
+    class InputVote: public Rule {
+    public:
+        InputVote(RuleContainer& rule);
+        RuleContainer& getRule();
+        //void setRule(RuleContainer& rule);
+    private:
+        Input to;
+        Input prompt;
+        Input choices;
+        Input result;
+        Count timeout;
     };
 }

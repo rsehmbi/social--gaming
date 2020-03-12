@@ -8,9 +8,9 @@ using game::Configurations;
 using game::Constants;
 using game::GameState;
 using game::GameRules;
+
 using game::VariableType;
 using game::RuleType;
-
 
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
@@ -46,14 +46,15 @@ GameRules
 GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     LOG(INFO) << "Creating game rules from Json";
     game::GameRules gameRules;
-    
+
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules) {
+    for(auto& jsonRule: jsonRules) { ////**** removed .items()
         auto& ruleName = jsonRule["rule"];
 
         // Construct the rule container to hold rule information
         // by adding the the key value pairs of the rule
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule);
+        RuleContainer initialContainer;
+        RuleContainer ruleContainer = constructRuleContainer(jsonRule, initialContainer);
         Rule rule(game::matchRuleType(ruleName), ruleContainer);
 
         // Adds rule to game rules
@@ -64,13 +65,16 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
 }
 
 RuleContainer
-GameConverter::constructRuleContainer(const nlohmann::json& jsonRule) {
-    RuleContainer ruleContainer;
-    
+GameConverter::constructRuleContainer(const nlohmann::json& jsonRule, RuleContainer& ruleContainer) {    
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        ruleContainer.add(item.key(), item.value());
+        if (item.value().size() == 1) {
+            ruleContainer.add(item.key(), item.value());
+        } else {
+            // If value contains nested JSON objects, use recursion to construct rule container.
+            constructRuleContainer(item.value(), ruleContainer);
+        }
     }
 
     return ruleContainer;
@@ -134,13 +138,12 @@ game::Variables GameConverter::convertVariables(const nlohmann::json& gameVariab
                 LOG(INFO) << "unsupported valType";
         }
 
-        std::cout << std::get<int>(std::get<game::ListVariant>(stateVariables.getVariable(key))[0]) << std::endl;
+        // std::cout << std::get<int>(std::get<game::ListVariant>(stateVariables.getVariable(key))[0]) << std::endl; ////****
     }
 
     
     
-    // std::cout << std::get<int>(std::get<game::listVariant>(stateVariables.getVariable("winners"))[0]) << std::endl;
+    // std::cout << std::get<int>(std::get<game::listVariant>(stateVariables.getVariable("winners"))[0]) << std::endl; ////****
     std::cout << "\nEnd of convert" << std::endl;
     return stateVariables;
 }
-
