@@ -6,6 +6,8 @@ using game::GlobalMessageRule;
 using game::Shuffle;
 using game::Sort;
 using game::Deal;
+using game::Discard;
+using game::ListAttributes;
 using game::RuleType;
 using game::Timer;
 using game::Add;
@@ -88,6 +90,19 @@ RuleContainer& Deal::getRule()
 
 }
 
+//Discard
+Discard::Discard(RuleContainer& rule)
+{}
+
+RuleContainer& Discard::getRule()
+{}
+
+//ListAttributes
+ListAttributes::ListAttributes(RuleContainer& rule)
+{}
+
+RuleContainer& ListAttributes::getRule()
+{}
 
 //Timer
 Timer::Timer(RuleContainer& rule) 

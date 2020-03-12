@@ -146,7 +146,6 @@ namespace game {
 
         RuleContainer& getRule();
         void setRule(RuleContainer& rule);
-        void discardList(ListName From, ListName To, Count count);
     private:
         Count count;
         ListName From;
