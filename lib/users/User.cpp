@@ -24,11 +24,11 @@ void User::setId(int _id){
     this->id = _id;
 }
 
-int User::getId(){
+int User::getId() const {
     return this->id;
 }
 
-ConnectionID User::getConnectionID(){
+ConnectionID User::getConnectionID() const {
     return this->connectionID;
 }
 
@@ -36,6 +36,6 @@ void User::setUserType(UserType _userType){
     this->userType = _userType;
 }
 
-UserType User::getUserType(){
+UserType User::getUserType() const {
     return this->userType;
 }
