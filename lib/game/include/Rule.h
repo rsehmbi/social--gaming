@@ -102,7 +102,7 @@ namespace game {
         void setRuleContainer(RuleContainer& rule);
 
         // Used for testing and debugging
-        virtual std::string toString();
+        std::string toString();
 
     private:
         RuleContainer ruleContainer;

@@ -190,6 +190,12 @@ TEST_F(ConvertGameRulesTest, Foreach) {
 
     EXPECT_EQ(expectedOutput, rule.toString());
     EXPECT_EQ(RuleType::Foreach, rule.getRuleType());
+
+    auto& nestedRules = rule.getNestedRules();
+    EXPECT_EQ(RuleType::GlobalMessage, nestedRules[0].getRuleType());
+    EXPECT_EQ(RuleType::Foreach, nestedRules[1].getRuleType());
+    EXPECT_EQ(RuleType::Scores, nestedRules[2].getRuleType());
+    
 }
 
 }
