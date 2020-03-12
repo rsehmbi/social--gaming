@@ -9,8 +9,6 @@ add_library(game
     Configurations.cpp 
     Variables.cpp
     Rule.cpp
-    PerPlayer.cpp
-    PerAudience.cpp
 )
 
 target_include_directories(game
