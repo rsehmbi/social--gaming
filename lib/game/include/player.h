@@ -12,7 +12,6 @@ namespace game {
         private:
             PlayerID id;
             std::string name;
-            std::string weapon;
             // std::vector<game::Elements> elements;
     };
 }

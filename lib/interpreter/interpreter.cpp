@@ -139,7 +139,7 @@ void executeExtend(GameState& state, Rule& rule) {
 
 
     //find associated variable with name of the targetVal
-    VariableVariant variable = state.variables.getVariable(targetVal);
+     variable = state.variables.getVariable(targetVal);
     
     //make a copy to modify then write back into variable
     ListVariant variableList = std::get<ListVariant>(variable);

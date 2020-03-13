@@ -18,7 +18,8 @@ using game::Constants;
 using game::Configurations;
 using game::Rule;
 using game::Variables;
-using game::VariableVariant;
+using game::Variable;
+using game::VariableType;
 
 using nlohmann::json;
 //responsible for checking rule inside json 
