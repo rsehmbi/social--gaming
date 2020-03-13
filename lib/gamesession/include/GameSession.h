@@ -73,4 +73,12 @@ class GameSession{
         Configurations configurations;
 
         GameState gameState;
+
+        // create a buffer for player messages.
+
+        // create and hold a timer to handle the timer rules
+
+        // create an interpreter and send messages to the interpreter.
+
+        // check if the messages are comming from the interpreter.
 };

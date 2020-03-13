@@ -61,6 +61,7 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
         gameRules.addRule(rule);
     }
 
+
     return gameRules;
 }
 

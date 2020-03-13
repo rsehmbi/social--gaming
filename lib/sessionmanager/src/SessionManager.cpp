@@ -80,33 +80,30 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
         return;
     }
 
-    // Find the requested game.
-    std::string gameName = message.text.substr(sizeof(CREATE_COMMAND));
-    Game selectedGame;
+    //generate new session id
+    SessionID sessionID = generateID();
 
     try {
+        // Find the requested game.
+        std::string gameName = message.text.substr(sizeof(CREATE_COMMAND));
         Game selectedGame = findSelectedGame(gameName);
+
+        //create new session and map to session id
+        sessionMap.emplace(sessionID, 
+            GameSession{ 
+                sessionID, 
+                connectionID,
+                selectedGame.getConstants(),
+                selectedGame.getGameRules(),
+                selectedGame.getGameState(),      
+                selectedGame.getConfigurations()
+            }
+        );
     } catch (const std::invalid_argument& e){
         LOG(ERROR) << "Caught exception while finding game. " << e.what();  
         outgoing.push_back({{connectionID}, "The game name entered is not available. Please enter a valid name.\n"});
         return ;              
     }
-
-    //generate new session id
-    SessionID sessionID = generateID();
-    
-    //create new session and map to session id
-    sessionMap.emplace(sessionID, 
-        GameSession{ 
-            sessionID, 
-            connectionID,
-            selectedGame.getConstants(),
-            selectedGame.getGameRules(),
-            selectedGame.getGameState(),      
-            selectedGame.getConfigurations()
-        }
-    );
-
 
     //update records and inform connection of status
     connectionSessionMap[connectionID] = sessionID;
