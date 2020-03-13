@@ -3,20 +3,11 @@
 #include <vector>
 #include <variant>
 #include <string>
+#include <Player.h>
 #include <iostream>
 #include <unordered_map>
-#include <utility>
 
 namespace game {
-    using PlayerID = std::variant<int, std::string>;
-
-    enum class VariableType {
-        MapType,
-        ListType,
-        StringType,
-        NumberType,
-        BoolType
-    };
     //From project spec: "Values may themselves be (1) maps from names to values, 
     //(2) lists of values, or (3) literal strings, numbers, or booleans."
 
@@ -27,25 +18,36 @@ namespace game {
 
 
     //add additional data types into variant as needed
-    using VariableVariant = std::variant<ListVariant, std::string, int>; 
+    using VariableVariant = std::variant<ListVariant, std::string, int>;
 
-    using VariablePair = std::pair<VariableVariant, VariableType>; // contains the variable value + that variable type, can be named better
+
+    enum class VariableType {
+        MapType,
+        ListType,
+        StringType,
+        NumberType,
+        BoolType
+    };
 
     class Variables{
         public:
-            VariablePair getVariable(const std::string& variableName) const;
+            VariableVariant getVariable(const std::string& variableName) const;
             VariableType getVariableType(const std::string &varName) const;
             
             template <class T>
             void insertVariable (const std::string& key, const T& val, VariableType valType) {
-                VariablePair variable{val, valType};
-                varMap.emplace(key, variable);
+                varMap.emplace(key, val);
+                varNameTypeMap.emplace(key, valType);
             }
             
             
         private:
             //map of string name given in JSON to a specific variable. Use variant to hold different types
             //*for now just implementing for the rock paper scissor game which only has list variable
-            std::unordered_map<std::string, VariablePair> varMap;
+            std::unordered_map<std::string, VariableVariant> varMap;
+
+            //maps variable name to its type to help rule functions to determine which type it is operating on
+            //eg: "winner" : ListType which means it is a std::vector<variant<...>>
+            std::unordered_map<std::string, VariableType> varNameTypeMap;
     };
 }
