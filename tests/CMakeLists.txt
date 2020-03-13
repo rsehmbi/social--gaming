@@ -7,6 +7,9 @@ enable_testing()
 
 add_executable(runConvertGameRulesTests
     convertGameRulesTests.cpp
+    InterpreterTests.cpp
+        ConfigurationTests.cpp
+
 )
 
 target_link_libraries(runConvertGameRulesTests gameConverter gtest gtest_main)
