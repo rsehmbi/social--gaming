@@ -117,7 +117,7 @@ void GameConverter::addJsonKeyValueToRuleContainer(RuleContainer& ruleContainer,
             break;
         default:
             // If value is not of type string, int, or bool, then produce an error
-            assert("Error: Invalid value type" == 0);
+            //assert("Error: Invalid value type" == 0);
             break;
     }
 
