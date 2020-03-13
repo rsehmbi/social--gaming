@@ -18,7 +18,7 @@ void Interpreter::processRules(json gameRules, json gameData){
     //calls processor to process rule block
 }
 
-void Interpreter::executeReverse(GameState &state, ListName &listName)
+void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
     VariableType variableType = state.variables.getVariableType(listName);
         switch (variableType) {
