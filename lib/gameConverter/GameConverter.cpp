@@ -84,19 +84,17 @@ GameConverter::constructNestedRule(nlohmann::json jsonRule) {
     RuleContainer ruleContainer;
     std::vector<Rule> nestedRules;
 
+    // GameRules is just a wrapper for a vector of rules so we can call convertGameRules
+    // to convert the array of nested rules and then extract the vector
+    auto& nestedJsonRules = jsonRule["rules"];
+    GameRules rules =  GameConverter::convertGameRules(nestedJsonRules);
+    nestedRules = rules.getRules();
+
     // Iterates through all key value pairs in the json rule object
-    // and adds them to the rule container
+    // except for nested rules and adds them to the rule container.
+    jsonRule.erase("rules");
     for (auto& item : jsonRule.items()) {
-        if (item.key() == "rules") {
-            // GameRules is just a wrapper for a vector of rules
-            // so we can call convertGameRules to convert the array
-            // of nested rules and then extract the vector
-            GameRules rules =  GameConverter::convertGameRules(item.value());
-            nestedRules = rules.getRules();
-        } 
-        else {
-            addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
-        }
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
     }
 
     auto& ruleName = jsonRule["rule"];
@@ -107,14 +105,20 @@ GameConverter::constructNestedRule(nlohmann::json jsonRule) {
 void GameConverter::addJsonKeyValueToRuleContainer(RuleContainer& ruleContainer, nlohmann::json key, nlohmann::json value) {
     std::string keyStr = key.get<std::string>();
 
-    if(value.type() == nlohmann::json::value_t::string) {
-        ruleContainer.add(keyStr, value.get<std::string>());
-    }
-    else if(value.type() == nlohmann::json::value_t::number_integer) {
-        ruleContainer.add(keyStr, value.get<int>());
-    }
-    else if(value.type() == nlohmann::json::value_t::boolean) {
-        ruleContainer.add(keyStr, value.get<bool>());
+    switch(value.type()) {
+        case nlohmann::json::value_t::string:
+            ruleContainer.add(keyStr, value.get<std::string>());
+            break;
+        case nlohmann::json::value_t::number_integer:
+            ruleContainer.add(keyStr, value.get<int>());
+            break;
+        case nlohmann::json::value_t::boolean:
+            ruleContainer.add(keyStr, value.get<bool>());
+            break;
+        default:
+            // If value is not of type string, int, or bool, then produce an error
+            assert("Error: Invalid value type" == 0);
+            break;
     }
 
     return;
