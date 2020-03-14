@@ -62,7 +62,7 @@ TEST_F(ConvertGameRulesTest, Scores) {
     // Keys are printed in alphabetic order instead
     // since they are stored in a map
     std::string expectedOutput = 
-        "ascending: false\nrule: scores\nscore: wins\n";
+        "rule: scores\nscore: wins\nascending: false\n";
     
     EXPECT_EQ(expectedOutput, rule.toString());
     EXPECT_EQ(RuleType::Scores, rule.getRuleType());
@@ -109,14 +109,14 @@ TEST_F(ConvertGameRulesTest, Timer) {
     GameRules ruleList = convertGameRules(jsonRule);
     Rule rule = ruleList.getRules().front();
     
-    std::string expectedOutput = "duration: 5\n"
+    std::string expectedOutput = "rule: timer\n"
+        "duration: 5\n"
         "mode: at most\n"
-        "rule: timer\n"
         "rules: \n"
         "{\n"
-        "ascending: false\n"
         "rule: scores\n"
         "score: wins\n"
+        "ascending: false\n"
         "}\n";
 
     EXPECT_EQ(expectedOutput, rule.toString());
@@ -166,16 +166,16 @@ TEST_F(ConvertGameRulesTest, Foreach) {
     GameRules ruleList = convertGameRules(jsonRule);
     Rule rule = ruleList.getRules().front();
 
-    std::string expectedOutput = "element: round\n"
+    std::string expectedOutput = "rule: foreach\n"
         "list: configuration.Rounds.upfrom(1)\n"
-        "rule: foreach\n"
+        "element: round\n"
         "rules: \n"
         "{\n"
         "rule: global-message\n"
         "value: Round {round}. Choose your weapon!\n"
-        "element: weapon\n"
-        "list: weapons\n"
         "rule: foreach\n"
+        "list: weapons\n"
+        "element: weapon\n"
         "rules: \n"
         "{\n"
         "rule: global-message\n"
@@ -183,9 +183,9 @@ TEST_F(ConvertGameRulesTest, Foreach) {
         "rule: global-message\n"
         "value: Waiting for other players to choose weapons...\n"
         "}\n"
-        "ascending: false\n"
         "rule: scores\n"
         "score: wins\n"
+        "ascending: false\n"
         "}\n";
 
     EXPECT_EQ(expectedOutput, rule.toString());
