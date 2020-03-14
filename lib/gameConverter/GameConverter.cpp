@@ -40,7 +40,7 @@ Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
     game::Configurations configs = convertConfigurations(jsonGame["configuration"]);
-    game::GameRules gameRules;// = convertGameRules(jsonGame["rules"]);
+    game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
     game::Constants constants = convertConstants(jsonGame["constants"]);
     game::GameState gameState = convertState(jsonGame["variables"], jsonGame["per-player"], jsonGame["per-audience"]);
 
@@ -177,7 +177,7 @@ void convertVariableHelperJSON(std::shared_ptr<Variable> variablePtr, const nloh
             break;
         }
         default:
-            LOG(INFO) << "unsupported valType, please implement";
+            LOG(ERROR) << "unsupported valType, please implement";
     }
 }
 

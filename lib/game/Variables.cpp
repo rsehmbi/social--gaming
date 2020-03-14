@@ -14,6 +14,9 @@ std::shared_ptr<Variable> Variables::getVariable (const std::string& varName) co
 }
 
 void Variables::createVariable (const std::string& key, std::shared_ptr<Variable> val) {
-        variables.erase(key);
-        variables.emplace(key, std::move(val));
+        if(variables.find(key) != variables.end()){
+            std::cout << "Interal error: key already exists. use getVariable to modify instead" << std::endl;
+        } else{
+            variables.emplace(key, std::move(val));
+        }
 }
