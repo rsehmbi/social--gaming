@@ -6,4 +6,5 @@ add_subdirectory(game)
 add_subdirectory(gamesession)
 add_subdirectory(users)
 add_subdirectory(interpreter)
+add_subdirectory(domainnametranslator)
 

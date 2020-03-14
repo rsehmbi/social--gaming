@@ -6,3 +6,4 @@ set(BINARY tests)
 enable_testing()
 
 add_subdirectory(gameConverterTests)
+add_subdirectory(DomainNameInterpreterTests)
