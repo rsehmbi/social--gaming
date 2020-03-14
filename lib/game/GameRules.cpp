@@ -7,10 +7,9 @@ GameRules::GameRules() {
 }
 
 void GameRules::addRule(Rule& rule) {
-    rules.push_back(rule);
+    rules.push_back(std::move(rule));
 }
 
-// Used for testing only
 const std::vector<Rule>& GameRules::getRules() {
     return rules;
 }

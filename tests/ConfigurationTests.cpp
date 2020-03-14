@@ -9,7 +9,6 @@ TEST(ConfigurationTests, Default_Constructor_Test)
     EXPECT_EQ(configuration.getMaxNoOfPlayers(),0);
     EXPECT_EQ(configuration.getMinNoOfPlayers(),0);
     EXPECT_EQ(configuration.getGameName()," ");
-    EXPECT_EQ(configuration.getGameType()," ");
 }
 
 TEST(ConfigurationTests, Constructor_Test)
