@@ -21,7 +21,7 @@ Messages::addMessage(const Message& message){
 std::vector<Message>
 Messages::popUpdate(){
     std::vector<Message> temp(this->messages);
-    this->messages.empty();
+    this->messages.clear();
     return temp;
 }
 
