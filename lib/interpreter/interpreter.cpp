@@ -125,5 +125,40 @@ void Interpreter::executeTimer(GameState& state, VariableName& value) {
     // TODO: need to build bridge between game execution and server first
 }
 
+//differentiates between type of listVal provided ie: 
+//"players.elements.collect(player, player.weapon == weapon.beats)"
+//or "[a b c d]"
+ListVariant processList(std::string listValue, GameState& state){
+    ListVariant processedList;
+
+    //check for character "(" which means there is operation to be parsed
+    if(listValue.find("(") != std::string::npos){
+        //not sure how to implement this, just hard coding until further information is provided
+        for(Player& player : state.playerList){
+            // if(player.weapon == )
+        }
+    }
+    return processedList;
+}
+
+void executeExtend(GameState& state, Rule& rule) {
+    //get corresponding field names from rule mapping
+    std::map<RuleFields, std::string> info = rule.getRuleContainer().ruleInformation;
+    std::string targetVal = info[RuleFields::target];
+    std::string listVal = info[RuleFields::list];
+
+
+    //find associated variable with name of the targetVal
+     variable = state.variables.getVariable(targetVal);
+    
+    //make a copy to modify then write back into variable
+    ListVariant variableList = std::get<ListVariant>(variable);
+
+    ListVariant providedList = processList(listVal, state);
+
+    variableList.insert(variableList.end(), providedList.begin(), providedList.end());
+
+    state.variables.updateVariable(targetVal, variableList);
+}
 
 

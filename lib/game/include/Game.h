@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#pragma once
 #include "json.hpp"
 
 #include "Configurations.h"

@@ -1,23 +1,22 @@
 #include "Variables.h"
 
+using game::Variable;
 using game::Variables;
-using game::VariableVariant;
 using game::VariableType;
 
 
-VariableVariant Variables::getVariable (const std::string& varName) const {
+std::shared_ptr<Variable> Variables::getVariable (const std::string& varName) const {
     //for debugging, should not happen
-    if(varMap.find(varName) == varMap.end()){
+    if(variables.find(varName) == variables.end()){
         std::cout << "Interal error: invalid variable error" << std::endl;
     }
-
-    return varMap.at(varName);
+    return variables.at(varName);
 }
 
-VariableType Variables::getVariableType(const std::string &varName) const {
-    if(varMap.find(varName) == varMap.end()){
-        std::cout << "Interal error: invalid variable error" << std::endl;
-    }
-    
-    return  varNameTypeMap.at(varName);
+void Variables::createVariable (const std::string& key, std::shared_ptr<Variable> val) {
+        if(variables.find(key) != variables.end()){
+            std::cout << "Interal error: key already exists. use getVariable to modify instead" << std::endl;
+        } else{
+            variables.emplace(key, std::move(val));
+        }
 }
