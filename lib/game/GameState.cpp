@@ -1,13 +1,11 @@
-#ifndef GAME_STATE_H
-#define GAME_STATE_H
+// #include "GameState.h"
 
-#include "GameState.h"
+// using game::GameState;
 
-using game::GameState;
+// GameState::GameState(){
 
-GameState::GameState(){
+//     // TODO : implement constructor.
+// }
 
-    // TODO : implement constructor.
-}
-
-#endif
+// GameState::GameState(const basic_json& var, const basic_json& pPlayer, const basic_json& pAudience):
+//     variables{var}, perPlayer{pPlayer}, perAudience{pAudience}{}
