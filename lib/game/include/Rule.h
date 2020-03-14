@@ -2,10 +2,19 @@
 #pragma once
 
 #include <map>
+#include <variant>
 #include "json.hpp"
 
 namespace game {
     
+    using ListName = std::string;
+    using Mode = std::string ;
+    using VariableName = std::string;
+    using Count = int;
+    using TimerLength = int;
+    using Input = std::string;
+    using Value = std::variant<std::string, int, bool>;
+
     enum class RuleType {
         GlobalMessage,
         Extend,
@@ -23,10 +32,13 @@ namespace game {
         InputVote,
         Message,
         Scores,
+        Foreach,
+        ParallelFor,
+        When,
         Error,
     };
 
-    enum class RuleFields{
+    enum class RuleField{
         rule,
         list,
         element,
@@ -48,22 +60,27 @@ namespace game {
         ascending
     };
 
-    using ListName = std::string;
-    using Mode = std::string ;
-    using VariableName = std::string;
-    using Count = int;
-    using TimerLength = int;
-    using Input = std::string;
+    extern std::unordered_map<game::RuleField, std::string> ruleFieldToString;
+    extern std::unordered_map<std::string, game::RuleField> stringToRuleField;
 
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
+    bool isNestedJsonRule(const nlohmann::json& jsonRule);
 
-    // Type defenition for RuleContaine struct
+    // Type defenition for RuleContainer struct
     struct RuleContainer {
-        std::map<RuleFields, std::string> ruleInformation;
-        RuleContainer* subRules;
+        std::map<RuleField, Value> ruleInformation;
 
-        void add(RuleFields item, std::string value) {
+        void add(RuleField item, Value value) {
             ruleInformation[item] = value;
+        }
+
+        std::string toString() {
+            std::string str = "";
+            for(auto& mapElem : ruleInformation) {
+                str += ruleFieldToString[mapElem.first] + ": " + std::get<std::string>(mapElem.second) + "\n";
+            }
+            
+            return str;
         }
     };
 
@@ -72,29 +89,31 @@ namespace game {
     class Rule {
         public:
 
-            Rule() {
+        Rule() {
             // This constructor is required to be explicity declared
             // because it is called by the constructors of subclasses
-            }
+        }
 
-            Rule(RuleType ruleType, RuleContainer& rule);
+        Rule(RuleType ruleType, RuleContainer& rule);
+        Rule(RuleType ruleType, RuleContainer& rule, std::vector<Rule>& nestedRules);
 
-            RuleType getRuleType() const;
-            
-            const RuleContainer& getRuleContainer() const;
+        RuleType getRuleType() const;
+        
+        const RuleContainer& getRuleContainer() const;
+        const std::vector<Rule>& getNestedRules();
 
-            void setRuleContainer(RuleContainer& rule);
+        void setRuleContainer(RuleContainer& rule);
 
-            static std::unordered_map<RuleFields, std::string> ruleFieldToString;
+        // Used for testing and debugging
+        std::string toString();
 
-            // Used for testing and debugging
-            std::string toString();
+    private:
+        RuleContainer ruleContainer;
+        std::vector<Rule> nestedRules;
 
-        private:
-            RuleType ruleType;
-            RuleContainer ruleContainer;
+        RuleType ruleType;
 
+        bool hasNestedRules;
     };
+
 }
-
-

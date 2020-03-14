@@ -23,7 +23,10 @@ namespace gameConverter{
     
             game::GameRules convertGameRules(const nlohmann::json& jsonRules);
             game::Rule constructRuleObject(const nlohmann::json& jsonRuleName);
-            game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule, game::RuleContainer& ruleContainer);
+            game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
+            game::Rule constructRule(nlohmann::json jsonRule);
+            game::Rule constructNestedRule(nlohmann::json jsonRule);
+            void addJsonKeyValueToRuleContainer(game::RuleContainer& ruleContainer, nlohmann::json key, nlohmann::json value);
     
     
             game::GameState convertState(const nlohmann::json& gameVariables, 
@@ -32,7 +35,7 @@ namespace gameConverter{
     
             game::Variables convertVariables(const nlohmann::json& gameVariables);
 
-            std::unordered_map<std::string, game::RuleFields> ruleFieldMap;
+            
     
     
             friend class ConvertGameRulesTest;

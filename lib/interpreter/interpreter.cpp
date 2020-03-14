@@ -20,25 +20,23 @@ void Interpreter::processRules(json gameRules, json gameData){
 
 void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
-    VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);
         switch (variableType) {
             case VariableType::ListType:
-                std::reverse(std::get<ListVariant>(variableVariant).begin(),
-                std::get<ListVariant>(variableVariant).end());
+                std::reverse(std::get<ListVariant>(state.variables.getVariable(listName)).begin(),
+                             std::get<ListVariant>(state.variables.getVariable(listName)).end());
                 break;
             case VariableType::BoolType:
                 break;
             case VariableType::StringType:
-                std::reverse(std::get <std::string> (variableVariant).begin()
-                ,std::get <std::string> (variableVariant).end());
+                std::reverse(std::get<std::string>(state.variables.getVariable(listName)).begin()
+                ,std::get <std::string> (state.variables.getVariable(listName)).end());
                 break;
             case VariableType::MapType:
                 break;
             case VariableType::NumberType:
                 break;
         }
-
 }
  
 void Interpreter::executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)

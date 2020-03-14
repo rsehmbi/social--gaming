@@ -13,28 +13,7 @@ using game::Variable;
 using game::VariableType;
 using game::RuleType;
 
-GameConverter::GameConverter(){
-    ruleFieldMap["rule"] = game::RuleFields::rule;
-    ruleFieldMap["list"] = game::RuleFields::list;
-    ruleFieldMap["element"] = game::RuleFields::element;
-    ruleFieldMap["rules"] = game::RuleFields::rules;
-    ruleFieldMap["until"] = game::RuleFields::until;
-    ruleFieldMap["cases"] = game::RuleFields::cases;
-    ruleFieldMap["target"] = game::RuleFields::target;
-    ruleFieldMap["from"] = game::RuleFields::from;
-    ruleFieldMap["to"] = game::RuleFields::to;
-    ruleFieldMap["count"] = game::RuleFields::count;
-    ruleFieldMap["roles"] = game::RuleFields::roles;
-    ruleFieldMap["value"] = game::RuleFields::value;
-    ruleFieldMap["duration"] = game::RuleFields::duration;
-    ruleFieldMap["mode"] = game::RuleFields::mode;
-    ruleFieldMap["flag"] = game::RuleFields::flag;
-    ruleFieldMap["prompt"] = game::RuleFields::prompt;
-    ruleFieldMap["result"] = game::RuleFields::result;
-    ruleFieldMap["score"] = game::RuleFields::score;
-    ruleFieldMap["ascending"] = game::RuleFields::ascending;
-        
-}
+GameConverter::GameConverter() {}
 
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
@@ -72,36 +51,81 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     game::GameRules gameRules;
 
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules) { ////**** removed .items()
-        auto& ruleName = jsonRule["rule"];
-
-        // Construct the rule container to hold rule information
-        // by adding the the key value pairs of the rule
-        RuleContainer initialContainer;
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule, initialContainer);
-        Rule rule(game::matchRuleType(ruleName), ruleContainer);
-
+    for(auto& jsonRule: jsonRules) {
+        Rule rule;
+        if(game::isNestedJsonRule(jsonRule)) {
+            rule = constructNestedRule(jsonRule);
+        }
+        else {
+            rule = constructRule(jsonRule);
+        }
+    
         // Adds rule to game rules
         gameRules.addRule(rule);
     }
 
+
     return gameRules;
 }
 
-RuleContainer
-GameConverter::constructRuleContainer(const nlohmann::json& jsonRule, RuleContainer& ruleContainer) {    
+Rule
+GameConverter::constructRule(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        if (item.value().size() == 1) {
-            ruleContainer.add(ruleFieldMap[item.key()], item.value());
-        } else {
-            // If value contains nested JSON objects, use recursion to construct rule container.
-            constructRuleContainer(item.value(), ruleContainer);
-        }
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
     }
 
-    return ruleContainer;
+    auto& ruleName = jsonRule["rule"];
+    Rule rule(game::matchRuleType(ruleName), ruleContainer);
+    return rule;
+}
+
+Rule
+GameConverter::constructNestedRule(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+    std::vector<Rule> nestedRules;
+
+    // GameRules is just a wrapper for a vector of rules so we can call convertGameRules
+    // to convert the array of nested rules and then extract the vector
+    auto& nestedJsonRules = jsonRule["rules"];
+    GameRules rules =  GameConverter::convertGameRules(nestedJsonRules);
+    nestedRules = rules.getRules();
+
+    // Iterates through all key value pairs in the json rule object
+    // except for nested rules and adds them to the rule container.
+    jsonRule.erase("rules");
+    for (auto& item : jsonRule.items()) {
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
+    }
+
+    auto& ruleName = jsonRule["rule"];
+    Rule rule(game::matchRuleType(ruleName), ruleContainer, nestedRules);
+    return rule;
+}
+
+void GameConverter::addJsonKeyValueToRuleContainer(RuleContainer& ruleContainer, nlohmann::json jsonKey, nlohmann::json value) {
+    game::RuleField key = game::stringToRuleField[jsonKey];
+
+    switch(value.type()) {
+        case nlohmann::json::value_t::string:
+            ruleContainer.add(key, value.get<std::string>());
+            break;
+        case nlohmann::json::value_t::number_integer:
+            ruleContainer.add(key, value.get<int>());
+            break;
+        case nlohmann::json::value_t::boolean:
+            ruleContainer.add(key, value.get<bool>());
+            break;
+        default:
+            // If value is not of type string, int, or bool, then produce an error
+            //assert("Error: Invalid value type" == 0);
+            break;
+    }
+
+    return;
 }
 
 Constants 

@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <player.h>
+#include <Player.h>
 #include <iostream>
 #include <unordered_map>
 #include <memory>
