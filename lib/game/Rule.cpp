@@ -2,16 +2,49 @@
 
 using game::Rule;
 using game::RuleContainer;
-using game::GlobalMessageRule;
-using game::Shuffle;
-using game::Sort;
-using game::Deal;
+// using game::GlobalMessageRule;
+// using game::Shuffle;
+// using game::Sort;
+// using game::Deal;
 using game::RuleType;
-using game::Timer;
-using game::Add;
-using game::InputChoice;
-using game::InputText;
-using game::InputVote;
+// using game::Timer;
+// using game::Add;
+// using game::InputChoice;
+// using game::InputText;
+// using game::InputVote;
+
+    std::unordered_map<game::RuleField, std::string> game::ruleFieldToString = {
+        {RuleField::rule, "rule"},
+        {RuleField::value, "value"},
+        {RuleField::score, "score"},
+        {RuleField::ascending, "ascending"},
+        {RuleField::to, "to"},
+        {RuleField::duration, "duration"},
+        {RuleField::mode, "mode"},
+    };
+
+    std::unordered_map<std::string, game::RuleField> game::stringToRuleField = {
+        {"rule", RuleField::rule},
+        {"rule", RuleField::rule},
+        {"list", RuleField::list},
+        {"element", RuleField::element},
+        {"rules", RuleField::rules},
+        {"until", RuleField::until},
+        {"cases", RuleField::cases},
+        {"target", RuleField::target},
+        {"from", RuleField::from},
+        {"to", RuleField::to},
+        {"count", RuleField::count},
+        {"roles", RuleField::roles},
+        {"value", RuleField::value},
+        {"duration", RuleField::duration},
+        {"mode", RuleField::mode},
+        {"flag", RuleField::flag},
+        {"prompt", RuleField::prompt},
+        {"result", RuleField::result},
+        {"score", RuleField::score},
+        {"ascending", RuleField::ascending},
+    };
 
 Rule::Rule(RuleType ruleType, RuleContainer& ruleContainer) : ruleType(ruleType), ruleContainer(ruleContainer) {
     hasNestedRules = false;
@@ -98,80 +131,3 @@ bool game::isNestedJsonRule(const nlohmann::json& jsonRule) {
     bool isNested = (it != jsonRule.items().end());
     return isNested;
 }
-
-//Shuffle
-Shuffle::Shuffle(RuleContainer& rule)
-{
-
-}
-
-RuleContainer& Shuffle::getRule()
-{
-
-}
-
-//Sort 
-Sort::Sort(RuleContainer& rule)
-{
-
-}
-
-RuleContainer& Sort::getRule()
-{
-
-}
-
-
-//Deal
-Deal::Deal(RuleContainer& rule)
-{
-
-}
-
-RuleContainer& Deal::getRule()
-{
-
-}
-
-
-//Timer
-Timer::Timer(RuleContainer& rule) 
-{
-
-}
-RuleContainer& Timer::getRule()
-{
-
-}
-
-//Add
-Add::Add(RuleContainer& rule) 
-{
-
-}
-RuleContainer& Add::getRule()
-{
-
-}
-
-//InputChoice
-InputChoice::InputChoice(RuleContainer& rule) 
-{}
-
-RuleContainer& InputChoice::getRule()
-{}
-
-//InputText
-InputText::InputText(RuleContainer& rule) 
-{}
-
-RuleContainer& InputText::getRule()
-{}
-
-//InputVote
-InputVote::InputVote(RuleContainer& rule) 
-{}
-
-RuleContainer& InputVote::getRule()
-{}
-
