@@ -5,7 +5,13 @@
 using game::Configurations;
 
 Configurations::Configurations()
-{}
+{
+   this-> gameName = " ";
+   this->audience = false;
+   this-> minNoOfPlayers = 0;
+   this-> maxNoOfPlayers = 0;
+   this->gameType = " ";
+}
 
 Configurations::Configurations(std::string gameName,bool audience,int minNoOfPlayers,int maxNoOfPlayers):
 gameName(gameName),audience(audience),minNoOfPlayers(minNoOfPlayers),maxNoOfPlayers(maxNoOfPlayers){

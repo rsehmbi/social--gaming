@@ -1,3 +1,6 @@
+#ifndef MESSAGES_H
+#define MESSAGES_H
+
 #include<iostream>
 #include<vector>
 
@@ -14,8 +17,10 @@ class Messages{
         Messages();
         const std::vector<Message> getMessages();
         void addMessage(const Message& message);
-        std::vector<Message> getUpdate(); // only return updated messages
+        std::vector<Message> popUpdate(); //return message list and empty it 
     private:
         std::vector<Message> messages;
 };
 }
+
+#endif
