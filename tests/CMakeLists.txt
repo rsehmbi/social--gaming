@@ -12,6 +12,13 @@ add_executable(runConvertGameRulesTests
 
 )
 
+add_executable(runDomainInterpreterTests
+    DomainNameInterpreterTests/DomainNameTests.cpp
+)
+
 target_link_libraries(runConvertGameRulesTests gameConverter gtest gtest_main)
+target_link_libraries(runDomainInterpreterTests domainnametranslator gtest gtest_main)
+
 add_test(NAME convertGameRulesTests COMMAND runConvertGameRulesTests)
+add_test(NAME DomainNameInterpreterTests COMMAND runDomainInterpreterTests)
 
