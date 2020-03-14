@@ -20,25 +20,23 @@ void Interpreter::processRules(json gameRules, json gameData){
 
 void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
-    VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);
         switch (variableType) {
             case VariableType::ListType:
-                std::reverse(std::get<ListVariant>(variableVariant).begin(),
-                std::get<ListVariant>(variableVariant).end());
+                std::reverse(std::get<ListVariant>(state.variables.getVariable(listName)).begin(),
+                             std::get<ListVariant>(state.variables.getVariable(listName)).end());
                 break;
             case VariableType::BoolType:
                 break;
             case VariableType::StringType:
-                std::reverse(std::get <std::string> (variableVariant).begin()
-                ,std::get <std::string> (variableVariant).end());
+                std::reverse(std::get<std::string>(state.variables.getVariable(listName)).begin()
+                ,std::get <std::string> (state.variables.getVariable(listName)).end());
                 break;
             case VariableType::MapType:
                 break;
             case VariableType::NumberType:
                 break;
         }
-
 }
  
 void Interpreter::executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
@@ -127,40 +125,5 @@ void Interpreter::executeTimer(GameState& state, VariableName& value) {
     // TODO: need to build bridge between game execution and server first
 }
 
-void Interpreter::executeInputChoice(const Constants &constants, GameSession& session, Input& to, Input& prompt, 
-                                        Input& choices, Input& result, Count& timeout){
-    std::optional<Count> isTimeOut= timeout;
-    if (!isTimeOut){
-        for (auto player: session.getPlayers()){
-            if (player.getName==to){
-                session.msgConnection(player.getConnectionID, prompt);
-            }
-            //otherwise do nothing
-        }
-        /*
-        std::vector<game::Player>::iterator it=std::find_if(
-            state.playerList.begin(), state.playerList.end(), 
-            [](const game::Player& i, Input& to) {return true;});//i.getConnectionID()==to.getConnectionID();};
-        //PlayerID connection = state.playerList.getVariable(toVariable); 
-        session.msgConnection(it.getConnectionID(), prompt);
-
-/*
-GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
-    outMsgs.push_back({target, msg});
-}
-*/
-
-    }
-    else{
-        //TimeoutRoute
-    }
-}
 
 
-/*
- Input to;
-        Input prompt;
-        Input choices;
-        Input result;
-        Count timeout;
-*/

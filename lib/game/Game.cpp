@@ -12,8 +12,8 @@ Game::Game()
 
 }
 
-Game::Game(Configurations& configurations, GameRules& gameRules, 
-    Constants& constants, GameState& gameState)
+Game::Game(Configurations configurations, GameRules gameRules, 
+    Constants constants, GameState gameState)
     :   m_configurations(std::move(configurations)),
         m_gameRules(std::move(gameRules)),
         m_constants(std::move(constants)),
@@ -31,12 +31,12 @@ Game::getConfigurations() const{
     return m_configurations;
 }
 
-GameRules 
+GameRules&
 Game::getGameRules() {
     return m_gameRules;
 }
 
-Constants 
+Constants&
 Game::getConstants() {
     return m_constants;
 }
