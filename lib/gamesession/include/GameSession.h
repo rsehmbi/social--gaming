@@ -18,6 +18,12 @@ using game::GameRules;
 using game::Constants;
 using game::Configurations;
 
+enum NewUserType {
+    Default,
+    Player,
+    Audience
+};
+
 class GameSession{
 
     public:
@@ -37,7 +43,7 @@ class GameSession{
         void disconnect(const ConnectionID& cid);
         
         //add user to game session
-        void connect(const ConnectionID& cid);
+        void connect(const ConnectionID& cid, const NewUserType newUserType);
 
         // Filters the users that are players.
         std::vector<user::User> getPlayers();

@@ -31,6 +31,8 @@ enum class CommandType {
     NotACommand,
     Create,
     Join,
+    JoinAudince,
+    JoinPlayer
 };
 
 //a wrapper class to map command strings to CommandType to better accomodate future changes 
@@ -99,7 +101,7 @@ class SessionManager {
         void createSession(const ConnectionID& id, const Message& message);
 
         //join a session
-        void joinSession(const ConnectionID& connectionID, const SessionID& sessionID);
+        void joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID);
 
         //generate a session id for session creation
         std::string generateID();

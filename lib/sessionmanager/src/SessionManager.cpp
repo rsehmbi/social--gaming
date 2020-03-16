@@ -11,6 +11,8 @@
 #define SESSION_ID_LEN 10
 #define CREATE_COMMAND "/create"
 #define JOIN_COMMAND "/join"
+#define JOIN_PLAYER_COMMAND "/join_player"
+#define JOIN_AUDIENCE_COMMAND "/join_audience"
 
 
 //----------Session Manager Class----------------------
@@ -34,17 +36,21 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
 
         switch(command) {
             case CommandType::Create:
-            {
                 createSession(message.connection.id, message);
-                //console debugging message
-                std::cout << "Request for create.\n";
+                LOG(INFO) << "Request for create.\n";
                 break;
-            }
             case CommandType::Join:
-                joinSession(message.connection.id, commandChecker.getArgument());
-                //console debugging message
-                std::cout << "Request for join.\n";
+                joinSession(message.connection.id, command, commandChecker.getArgument());
+                LOG(INFO) << "Request for join.\n";
                 break;
+            case CommandType::JoinPlayer:
+                joinSession(message.connection.id, command, commandChecker.getArgument());
+                LOG(INFO) << "Request to join as player.";
+                break;
+            case CommandType::JoinAudince:
+                joinSession(message.connection.id, command, commandChecker.getArgument());
+                LOG(INFO) << "Request to join as an audience";
+                break;    
             default:
                 sortMessage(message);
         }
@@ -114,7 +120,7 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
     return;
 }
 
-void SessionManager::joinSession(const ConnectionID& connectionID, const SessionID& sessionID) {
+void SessionManager::joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID) {
     
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
@@ -122,20 +128,24 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Session
                             "You are already in a session. Open a new connection to join another session.\n"});
         return;
     }
+
     //check if sessionID exists
     if(sessionMap.find(sessionID) == sessionMap.end()){
         outgoing.push_back({{connectionID}, "Invalid session ID\n"});
         return;
     }
-
-    //update records and inform connection of status
-    connectionSessionMap[connectionID] = sessionID;
-    std::ostringstream outStr;
-    outStr << "Connected to session: " << sessionID << "\n";
-    outgoing.push_back({{connectionID}, outStr.str()});
     
-    //tell the session object to add connection to its record
-    sessionMap.at(sessionID).connect(connectionID);
+    // Find the userType for the new user from the command.
+    NewUserType userType;
+    if (command == CommandType::JoinAudince)
+        userType = NewUserType::Default;
+    else if (command == CommandType::JoinPlayer)
+        userType = NewUserType::Player;
+    else if (command == CommandType::JoinPlayer)
+        userType = NewUserType::Audience;
+    
+    // Tell the session add the user as a client of selected userType.
+    sessionMap.at(sessionID).connect(connectionID, userType);
     return;
 }
 
@@ -186,29 +196,6 @@ std::string SessionManager::getGamesList(){
     return gamePrompt + availableGamesPrompt;
 }
 
-//----------------CommandChecker Class---------------------
-
-
-CommandChecker::CommandChecker(){
-    commandMap[CREATE_COMMAND] = CommandType::Create;
-    commandMap[JOIN_COMMAND] = CommandType::Join;
-}
-
-//checks first word of string and returns CommandType and updates argument accordingly
-CommandType CommandChecker::checkString(const Message& message){
-    argument = "";
-    std::istringstream iss(message.text);
-    std::string firstWord;
-    iss >> firstWord;
-    if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
-    iss >> argument;
-    return commandMap[firstWord];
-}
-
-std::string CommandChecker::getArgument(){
-    return argument;
-}
-
 std::vector <std::string> 
 SessionManager::getAvailableGamesNames(){
     std::vector<std::string> gameNames;
@@ -231,4 +218,29 @@ SessionManager::findSelectedGame(std::string gameName){
     } 
 
     return iter->game;
+}
+
+//----------------CommandChecker Class---------------------
+
+
+CommandChecker::CommandChecker(){
+    commandMap[CREATE_COMMAND] = CommandType::Create;
+    commandMap[JOIN_COMMAND] = CommandType::Join;
+    commandMap[JOIN_PLAYER_COMMAND] = CommandType::JoinPlayer;
+    commandMap[JOIN_AUDIENCE_COMMAND] = CommandType::JoinAudince;
+}
+
+//checks first word of string and returns CommandType and updates argument accordingly
+CommandType CommandChecker::checkString(const Message& message){
+    argument = "";
+    std::istringstream iss(message.text);
+    std::string firstWord;
+    iss >> firstWord;
+    if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
+    iss >> argument;
+    return commandMap[firstWord];
+}
+
+std::string CommandChecker::getArgument(){
+    return argument;
 }

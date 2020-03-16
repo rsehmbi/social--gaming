@@ -5,6 +5,7 @@
 #include <iostream>
 
 
+static const std::string MSG_NO_ROOM_FOR_PLAYER = "No room for a new player";
 
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
@@ -76,19 +77,34 @@ GameSession::disconnect(const ConnectionID& cid){
         [&cid] (User& user) {return user.getConnectionID() == cid;})
     );
 }
-
+// TODO: fix this function.
 void 
-GameSession::connect(const ConnectionID& cid){
+GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
     if (cid == owner.getConnectionID())
         return ;
 
-    // Max players allowed. if the number of session users is more than
-    // this they will be added as audience.
     int maxPlayersAllowed = configurations.getMaxNoOfPlayers();
 
-    UserType userType = getUserCountWithType(UserType::Player) < maxPlayersAllowed 
-        ? UserType::Player : UserType::Audience;
-
+    // Find the userType of the new connection.
+    UserType userType;
+    if (newUserType == NewUserType::Default) {
+        // Max players allowed. if the number of session users is more than
+        // this they will be added as audience.
+        userType = getUserCountWithType(UserType::Player) < maxPlayersAllowed 
+            ? UserType::Player : UserType::Audience;
+    } else if (newUserType == NewUserType::Player) {
+        int playerCount = getUserCountWithType(UserType::Player);
+        if (playerCount < maxPlayersAllowed ){
+            userType = UserType::Player;
+        } else {
+            // if no new player can be added, show an error message to the user.
+            msgConnection(cid, MSG_NO_ROOM_FOR_PLAYER);
+            return ;
+        }
+    } else if (newUserType == NewUserType::Audience) {
+        userType = UserType::Audience;
+    }
+            
     User user {"", getUserCountWithType(userType) + 1, cid, userType};
     sessionUsers.push_back(user);
 
@@ -96,9 +112,13 @@ GameSession::connect(const ConnectionID& cid){
     std::string userTypeStr = UserType::Player == userType ? "Player" : "Audience";
     std::ostringstream stream;
     stream << userTypeStr << " joined with id " << cid;
-    std::string message = stream.str();
     msgConnection(owner.getConnectionID(), stream.str());
-    LOG(INFO) << stream.str();
+
+    // Send message to client to inform connection status
+    stream.str("");
+    stream.clear();
+    stream << "Connected to session: " << sessionID << "\n";
+    msgConnection(cid, stream.str());
 }
 
 std::vector<User> 
