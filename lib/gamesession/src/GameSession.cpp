@@ -15,16 +15,17 @@ GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Con
         owner{User {"", -1, ownerConnectionId, UserType::Owner} },
         constants(_constants), 
         rules(_rules),
-        gameState(_gameState),
-        configurations(_configurations)
+        configurations(_configurations),
+        gameState(_gameState)
 {   
     sessionUsers.push_back(owner);
     LOG(INFO) << "Session created with id: " << sessionID;
 }
 
 MessageBatch
-GameSession::processGameTurn(const MessageBatch& inMsgs){
+GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpreter> interpreter){
     MessageBatch msgBuffer;
+    interpreter->setCurrentGameSession(this);
 
     //-----------perform game turn-------
 
@@ -39,11 +40,22 @@ GameSession::processGameTurn(const MessageBatch& inMsgs){
     std::transform(std::make_move_iterator(outMsgs.begin()), 
         std::make_move_iterator(outMsgs.end()),
         std::back_inserter(msgBuffer), 
-        [](auto&& msg) { return msg; });
+        [](auto&& msg) { return std::move(msg); }
+    );
+    
     outMsgs.clear();
 
     //-----------end of perform game turn-------
     return msgBuffer;
+}
+
+// This is a function to test the communication from interpreter to game session.
+// TODO: needs to be refactored.
+void 
+GameSession::messageAllClients() {
+    msgConnectionsOfType(UserType::Audience, "This is an audience");
+    msgConnectionsOfType(UserType::Player, "This is a player");
+    msgConnectionsOfType(UserType::Owner, "This is the owner");
 }
 
 void 
@@ -77,7 +89,7 @@ GameSession::disconnect(const ConnectionID& cid){
         [&cid] (User& user) {return user.getConnectionID() == cid;})
     );
 }
-// TODO: fix this function.
+
 void 
 GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
     if (cid == owner.getConnectionID())
@@ -86,7 +98,7 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
     int maxPlayersAllowed = configurations.getMaxNoOfPlayers();
 
     // Find the userType of the new connection.
-    UserType userType;
+    UserType userType = UserType::Player;
     if (newUserType == NewUserType::Default) {
         // Max players allowed. if the number of session users is more than
         // this they will be added as audience.
@@ -100,14 +112,14 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
             // if no new player can be added, show an error message to the user.
             msgConnection(cid, MSG_NO_ROOM_FOR_PLAYER);
             return ;
-        }
+        } 
     } else if (newUserType == NewUserType::Audience) {
         userType = UserType::Audience;
     }
             
     User user {"", getUserCountWithType(userType) + 1, cid, userType};
     sessionUsers.push_back(user);
-
+    
     // Send messgae to owner informing a new user in session.
     std::string userTypeStr = UserType::Player == userType ? "Player" : "Audience";
     std::ostringstream stream;

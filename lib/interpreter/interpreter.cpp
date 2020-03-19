@@ -9,6 +9,13 @@ using interpreter::Interpreter;
 using namespace game;
 using namespace std;
 
+Interpreter::Interpreter () {
+}
+
+void 
+Interpreter::setCurrentGameSession(GameSessionInterface* session){
+    session->messageAllClients();
+}
 
 void Interpreter::processRules(json gameRules, json gameData){
     json ruleBlock = getNextRuleBlock(gameRules);

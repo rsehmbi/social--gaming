@@ -7,6 +7,7 @@ add_library(interpreter
 
 target_link_libraries(interpreter 
     game
+    gameSessionInterface
 )
 
 target_include_directories(interpreter

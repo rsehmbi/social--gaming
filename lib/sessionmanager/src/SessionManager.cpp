@@ -19,6 +19,7 @@
 SessionManager::SessionManager() : 
     generator(std::chrono::high_resolution_clock::now().time_since_epoch().count())
 {
+    interpreter = std::make_unique<Interpreter>();
     gamePrompt = "\nTo create a game use /create {Game name}.\n"
         "To join existing game use /join {Session ID}."
         "\n\nThe server supports following games:\n";
@@ -56,16 +57,18 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
         }
         
     }
+
     //Send sorted messages out to sessions. Since server execution is sequential, control is also passed
     //to each session to execute its game turn
     for(auto& pair : sessionMap){
         //first = session ID, second = session object
         //Pass session messages to each session and append (by moving) session output messages
         //to outgoing messages for server to send
-        MessageBatch sessionOut = pair.second.processGameTurn(msgsForSession[pair.first]);
+        MessageBatch& inMessages = msgsForSession[pair.first];
+        GameSession& session = pair.second; 
+        MessageBatch sessionOut = session.processGameTurn(inMessages, interpreter);
         outgoing.insert(outgoing.end(), sessionOut.begin(), sessionOut.end());
     }
-  
 }
 
 void SessionManager::sortMessage(const Message& message){

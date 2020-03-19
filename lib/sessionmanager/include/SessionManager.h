@@ -9,10 +9,12 @@
 #include <random>
 #include <GameSession.h>
 #include "Game.h"
+#include <interpreter.h>
 
 using networking::Message;
 using networking::Connection;
 using game::Game;
+using interpreter::Interpreter;
 
 // struct to store the game and gameName to easily excess the gameName
 // when creating a new game.
@@ -122,5 +124,7 @@ class SessionManager {
 
         // Find game from available games using the game.
         Game& findSelectedGame(std::string gameName);
+
+        std::shared_ptr<Interpreter> interpreter;
 };
 

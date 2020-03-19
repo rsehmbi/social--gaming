@@ -5,6 +5,7 @@
 #include "../../jsonReader/include/dsl.h"
 #include "json.hpp"
 #include "Game.h"
+#include "GameSessionInterface.h"
 
 using game::ListName;////****
 using game::Mode;
@@ -28,6 +29,8 @@ namespace interpreter{
 
     class Interpreter{
     private:
+
+        const std::unique_ptr<GameSessionInterface> mSession;
         json gameRules;
         json gameData;  
 
@@ -36,6 +39,10 @@ namespace interpreter{
         
     
     public:
+
+        Interpreter();
+
+        void setCurrentGameSession(GameSessionInterface* session);
         void executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);

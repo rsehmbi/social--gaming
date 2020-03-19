@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../lib/interpreter/include/interpreter.h"
+#include "interpreter.h"
 
 using interpreter::Interpreter;
 
