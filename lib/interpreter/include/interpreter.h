@@ -36,15 +36,17 @@ namespace interpreter{
         
     
     public:
-        void executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeDeal(GameState &state, const Constants &constants,
-                Configurations &configurations, Count count, ListName &from, ListName &to);
+        void executeReverse(GameState &state, Rule& rule);
+        void executeExtend(GameState &state, Rule& rule);
+        // void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
+        // void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
+        // void executeDeal(GameState &state, const Constants &constants,
+        //         Configurations &configurations, Count count, ListName &from, ListName &to);
 
-        void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
-        void executeTimer(GameState &state, VariableName& value);
+        // void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
+        // void executeTimer(GameState &state, VariableName& value);
         void processRules(json gameRules, json gameData);
+        
     };
 }
 
