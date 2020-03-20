@@ -34,7 +34,8 @@ enum class CommandType {
     Create,
     Join,
     JoinAudince,
-    JoinPlayer
+    JoinPlayer,
+    StartGame
 };
 
 //a wrapper class to map command strings to CommandType to better accomodate future changes 
@@ -98,6 +99,9 @@ class SessionManager {
 
         //directs message to session
         void sortMessage(const Message& message);
+
+        // try to start the game if the owner has given the command to start game.
+        void startGame(const ConnectionID& connectionID);
 
         //create a new session
         void createSession(const ConnectionID& id, const Message& message);

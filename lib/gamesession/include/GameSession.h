@@ -55,10 +55,15 @@ class GameSession : public GameSessionInterface {
         //add user to game session
         void connect(const ConnectionID& cid, const NewUserType newUserType);
 
+        // start the game if the conditions are met.
+        void startGame(const ConnectionID& cid);
+        
         // Filters the users that are players.
         std::vector<user::User> getPlayers();
 
     private:
+
+        bool gameStarted;
 
         SessionID sessionID;
 

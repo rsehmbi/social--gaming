@@ -19,21 +19,33 @@ GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Con
         gameState(_gameState)
 {   
     sessionUsers.push_back(owner);
+    gameStarted = false;
     LOG(INFO) << "Session created with id: " << sessionID;
 }
 
 MessageBatch
 GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpreter> interpreter){
     MessageBatch msgBuffer;
-    interpreter->setCurrentGameSession(this);
+    
+     /* 
+            Game starts only when the owner of the game starts the game.
+            this statements checks at evry rick if the game has started.
+            If the game cannot be started but the user wants to start the game
+            show an error message to the user.
+        */
+    if (gameStarted) { 
+        interpreter->setCurrentGameSession(this);
 
-    //-----------perform game turn-------
+        //-----------perform game turn-------
 
-    //FOR TESTING: send msg back to each player
-    for(auto& msg : inMsgs){
-        std::ostringstream out;
-        out << msg.connection.id << "> " << msg.text << "\n";
-        msgBuffer.push_back({{msg.connection.id}, out.str()});
+        //FOR TESTING: send msg back to each player
+        for(auto& msg : inMsgs){
+            std::ostringstream out;
+            out << msg.connection.id << "> " << msg.text << "\n";
+            msgBuffer.push_back({{msg.connection.id}, out.str()});
+        }
+
+        //-----------end of perform game turn-------
     }
 
     // send all the incoming messages out in the current tick.
@@ -42,10 +54,8 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
         std::back_inserter(msgBuffer), 
         [](auto&& msg) { return std::move(msg); }
     );
-    
     outMsgs.clear();
 
-    //-----------end of perform game turn-------
     return msgBuffer;
 }
 
@@ -122,6 +132,28 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
     stream.clear();
     stream << "Connected to session: " << sessionID << "\n";
     msgConnection(cid, stream.str());
+}
+
+void 
+GameSession::startGame(const ConnectionID& cid){
+    if (cid == owner.getConnectionID()){
+        if (getUserCountWithType(UserType::Player) >= configurations.getMinNoOfPlayers()){
+            gameStarted = true;
+            std::string msg = "Game started";
+            msgConnection(cid, msg);
+        } else {
+            std::ostringstream stream;
+            stream << "Error starting the game. Minimum number of players needed: "
+                << configurations.getMinNoOfPlayers();
+            std::string errorMsg = stream.str();
+            LOG(INFO) << errorMsg;
+            msgConnection(cid, errorMsg);
+        }
+    } else {
+        std::string errorMsg = "Error starting the game. Only the owner can start the game";
+        LOG(INFO) << errorMsg;
+        msgConnection(cid, errorMsg);
+    }
 }
 
 std::vector<User> 

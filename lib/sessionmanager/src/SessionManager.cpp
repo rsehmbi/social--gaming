@@ -13,6 +13,10 @@
 #define JOIN_COMMAND "/join"
 #define JOIN_PLAYER_COMMAND "/join_player"
 #define JOIN_AUDIENCE_COMMAND "/join_audience"
+#define START_GAME_COMMAND "/start"
+
+// Messages to clients
+#define START_GAME_MESSGAGE "When ready, use /start command to start game."
 
 
 //----------Session Manager Class----------------------
@@ -21,8 +25,10 @@ SessionManager::SessionManager() :
 {
     interpreter = std::make_unique<Interpreter>();
     gamePrompt = "\nTo create a game use /create {Game name}.\n"
-        "To join existing game use /join {Session ID}."
-        "\n\nThe server supports following games:\n";
+        "To join an existing game use /join {Session ID}.\n"
+        "To join an existing game as a player use /join_player {Session ID}.\n"
+        "To join an existing game as an audience use /join_audience {Session ID}.\n"
+        "\nThe server supports following games:\n";
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
@@ -51,11 +57,14 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
             case CommandType::JoinAudince:
                 joinSession(message.connection.id, command, commandChecker.getArgument());
                 LOG(INFO) << "Request to join as an audience";
+                break; 
+            case CommandType::StartGame:
+                startGame(message.connection.id);
+                LOG(INFO) << "Request to start a game";
                 break;    
             default:
                 sortMessage(message);
         }
-        
     }
 
     //Send sorted messages out to sessions. Since server execution is sequential, control is also passed
@@ -118,9 +127,24 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Session created. Session ID: " << sessionID << "\n";
+    outStr << START_GAME_MESSGAGE << "\n";
     outgoing.push_back({{connectionID}, outStr.str()});
 
     return;
+}
+
+void SessionManager::startGame(const ConnectionID& cid){
+    //check if sessionID exists
+    auto sessionIt = connectionSessionMap.find(cid);
+    if(sessionIt == connectionSessionMap.end()){
+        outgoing.push_back({{cid}, "Create a session first\n"});
+        return;
+    }
+
+    SessionID sessionId = sessionIt->second;
+
+    // Tell the session to start the game.
+    sessionMap.at(sessionId).startGame(cid);
 }
 
 void SessionManager::joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID) {
@@ -231,6 +255,7 @@ CommandChecker::CommandChecker(){
     commandMap[JOIN_COMMAND] = CommandType::Join;
     commandMap[JOIN_PLAYER_COMMAND] = CommandType::JoinPlayer;
     commandMap[JOIN_AUDIENCE_COMMAND] = CommandType::JoinAudince;
+    commandMap[START_GAME_COMMAND] = CommandType::StartGame;
 }
 
 //checks first word of string and returns CommandType and updates argument accordingly
