@@ -17,6 +17,7 @@ using game::Input;////****
 using game::GameState;
 using game::Constants;
 using game::Configurations;
+using game::GameRules;
 using game::Rule;
 using game::Variables;
 using game::Variable;
@@ -30,7 +31,15 @@ namespace interpreter{
     class Interpreter{
     private:
 
-        GameSessionInterface* mSession;
+        const GameSessionInterface* mSession;
+
+        CurrentGameState* gameState;
+
+        const Constants* constants;
+
+        const GameRules* rules;
+
+
         json gameRules;
         json gameData;  
 
@@ -42,7 +51,8 @@ namespace interpreter{
 
         Interpreter();
 
-        void setCurrentGameSession(GameSessionInterface* session);
+        void setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* gameState, 
+            const Constants* constatnts, const GameRules* rules);
 
         void executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);

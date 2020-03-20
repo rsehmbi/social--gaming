@@ -13,8 +13,12 @@ Interpreter::Interpreter () {
 }
 
 void 
-Interpreter::setCurrentGameSession(GameSessionInterface* session){
+Interpreter::setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* _gameState, 
+    const Constants* _constants, const GameRules* _rules){
     mSession = session;
+    gameState = _gameState;
+    constants = _constants;
+    rules = _rules;
 }
 
 void Interpreter::processRules(json gameRules, json gameData){

@@ -35,7 +35,7 @@ class GameSession : public GameSessionInterface {
         //Initialized by the session manager, session manager will pass 
         //in game type argument containing game information
         GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-            const GameRules& _rules, GameState _gameState, Configurations _configurations);
+            const GameRules& _rules, const GameState& _gameState, Configurations _configurations);
         
         //Entry point for session manager to pass execution to a game session.
         //Session manager passes the messages from clients of this session to processGameTurn

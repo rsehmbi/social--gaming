@@ -10,7 +10,7 @@ static const std::string MSG_NO_ROOM_FOR_PLAYER = "No room for a new player";
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
 GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-    const GameRules& _rules, GameState _gameState, Configurations _configurations)
+    const GameRules& _rules, const GameState& _gameState, Configurations _configurations)
     :   constants(_constants), 
         rules(_rules),
         configurations(_configurations),
@@ -29,12 +29,11 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
     
      /* 
         Game starts only when the owner of the game starts the game.
-        this statements checks at evry rick if the game has started.
-        If the game cannot be started but the user wants to start the game
-        show an error message to the user.
+        This set of statements checks at every tick if the game has started
+        and process the rules only if the game has started.
     */
     if (gameStarted) { 
-        interpreter->setCurrentGameSession(this);
+        interpreter->setCurrentGameSession(this, &currentState, &constants, &rules);
 
         //-----------perform game turn-------
 
