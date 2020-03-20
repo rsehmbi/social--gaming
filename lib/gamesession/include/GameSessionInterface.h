@@ -15,6 +15,12 @@ using networking::ConnectionID;
 
 using user::UserType;
 
+struct CurrentGameState {
+    UserVariables perPlayer;
+    UserVariables perAudience;
+    UserVariables gameVariables;
+};
+
 class GameSessionInterface
 {
     public:

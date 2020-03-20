@@ -14,13 +14,6 @@ using game::Variables;
 
 namespace game{
 
-// struct GameState {
-//     Variables gameVariables;
-//     Variables perPlayer;
-//     Variables perAudience;
-// };
-
-
 class Game{
 
 public:

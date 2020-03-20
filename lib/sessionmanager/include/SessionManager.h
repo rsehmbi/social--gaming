@@ -33,7 +33,7 @@ enum class CommandType {
     NotACommand,
     Create,
     Join,
-    JoinAudince,
+    JoinAudience,
     JoinPlayer,
     StartGame
 };

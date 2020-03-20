@@ -11,12 +11,12 @@ static const std::string MSG_NO_ROOM_FOR_PLAYER = "No room for a new player";
 //in game type argument containing game information
 GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
     const GameRules& _rules, GameState _gameState, Configurations _configurations)
-    :   sessionID{id},
-        owner{User {"", -1, ownerConnectionId, UserType::Owner} },
-        constants(_constants), 
+    :   constants(_constants), 
         rules(_rules),
         configurations(_configurations),
-        gameState(_gameState)
+        initialState(_gameState),
+        sessionID{id},
+        owner{User {"", -1, ownerConnectionId, UserType::Owner} }
 {   
     sessionUsers.push_back(owner);
     gameStarted = false;
@@ -28,11 +28,11 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
     MessageBatch msgBuffer;
     
      /* 
-            Game starts only when the owner of the game starts the game.
-            this statements checks at evry rick if the game has started.
-            If the game cannot be started but the user wants to start the game
-            show an error message to the user.
-        */
+        Game starts only when the owner of the game starts the game.
+        this statements checks at evry rick if the game has started.
+        If the game cannot be started but the user wants to start the game
+        show an error message to the user.
+    */
     if (gameStarted) { 
         interpreter->setCurrentGameSession(this);
 
@@ -93,6 +93,11 @@ GameSession::disconnect(const ConnectionID& cid){
 
 void 
 GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
+    if (gameStarted){
+        msgConnection(cid, "Cannot join this session. Game has already started.");
+        return ;
+    } 
+
     if (cid == owner.getConnectionID())
         return ;
 
@@ -120,7 +125,8 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
             
     User user {"", getUserCountWithType(userType) + 1, cid, userType};
     sessionUsers.push_back(user);
-    
+    addUserToState(userType, user.getId());
+
     // Send messgae to owner informing a new user in session.
     std::string userTypeStr = UserType::Player == userType ? "Player" : "Audience";
     std::ostringstream stream;
@@ -132,6 +138,16 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
     stream.clear();
     stream << "Connected to session: " << sessionID << "\n";
     msgConnection(cid, stream.str());
+}
+
+void 
+GameSession::addUserToState(UserType userType, int userId){\
+    std::cout << "adding state" << std::endl;
+    if (userType == UserType::Player){
+        currentState.perPlayer.addNewUser(userId, initialState.perPlayer);
+    } else if (userType == UserType::Audience){
+        currentState.perAudience.addNewUser(userId, initialState.perAudience);
+    }
 }
 
 void 

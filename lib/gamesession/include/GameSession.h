@@ -19,6 +19,7 @@ using game::GameState;
 using game::GameRules;
 using game::Constants;
 using game::Configurations;
+using game::UserVariables;
 
 using interpreter::Interpreter;
 
@@ -57,12 +58,26 @@ class GameSession : public GameSessionInterface {
 
         // start the game if the conditions are met.
         void startGame(const ConnectionID& cid);
-        
+
         // Filters the users that are players.
         std::vector<user::User> getPlayers();
 
     private:
 
+        // ------- Game Data --------------------
+        const Constants& constants;
+
+        const GameRules& rules;
+
+        Configurations configurations;
+
+        GameState initialState;
+
+        CurrentGameState currentState;
+        // --------------------------------------
+
+
+        // ------- Connections Data -------------
         bool gameStarted;
 
         SessionID sessionID;
@@ -72,6 +87,8 @@ class GameSession : public GameSessionInterface {
         user::User owner;
 
         MessageBatch outMsgs;
+        // --------------------------------------
+
 
         void msgConnection(const ConnectionID& target, const std::string& msg);  
 
@@ -81,13 +98,9 @@ class GameSession : public GameSessionInterface {
 
         int getUserCountWithType(const UserType& userType);
 
-        const Constants& constants;
-
-        const GameRules& rules;
-
-        Configurations configurations;
-
-        GameState gameState;
+        // When a new user is added initialize the state for that user in perPlayer or 
+        // perAudience based on the userType.
+        void addUserToState(UserType userType, int userId);
 
         // create a buffer for player messages.
 

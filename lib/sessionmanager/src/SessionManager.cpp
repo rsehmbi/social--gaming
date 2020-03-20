@@ -54,7 +54,7 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
                 joinSession(message.connection.id, command, commandChecker.getArgument());
                 LOG(INFO) << "Request to join as player.";
                 break;
-            case CommandType::JoinAudince:
+            case CommandType::JoinAudience:
                 joinSession(message.connection.id, command, commandChecker.getArgument());
                 LOG(INFO) << "Request to join as an audience";
                 break; 
@@ -85,8 +85,10 @@ void SessionManager::sortMessage(const Message& message){
         std::ostringstream publicStr;
         publicStr << message.connection.id << "> " << message.text << "\n";
         chatLogs["public"] += publicStr.str();
+        std::cout << "This is a public message " << message.text << std::endl;
     } else {
         SessionID sid = connectionSessionMap[message.connection.id];
+        std::cout << "This is a section message " << message.text << ", " << sid << std::endl;
         msgsForSession[sid].push_back(message);
     }
 }
@@ -135,13 +137,12 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
 
 void SessionManager::startGame(const ConnectionID& cid){
     //check if sessionID exists
-    auto sessionIt = connectionSessionMap.find(cid);
-    if(sessionIt == connectionSessionMap.end()){
-        outgoing.push_back({{cid}, "Create a session first\n"});
+    if(connectionSessionMap.find(cid) == connectionSessionMap.end()){
+        outgoing.push_back({{cid}, "Error starting game. You need to create a session first\n"});
         return;
     }
 
-    SessionID sessionId = sessionIt->second;
+    SessionID sessionId = connectionSessionMap[cid];
 
     // Tell the session to start the game.
     sessionMap.at(sessionId).startGame(cid);
@@ -152,7 +153,7 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Command
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
         outgoing.push_back({{connectionID},
-                            "You are already in a session. Open a new connection to join another session.\n"});
+            "You are already in a session. Open a new connection to join another session.\n"});
         return;
     }
 
@@ -162,13 +163,12 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Command
         return;
     }
     
+    connectionSessionMap[connectionID] = sessionID;
     // Find the userType for the new user from the command.
-    NewUserType userType;
-    if (command == CommandType::JoinAudince)
-        userType = NewUserType::Default;
-    else if (command == CommandType::JoinPlayer)
+    NewUserType userType = NewUserType::Default;
+    if (command == CommandType::JoinPlayer)
         userType = NewUserType::Player;
-    else if (command == CommandType::JoinPlayer)
+    else if (command == CommandType::JoinAudience)
         userType = NewUserType::Audience;
     
     // Tell the session add the user as a client of selected userType.
@@ -254,7 +254,7 @@ CommandChecker::CommandChecker(){
     commandMap[CREATE_COMMAND] = CommandType::Create;
     commandMap[JOIN_COMMAND] = CommandType::Join;
     commandMap[JOIN_PLAYER_COMMAND] = CommandType::JoinPlayer;
-    commandMap[JOIN_AUDIENCE_COMMAND] = CommandType::JoinAudince;
+    commandMap[JOIN_AUDIENCE_COMMAND] = CommandType::JoinAudience;
     commandMap[START_GAME_COMMAND] = CommandType::StartGame;
 }
 
