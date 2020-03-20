@@ -43,7 +43,11 @@ class GameSession : public GameSessionInterface {
         //use sessionBroadCast and msgConnection to send msgs to clients
         MessageBatch processGameTurn(const MessageBatch& incomingMsgs, std::shared_ptr<Interpreter> interpreter);
 
-        void messageAllClients();
+        // Send messgae to all the session users.
+        void sessionBroadCast(const std::string& text); 
+
+        // Send message to users of type provided by second param only.
+        void msgUsersOfType(UserType userType, const std::string& text);
 
         //remove user from game session
         void disconnect(const ConnectionID& cid);
@@ -63,12 +67,6 @@ class GameSession : public GameSessionInterface {
         user::User owner;
 
         MessageBatch outMsgs;
-
-        // Send messgae to all the session users.
-        void sessionBroadCast(const std::string& text);
-
-        // Send message to users of type provided by second param only.
-        void msgConnectionsOfType(UserType userType, const std::string& text);
 
         void msgConnection(const ConnectionID& target, const std::string& msg);  
 

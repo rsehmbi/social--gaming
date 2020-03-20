@@ -49,15 +49,6 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
     return msgBuffer;
 }
 
-// This is a function to test the communication from interpreter to game session.
-// TODO: needs to be refactored.
-void 
-GameSession::messageAllClients() {
-    msgConnectionsOfType(UserType::Audience, "This is an audience");
-    msgConnectionsOfType(UserType::Player, "This is a player");
-    msgConnectionsOfType(UserType::Owner, "This is the owner");
-}
-
 void 
 GameSession::sessionBroadCast(const std::string& text){
     for (const User& user : sessionUsers){
@@ -66,7 +57,7 @@ GameSession::sessionBroadCast(const std::string& text){
 }
 
 void
-GameSession::msgConnectionsOfType(UserType userType, const std::string& text){
+GameSession::msgUsersOfType(UserType userType, const std::string& text){
     if (userType == UserType::Owner){
         msgConnection(owner.getConnectionID(), text);
     } else {

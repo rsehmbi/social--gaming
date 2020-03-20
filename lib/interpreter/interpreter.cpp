@@ -14,7 +14,7 @@ Interpreter::Interpreter () {
 
 void 
 Interpreter::setCurrentGameSession(GameSessionInterface* session){
-    session->messageAllClients();
+    mSession = session;
 }
 
 void Interpreter::processRules(json gameRules, json gameData){

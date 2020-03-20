@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
-#include <Server.h>
 #include <unordered_set>
+
+#include <Server.h>
+#include <User.h>
 
 using networking::Server;
 using networking::Connection;
@@ -11,8 +13,12 @@ using networking::MessageBatch;
 using networking::SessionID;
 using networking::ConnectionID;
 
+using user::UserType;
+
 class GameSessionInterface
 {
     public:
-        virtual void messageAllClients() = 0;
+        virtual void sessionBroadCast(const std::string& text) = 0;
+
+        virtual void msgUsersOfType(UserType userType, const std::string& text) = 0;
 };

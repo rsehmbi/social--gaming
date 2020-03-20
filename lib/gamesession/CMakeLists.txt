@@ -14,7 +14,8 @@ target_include_directories(gameSessionInterface
 
 target_link_libraries(gameSessionInterface 
   INTERFACE
-    networking 
+    networking
+    user
 )
 
 # Build rules for game Session

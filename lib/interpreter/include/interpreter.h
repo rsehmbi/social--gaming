@@ -30,7 +30,7 @@ namespace interpreter{
     class Interpreter{
     private:
 
-        const std::unique_ptr<GameSessionInterface> mSession;
+        GameSessionInterface* mSession;
         json gameRules;
         json gameData;  
 
@@ -43,6 +43,7 @@ namespace interpreter{
         Interpreter();
 
         void setCurrentGameSession(GameSessionInterface* session);
+
         void executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
