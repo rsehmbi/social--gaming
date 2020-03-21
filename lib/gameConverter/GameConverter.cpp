@@ -141,11 +141,11 @@ GameState
 GameConverter::convertState(const nlohmann::json& gameVariables, 
     const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
     
-    // TODO : create GameState from json.
+    GameState gameState;
+    gameState.gameVariables = convertVariables(gameVariables);
+    gameState.perPlayer = convertVariables(perPlayer);
+    gameState.perAudience = convertVariables(perAudience);
 
-    game::Variables stateVariable = convertVariables(gameVariables);
-    
-    game::GameState gameState;
     return gameState;
 }
 
@@ -207,7 +207,7 @@ void convertVariableHelperJSON(std::shared_ptr<Variable> variablePtr, const nloh
 
 Variables GameConverter::convertVariables(const nlohmann::json& gameVariables){
     // Variable conversion and creation
-    std::cout << "\nStart of convert variable" << std::endl;
+    LOG(INFO) << "\nStart of convert variable" << std::endl;
 
     Variables stateVariables;
 
@@ -217,6 +217,6 @@ Variables GameConverter::convertVariables(const nlohmann::json& gameVariables){
         convertVariableHelperJSON(varPtr, value);
     }
 
-    std::cout << "\nEnd of convert variable" << std::endl;
+    LOG(INFO) << "\nEnd of convert variable" << std::endl;
     return stateVariables;
 }
