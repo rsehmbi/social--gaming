@@ -5,6 +5,11 @@
 using namespace game;
 using domainnametranslator::DomainNameTranslator;
 
+using std::string leftCurlyBracket = "{";
+using std::string rightCurlyBracket = "}";
+using std::string leftParenthesis = "(";
+using std::string rightParenthesis = ")";
+
 std::string
 getVariableFromBrackets(std::string variable, std::string forwardBracket, std::string reverseBracket) {
     unsigned firstLim = variable.find(forwardBracket);
@@ -30,19 +35,19 @@ Notes: example command:
 std::vector<std::string>
 DomainNameTranslator::parseInstruction(std::string& instruction) {
     // Handles parsing instructions enclosed by curly braces e.g. {player.name}
-    if (boost::algorithm::contains(instruction, "{")) {
-        std::string variable = getVariableFromBrackets(instruction, "{", "}");
+    if (boost::algorithm::contains(instruction, leftCurlyBracket)) {
+        std::string variable = getVariableFromBrackets(instruction, leftCurlyBracket, rightCurlyBracket);
         return parseInstruction(variable);
     }
 
     std::vector<std::string> result; 
     std::string delimiter = ".";
-    std::string instructionWithoutParenthesis = instruction.substr(0, instruction.find("("));
+    std::string instructionWithoutParenthesis = instruction.substr(0, instruction.find(leftParenthesis));
     boost::split(result, instructionWithoutParenthesis, boost::is_any_of(delimiter)); 
     
     // Handles parsing methods and their associated parameters
     // e.g. contains(weapon.name)
-    if (boost::algorithm::contains(instruction, "(")) {
+    if (boost::algorithm::contains(instruction, leftParenthesis) {
         if (boost::algorithm::contains(instruction, "upfrom")) {
             result.erase(std::remove(result.begin(), result.end(), "upfrom"), result.end());
             // TODO: once we have method to process "upfrom" function, call this method here
