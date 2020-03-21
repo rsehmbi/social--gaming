@@ -9,10 +9,12 @@
 #include <random>
 #include <GameSession.h>
 #include "Game.h"
+#include <interpreter.h>
 
 using networking::Message;
 using networking::Connection;
 using game::Game;
+using interpreter::Interpreter;
 
 // struct to store the game and gameName to easily excess the gameName
 // when creating a new game.
@@ -31,6 +33,9 @@ enum class CommandType {
     NotACommand,
     Create,
     Join,
+    JoinAudience,
+    JoinPlayer,
+    StartGame
 };
 
 //a wrapper class to map command strings to CommandType to better accomodate future changes 
@@ -95,11 +100,14 @@ class SessionManager {
         //directs message to session
         void sortMessage(const Message& message);
 
+        // try to start the game if the owner has given the command to start game.
+        void startGame(const ConnectionID& connectionID);
+
         //create a new session
-        void createSession(const ConnectionID& id);
+        void createSession(const ConnectionID& id, const Message& message);
 
         //join a session
-        void joinSession(const ConnectionID& connectionID, const SessionID& sessionID);
+        void joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID);
 
         //generate a session id for session creation
         std::string generateID();
@@ -112,9 +120,15 @@ class SessionManager {
 
         std::string gamePrompt;
 
+        // List of availableGames to choose from mapped to id and name.
         std::vector<GameMap> availableGames; 
 
+        // Helper function to find the names of available games from available games.
         std::vector<std::string> getAvailableGamesNames();
 
+        // Find game from available games using the game.
+        Game& findSelectedGame(std::string gameName);
+
+        std::shared_ptr<Interpreter> interpreter;
 };
 

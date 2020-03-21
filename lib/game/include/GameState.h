@@ -1,19 +1,22 @@
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
+
 #include <vector>
 #include "Variables.h"
-#include "player.h"
-#include "messages.h"
-#include "json.hpp"
+#include "Messages.h"
+#include "UserVariables.h"
+
+using game::Variables;
+using game::UserVariables;
 
 namespace game{
-class GameState{
-    public:
-        // TODO : Remove default constructor once createGameState is done.
-        GameState();
-
-        //TODO: need function to check for updated data
-        std::vector<game::Player> playerList;
-
-        game::Message messages;
-        game::Variables variables;
+    
+struct GameState {
+    Variables gameVariables;
+    Variables perPlayer;
+    Variables perAudience;
 };
+
 }
+
+#endif

@@ -9,6 +9,17 @@ using interpreter::Interpreter;
 using namespace game;
 using namespace std;
 
+Interpreter::Interpreter () {
+}
+
+void 
+Interpreter::setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* _gameState, 
+    const Constants* _constants, const GameRules* _rules){
+    mSession = session;
+    gameState = _gameState;
+    constants = _constants;
+    rules = _rules;
+}
 
 void Interpreter::processRules(json gameRules, json gameData){
     json ruleBlock = getNextRuleBlock(gameRules);
@@ -20,25 +31,23 @@ void Interpreter::processRules(json gameRules, json gameData){
 
 void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
-    VariableVariant variableVariant = state.variables.getVariable(listName);
     VariableType variableType = state.variables.getVariableType(listName);
         switch (variableType) {
             case VariableType::ListType:
-                std::reverse(std::get<ListVariant>(variableVariant).begin(),
-                std::get<ListVariant>(variableVariant).end());
+                std::reverse(std::get<ListVariant>(state.variables.getVariable(listName)).begin(),
+                             std::get<ListVariant>(state.variables.getVariable(listName)).end());
                 break;
             case VariableType::BoolType:
                 break;
             case VariableType::StringType:
-                std::reverse(std::get <std::string> (variableVariant).begin()
-                ,std::get <std::string> (variableVariant).end());
+                std::reverse(std::get<std::string>(state.variables.getVariable(listName)).begin()
+                ,std::get <std::string> (state.variables.getVariable(listName)).end());
                 break;
             case VariableType::MapType:
                 break;
             case VariableType::NumberType:
                 break;
         }
-
 }
  
 void Interpreter::executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
@@ -144,11 +153,40 @@ GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
     }
 }
 
+//differentiates between type of listVal provided ie: 
+//"players.elements.collect(player, player.weapon == weapon.beats)"
+//or "[a b c d]"
+ListVariant processList(std::string listValue, GameState& state){
+    ListVariant processedList;
 
-/*
- Input to;
-        Input prompt;
-        Input choices;
-        Input result;
-        Count timeout;
-*/
+    //check for character "(" which means there is operation to be parsed
+    if(listValue.find("(") != std::string::npos){
+        //not sure how to implement this, just hard coding until further information is provided
+        for(Player& player : state.playerList){
+            // if(player.weapon == )
+        }
+    }
+    return processedList;
+}
+
+void executeExtend(GameState& state, Rule& rule) {
+    //get corresponding field names from rule mapping
+    std::map<RuleFields, std::string> info = rule.getRuleContainer().ruleInformation;
+    std::string targetVal = info[RuleFields::target];
+    std::string listVal = info[RuleFields::list];
+
+
+    //find associated variable with name of the targetVal
+    variable = state.variables.getVariable(targetVal);
+    
+    //make a copy to modify then write back into variable
+    ListVariant variableList = std::get<ListVariant>(variable);
+
+    ListVariant providedList = processList(listVal, state);
+
+    variableList.insert(variableList.end(), providedList.begin(), providedList.end());
+
+    state.variables.updateVariable(targetVal, variableList);
+}
+
+

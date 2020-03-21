@@ -38,7 +38,9 @@ struct fileNames {
 std::vector <GameMap> createGames(const std::vector<fileNames>& specPaths);
 
 // This vector needs to contain the list of all the paths to the game specs.
-std::vector<fileNames> gamePaths = std::vector<fileNames>{{"exampleSpecs.json", "exampleConfig.json"}};
+std::vector<fileNames> gamePaths = std::vector<fileNames>{
+  {"exampleSpecs.json", "exampleConfig.json"},
+  {"Chess.json", ""}};
 
 // List of all the availableGames created when server is initialized.
 std::vector <GameMap> availableGames;
@@ -52,7 +54,7 @@ onConnect(Connection c) {
     std::cout << "New connection found: " << c.id << "\n";
     clients.push_back(c);
     std::deque<Message> onConnectMsg;
-    onConnectMsg.push_back({c.id, manager.getGamesList()});
+    onConnectMsg.push_back({{c.id}, manager.getGamesList()});
     serverPtr->send(onConnectMsg);
 }
 
@@ -128,7 +130,8 @@ main(int argc, char* argv[]) {
         if (errorWhileUpdating) {
             break;
         }
-
+        
+        google::FlushLogFiles(google::INFO);
         sleep(1);
     }
 

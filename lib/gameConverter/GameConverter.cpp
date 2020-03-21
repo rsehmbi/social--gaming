@@ -8,9 +8,12 @@ using game::Configurations;
 using game::Constants;
 using game::GameState;
 using game::GameRules;
-
+using game::Variables;
+using game::Variable;
 using game::VariableType;
 using game::RuleType;
+
+GameConverter::GameConverter() {}
 
 Game
 GameConverter::createGame(const nlohmann::json& jsonGame){
@@ -48,36 +51,81 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
     game::GameRules gameRules;
 
     // Loop through all the rules
-    for(auto& jsonRule: jsonRules) { ////**** removed .items()
-        auto& ruleName = jsonRule["rule"];
-
-        // Construct the rule container to hold rule information
-        // by adding the the key value pairs of the rule
-        RuleContainer initialContainer;
-        RuleContainer ruleContainer = constructRuleContainer(jsonRule, initialContainer);
-        Rule rule(game::matchRuleType(ruleName), ruleContainer);
-
+    for(auto& jsonRule: jsonRules) {
+        Rule rule;
+        if(game::isNestedJsonRule(jsonRule)) {
+            rule = constructNestedRule(jsonRule);
+        }
+        else {
+            rule = constructRule(jsonRule);
+        }
+    
         // Adds rule to game rules
         gameRules.addRule(rule);
     }
 
+
     return gameRules;
 }
 
-RuleContainer
-GameConverter::constructRuleContainer(const nlohmann::json& jsonRule, RuleContainer& ruleContainer) {    
+Rule
+GameConverter::constructRule(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+
     // Iterates through all key value pairs in the json rule object
     // and adds them to the rule container
     for (auto& item : jsonRule.items()) {
-        if (item.value().size() == 1) {
-            ruleContainer.add(item.key(), item.value());
-        } else {
-            // If value contains nested JSON objects, use recursion to construct rule container.
-            constructRuleContainer(item.value(), ruleContainer);
-        }
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
     }
 
-    return ruleContainer;
+    auto& ruleName = jsonRule["rule"];
+    Rule rule(game::matchRuleType(ruleName), ruleContainer);
+    return rule;
+}
+
+Rule
+GameConverter::constructNestedRule(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+    std::vector<Rule> nestedRules;
+
+    // GameRules is just a wrapper for a vector of rules so we can call convertGameRules
+    // to convert the array of nested rules and then extract the vector
+    auto& nestedJsonRules = jsonRule["rules"];
+    GameRules rules =  GameConverter::convertGameRules(nestedJsonRules);
+    nestedRules = rules.getRules();
+
+    // Iterates through all key value pairs in the json rule object
+    // except for nested rules and adds them to the rule container.
+    jsonRule.erase("rules");
+    for (auto& item : jsonRule.items()) {
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
+    }
+
+    auto& ruleName = jsonRule["rule"];
+    Rule rule(game::matchRuleType(ruleName), ruleContainer, nestedRules);
+    return rule;
+}
+
+void GameConverter::addJsonKeyValueToRuleContainer(RuleContainer& ruleContainer, nlohmann::json jsonKey, nlohmann::json value) {
+    game::RuleField key = game::stringToRuleField[jsonKey];
+
+    switch(value.type()) {
+        case nlohmann::json::value_t::string:
+            ruleContainer.add(key, value.get<std::string>());
+            break;
+        case nlohmann::json::value_t::number_integer:
+            ruleContainer.add(key, value.get<int>());
+            break;
+        case nlohmann::json::value_t::boolean:
+            ruleContainer.add(key, value.get<bool>());
+            break;
+        default:
+            // If value is not of type string, int, or bool, then produce an error
+            //assert("Error: Invalid value type" == 0);
+            break;
+    }
+
+    return;
 }
 
 Constants 
@@ -93,57 +141,82 @@ GameState
 GameConverter::convertState(const nlohmann::json& gameVariables, 
     const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
     
-    // TODO : create GameState from json.
+    GameState gameState;
+    gameState.gameVariables = convertVariables(gameVariables);
+    gameState.perPlayer = convertVariables(perPlayer);
+    gameState.perAudience = convertVariables(perAudience);
 
-    game::Variables stateVariable = convertVariables(gameVariables);
-    
-    game::GameState gameState;
     return gameState;
 }
 
-
-game::VariableType determineValueType(const nlohmann::json& value){
-    using game::VariableType;
+//typecheck helper function
+VariableType determineValueTypeJSON(const nlohmann::json& value){
     if(value.is_number()){return VariableType::NumberType;}
     if(value.is_array()){return VariableType::ListType;}
     if(value.is_boolean()){return VariableType::BoolType;}
     if(value.is_string()){return VariableType::StringType;}
     if(value.is_object()){return VariableType::MapType;}
     LOG(INFO) << "Unsupported ValueType, need to implement";
+    return VariableType::NumberType;
 }
 
-game::Variables GameConverter::convertVariables(const nlohmann::json& gameVariables){
-    using game::VariableType;
+//process JSON recursively
+void convertVariableHelperJSON(std::shared_ptr<Variable> variablePtr, const nlohmann::json& value){
+    VariableType valType = determineValueTypeJSON(value);
+    variablePtr->varType = valType;
+    switch(valType) {
+        case VariableType::NumberType: 
+        {
+            variablePtr->intVar = value.get<int>();
+            break;
+        }
+        case VariableType::StringType: 
+        {
+            variablePtr->stringVar = value.get<std::string>();
+            break;
+        }
+        case VariableType::BoolType: 
+        {
+            variablePtr->boolVar = value.get<bool>();
+            break;
+        }             
+        case VariableType::ListType:
+        {
+            //recursively call convertVariableHelperJSON to process each element in list
+            for(auto& element : value){
+                std::shared_ptr<Variable> elementPtr = std::make_shared<Variable>();
+                convertVariableHelperJSON(elementPtr, element);
+                variablePtr->listVar.push_back(elementPtr);
+            }
+            break;
+        }
+        case VariableType::MapType:
+        {
+            //recursively call convertVariableHelperJSON to process each pair in map
+            for(auto& [key, val]: value.items()){
+                std::shared_ptr<Variable> valPtr = std::make_shared<Variable>();
+                convertVariableHelperJSON(valPtr, val);
+                variablePtr->mapVar[key] = valPtr;
+            }
+            break;
+        }
+        default:
+            LOG(ERROR) << "unsupported valType, please implement";
+    }
+}
+
+Variables GameConverter::convertVariables(const nlohmann::json& gameVariables){
     // Variable conversion and creation
-    //vector, map, bool, int, string
+    LOG(INFO) << "\nStart of convert variable" << std::endl;
 
-    //check type
-
-    std::cout << "Convert Variable:" << std::endl;
-
-
-    game::Variables stateVariables;
+    Variables stateVariables;
 
     for (auto& [key, value] : gameVariables.items()){
-        VariableType valType = determineValueType(value);
-        
-        switch(valType) {
-            case VariableType::NumberType: 
-                stateVariables.insertVariable(key, value.get<int>(), valType);
-                break;
-            case VariableType::ListType:
-                stateVariables.insertVariable(key, game::ListVariant{1}, valType);
-                break;
-            default:
-                LOG(INFO) << "unsupported valType";
-        }
-
-        // std::cout << std::get<int>(std::get<game::ListVariant>(stateVariables.getVariable(key))[0]) << std::endl; ////****
+        std::shared_ptr<Variable> varPtr = std::make_shared<Variable>();
+        stateVariables.createVariable(key, varPtr);
+        convertVariableHelperJSON(varPtr, value);
     }
 
-    
-    
-    // std::cout << std::get<int>(std::get<game::listVariant>(stateVariables.getVariable("winners"))[0]) << std::endl; ////****
-    std::cout << "\nEnd of convert" << std::endl;
+    LOG(INFO) << "\nEnd of convert variable" << std::endl;
     return stateVariables;
 }

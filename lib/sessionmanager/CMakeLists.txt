@@ -17,7 +17,12 @@ set_target_properties(sessionmanager
                       CXX_STANDARD 17
 )
 
-target_link_libraries(sessionmanager networking gamesession game)
+target_link_libraries(sessionmanager 
+  interpreter
+  networking 
+  gamesession 
+  game
+  glog::glog)
 
 
 install(TARGETS sessionmanager
