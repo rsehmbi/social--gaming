@@ -15,12 +15,23 @@ int main(){
     std::cout<<jsonObject;
     printf("\n");
     printf("\n");
-    std::cout<<jsonObject.begin().value()[0];
+    std::cout<<jsonObject.begin().value()[0]<< '\n';
     std::map<std::string, std::string> mymap;
     //modifiedInput=jsonObject.begin().value();
     //std::cout<<modifiedInput.value();
 
-    
+    for (auto& element : jsonObject) {
+        std::cout << element << '\n';
+        for (auto& i : element) {
+            std::cout << i << '\n';
+            for (auto& [key, value] : i.items()) {
+                std::cout << key << " : " << value << "\n";
+                std::map<std::string, std::string> (key())=it.value();
+            }   
+        }
+    }
+
+    /*
     printf("\n");
     std::list<std::map<std::string, std::string>> listOfAttributes;
     //for (auto const& value: jsonObject.begin().value().size())
@@ -33,5 +44,6 @@ int main(){
         }
     }
     //cout<<listOfAttributes;
+    */
     return 0;
 }
