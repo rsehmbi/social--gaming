@@ -9,6 +9,11 @@ add_executable(runConvertGameRulesTests
     convertGameRulesTests.cpp
 )
 
-target_link_libraries(runConvertGameRulesTests gameConverter gtest gtest_main)
+target_link_libraries(runConvertGameRulesTests 
+    gameConverter 
+    gtest 
+    gtest_main
+    gameSessionInterface
+)
 
 add_test(NAME convertGameRulesTests COMMAND runConvertGameRulesTests)

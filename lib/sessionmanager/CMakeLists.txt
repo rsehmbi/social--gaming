@@ -18,6 +18,7 @@ set_target_properties(sessionmanager
 )
 
 target_link_libraries(sessionmanager 
+  interpreter
   networking 
   gamesession 
   game

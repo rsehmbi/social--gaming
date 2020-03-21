@@ -9,6 +9,18 @@ using interpreter::Interpreter;
 using namespace game;
 using namespace std;
 
+Interpreter::Interpreter () {
+}
+
+void 
+Interpreter::setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* _gameState, 
+    const Constants* _constants, const GameRules* _rules){
+    mSession = session;
+    gameState = _gameState;
+    constants = _constants;
+    rules = _rules;
+}
+
 void Interpreter::processRules(json gameRules, json gameData){
     json ruleBlock = getNextRuleBlock(gameRules);
     if(hasNestedRules(ruleBlock)){
