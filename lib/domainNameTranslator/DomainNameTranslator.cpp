@@ -5,11 +5,6 @@
 using namespace game;
 using domainnametranslator::DomainNameTranslator;
 
-using std::string leftCurlyBracket = "{";
-using std::string rightCurlyBracket = "}";
-using std::string leftParenthesis = "(";
-using std::string rightParenthesis = ")";
-
 std::string
 getVariableFromBrackets(std::string variable, std::string forwardBracket, std::string reverseBracket) {
     unsigned firstLim = variable.find(forwardBracket);
@@ -34,6 +29,10 @@ Notes: example command:
 
 std::vector<std::string>
 DomainNameTranslator::parseInstruction(std::string& instruction) {
+    std::string leftCurlyBracket = "{";
+    std::string rightCurlyBracket = "}";
+    std::string leftParenthesis = "(";
+    std::string rightParenthesis = ")";
     // Handles parsing instructions enclosed by curly braces e.g. {player.name}
     if (boost::algorithm::contains(instruction, leftCurlyBracket)) {
         std::string variable = getVariableFromBrackets(instruction, leftCurlyBracket, rightCurlyBracket);
