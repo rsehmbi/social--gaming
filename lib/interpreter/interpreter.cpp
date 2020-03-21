@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <utility>
+#include <random>       // std::default_random_engine
 #include <chrono>
 
 using interpreter::Interpreter;
@@ -21,13 +22,13 @@ Interpreter::setCurrentGameSession(const GameSessionInterface* session, CurrentG
     rules = _rules;
 }
 
-void Interpreter::processRules(json gameRules, json gameData){
-    json ruleBlock = getNextRuleBlock(gameRules);
-    if(hasNestedRules(ruleBlock)){
-        processRules(ruleBlock, gameData);
-    }
-    //calls processor to process rule block
-}
+//void interpreter::Interpreter::processRules(json gameRules, json gameData){
+//    json ruleBlock = getNextRuleBlock(gameRules);
+//    if(hasNestedRules(ruleBlock)){
+//        processRules(ruleBlock, gameData);
+//    }
+//    //calls processor to process rule block
+//}
 
 std::shared_ptr<Variable> processToList(std::string domainLanguage){
     //TODO: implement the evaluation of command such as
@@ -39,10 +40,10 @@ std::shared_ptr<Variable> processToList(std::string domainLanguage){
     return listVariablePtr;
 }
 
-void executeExtend(GameState& state, Rule& rule) {
+void interpreter::Interpreter::executeExtend(GameState& state, Rule& rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string targetList = std::get<std::string>(container.ruleInformation.at(RuleField::target));
-    std::shared_ptr<Variable> targetListPtr = state.variables.getVariable(targetList);
+    std::shared_ptr<Variable> targetListPtr = state.gameVariables.getVariable(targetList);
     //must be a list type
     if(targetListPtr->varType != VariableType::ListType){
         std::cout << std::endl << "executeExtend error, type mismatch; not ListType" <<std::endl;
@@ -54,14 +55,48 @@ void executeExtend(GameState& state, Rule& rule) {
                     sourceVariablePtr->listVar.begin(), sourceVariablePtr->listVar.end());
 }
 
-void executeReverse(GameState& state, Rule& rule){
+void interpreter::Interpreter::executeReverse(GameState& state, Rule& rule){
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
-    std::shared_ptr<Variable> listVariablePtr = state.variables.getVariable(listName);
+    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
     //must be a list type
     if(listVariablePtr->varType != VariableType::ListType){
         std::cout << std::endl << "executeReverse error, type mismatch; not ListType" <<std::endl;
     }
     std::reverse(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
+}
+
+void interpreter::Interpreter::executeShuffle(GameState &state, Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
+
+    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
+    try {
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::shuffle(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end(),std::default_random_engine(seed));
+    }
+    catch (exception &e)
+    {
+        LOG(INFO) << "Shuffle failed in Interpreter" << e.what();
+    }
+}
+
+void interpreter::Interpreter::executeSort(GameState &state, Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
+
+    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
+    try {
+        std::sort(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
+    }
+    catch (exception &e)
+    {
+        LOG(INFO) << "Shuffle failed in Interpreter" << e.what();
+    }
+}
+
+void interpreter::Interpreter::executeDeal(GameState &state, Rule &rule) {
+    // TODO: More info or example needed
+
 }
 
