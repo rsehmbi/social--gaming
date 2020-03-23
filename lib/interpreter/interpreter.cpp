@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include <chrono>
+#include <glog/logging.h>
 
 using interpreter::Interpreter;
 using namespace game;
@@ -28,7 +29,7 @@ void Interpreter::processRules(json gameRules, json gameData){
     }
     //calls processor to process rule block
 }
-
+/*
 void Interpreter::executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName)
 {
     VariableType variableType = state.variables.getVariableType(listName);
@@ -119,40 +120,12 @@ void Interpreter::executeAdd(GameState& state, VariableName& toVariable, Variabl
         intVariable += intValue;
     }
 }
-
+*/
 void Interpreter::executeTimer(GameState& state, VariableName& value) {
     // TODO: need to build bridge between game execution and server first
 }
 
-void Interpreter::executeInputChoice(const Constants &constants, GameSession& session, Input& to, Input& prompt, 
-                                        Input& choices, Input& result, Count& timeout){
-    std::optional<Count> isTimeOut= timeout;
-    if (!isTimeOut){
-        for (auto player: session.getPlayers()){
-            if (player.getName==to){
-                session.msgConnection(player.getConnectionID, prompt);
-            }
-            //otherwise do nothing
-        }
-        /*
-        std::vector<game::Player>::iterator it=std::find_if(
-            state.playerList.begin(), state.playerList.end(), 
-            [](const game::Player& i, Input& to) {return true;});//i.getConnectionID()==to.getConnectionID();};
-        //PlayerID connection = state.playerList.getVariable(toVariable); 
-        session.msgConnection(it.getConnectionID(), prompt);
-
 /*
-GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
-    outMsgs.push_back({target, msg});
-}
-*/
-
-    }
-    else{
-        //TimeoutRoute
-    }
-}
-
 //differentiates between type of listVal provided ie: 
 //"players.elements.collect(player, player.weapon == weapon.beats)"
 //or "[a b c d]"
@@ -188,5 +161,44 @@ void executeExtend(GameState& state, Rule& rule) {
 
     state.variables.updateVariable(targetVal, variableList);
 }
+*/
+void Interpreter::executeInputChoice(const Constants &constants, GameSessionInterface* session, UserVariables& to, Input& prompt, 
+                                        Input& choices, Input& result, Count& timeout){
+    std::optional<Count> isTimeOut= timeout;
+    if (!isTimeOut){
+        try {
+            ConnectionID& connectionID = to.getUserVariables.getVariables("id");
+            session->msgConnection(connectionID, prompt);
+        }
+        catch (exception &e){
+            LOG(INFO) << "Can't send msg to player" << e.what();
+        }
 
+        
+        /*
+        for (auto player: session->getPlayers()){
+            if (player.getName==to){
+                session->msgConnection(player.getConnectionID, prompt);
+
+            }
+            //otherwise do nothing
+        }
+        
+        std::vector<game::Player>::iterator it=std::find_if(
+            state.playerList.begin(), state.playerList.end(), 
+            [](const game::Player& i, Input& to) {return true;});//i.getConnectionID()==to.getConnectionID();};
+        //PlayerID connection = state.playerList.getVariable(toVariable); 
+        session.msgConnection(it.getConnectionID(), prompt);
+
+/*
+GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
+    outMsgs.push_back({target, msg});
+}
+*/
+
+    }
+    else{
+        //TimeoutRoute
+    }
+}
 

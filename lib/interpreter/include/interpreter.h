@@ -63,7 +63,7 @@ namespace interpreter{
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);
         void processRules(json gameRules, json gameData);
-        void executeInputChoice(const Constants &constants, GameSessionInterface* session, Input& to, Input& prompt, Input& choices, Input& result, Count& timeout);
+        void executeInputChoice(const Constants &constants, GameSessionInterface* session, UserVariables& to, Input& prompt, Input& choices, Input& result, Count& timeout);
 
         //void executeInputChoice ()
     };
