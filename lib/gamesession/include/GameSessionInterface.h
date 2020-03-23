@@ -28,7 +28,7 @@ class GameSessionInterface
 
         virtual void msgUsersOfType(UserType userType, const std::string& text) = 0;
 
-
+        virtual void msgUser(int id, const std::string& text) = 0;
 
         // TODO: need to implement these inside the game Session.
         // virtual void setGlobalTimer() = 0;
