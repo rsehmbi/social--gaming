@@ -52,9 +52,7 @@ namespace interpreter{
         Interpreter();
 
         void setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* gameState, 
-            const Constants* constatnts, const GameRules* rules);
-
-        void executeReverse(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
+                const Constants* constatnts, const GameRules* rules);
         void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
         void executeDeal(GameState &state, const Constants &constants,
@@ -63,9 +61,12 @@ namespace interpreter{
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);
         void processRules(json gameRules, json gameData);
-        void executeInputChoice(const Constants &constants, GameSessionInterface* session, UserVariables& to, Input& prompt, Input& choices, Input& result, Count& timeout);
+        void executeInputChoice(const Constants &constants, GameSessionInterface* session, 
+                UserVariables& to, Input& prompt, list<std::string>& choices, Input& result, Count& timeout);
 
-        //void executeInputChoice ()
+        void executeReverse(GameState &state, Rule& rule);
+        void executeExtend(GameState &state, Rule& rule);
+        
     };
 }
 

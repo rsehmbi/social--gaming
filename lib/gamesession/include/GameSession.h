@@ -50,6 +50,9 @@ class GameSession : public GameSessionInterface {
         // Send message to users of type provided by second param only.
         void msgUsersOfType(UserType userType, const std::string& text);
 
+        // Send message to a user using the id.
+        void msgUser(int id, const std::string& text);
+
         //remove user from game session
         void disconnect(const ConnectionID& cid);
         
@@ -66,6 +69,10 @@ class GameSession : public GameSessionInterface {
 
         void msgConnection(const ConnectionID& target, const std::string& msg); 
 
+        std::string retrieveMsg ();
+
+        bool getWaitingInputFlag() {return waitingInput;};
+
     private:
 
         // ------- Game Data --------------------
@@ -78,6 +85,8 @@ class GameSession : public GameSessionInterface {
         GameState initialState;
 
         CurrentGameState currentState;
+
+        bool waitingInput;
         // --------------------------------------
 
 
