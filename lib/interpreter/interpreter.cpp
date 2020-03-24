@@ -66,14 +66,14 @@ void interpreter::Interpreter::executeReverse(GameState& state, Rule& rule){
     std::reverse(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
 }
 
-void interpreter::Interpreter::executeShuffle(GameState &state, Rule &rule) {
+void interpreter::Interpreter::executeShuffle(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
 
-    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
+    //std::shared_ptr<Variable> listVariablePtr = this->gameState->gameVariables.getVariable(listName);
     try {
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        std::shuffle(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end(),std::default_random_engine(seed));
+      //  std::shuffle(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end(),std::default_random_engine(seed));
     }
     catch (exception &e)
     {
@@ -81,21 +81,21 @@ void interpreter::Interpreter::executeShuffle(GameState &state, Rule &rule) {
     }
 }
 
-void interpreter::Interpreter::executeSort(GameState &state, Rule &rule) {
+void interpreter::Interpreter::executeSort(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
 
-    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
+    //std::shared_ptr<Variable> listVariablePtr = this->gameState->gameVariables.getVariable(listName);
     try {
-        std::sort(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
+       // std::sort(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
     }
     catch (exception &e)
     {
-        LOG(INFO) << "Shuffle failed in Interpreter" << e.what();
+        LOG(INFO) << "Sort failed in Interpreter" << e.what();
     }
 }
 
-void interpreter::Interpreter::executeDeal(GameState &state, Rule &rule) {
+void interpreter::Interpreter::executeDeal(Rule &rule) {
     // TODO: More info or example needed
 
 }

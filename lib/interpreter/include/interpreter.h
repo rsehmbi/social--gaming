@@ -54,9 +54,9 @@ namespace interpreter{
 
         void setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* gameState, 
                 const Constants* constatnts, const GameRules* rules);
-        void executeShuffle(GameState &state, Rule& rule);
-        void executeSort(GameState &state, Rule& rule);
-        void executeDeal(GameState &state, Rule& rule);
+        void executeShuffle(Rule& rule);
+        void executeSort(Rule& rule);
+        void executeDeal(Rule& rule);
 
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);
