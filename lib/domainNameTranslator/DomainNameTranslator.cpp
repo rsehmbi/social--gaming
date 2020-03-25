@@ -46,7 +46,7 @@ DomainNameTranslator::parseInstruction(std::string& instruction) {
     
     // Handles parsing methods and their associated parameters
     // e.g. contains(weapon.name)
-    if (boost::algorithm::contains(instruction, leftParenthesis) {
+    if (boost::algorithm::contains(instruction, leftParenthesis)) {
         if (boost::algorithm::contains(instruction, "upfrom")) {
             result.erase(std::remove(result.begin(), result.end(), "upfrom"), result.end());
             // TODO: once we have method to process "upfrom" function, call this method here
@@ -115,7 +115,7 @@ std::vector<Variable> collect(
     // var->playerIterator = identifier.begin();
 
     //store variable : "player" : Iterator Variable
-    state.variables.createVariable(targetName, varPtr);
+    state.gameVariables.createVariable(targetName, varPtr);
     
     //TODO
     // while(){

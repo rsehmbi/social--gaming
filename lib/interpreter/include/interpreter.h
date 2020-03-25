@@ -5,6 +5,7 @@
 #include "../../jsonReader/include/dsl.h"
 #include "json.hpp"
 #include "Game.h"
+#include <glog/logging.h>
 #include "GameSessionInterface.h"
 
 using game::ListName;////****
@@ -53,10 +54,9 @@ namespace interpreter{
 
         void setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* gameState, 
                 const Constants* constatnts, const GameRules* rules);
-        void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeDeal(GameState &state, const Constants &constants,
-                Configurations &configurations, Count count, ListName &from, ListName &to);
+        void executeShuffle(Rule& rule);
+        void executeSort(Rule& rule);
+        void executeDeal(Rule& rule);
 
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);

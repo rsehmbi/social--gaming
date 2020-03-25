@@ -12,6 +12,7 @@ using networking::Message;
 using networking::MessageBatch;
 using networking::SessionID;
 using networking::ConnectionID;
+using game::UserVariables;
 
 using user::UserType;
 

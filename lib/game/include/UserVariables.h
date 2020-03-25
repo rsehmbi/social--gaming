@@ -17,7 +17,7 @@ class UserVariables {
         std::unordered_map<int, Variables> userVariables;
 
     public:
-        // get the a map of the users Vaiables available.
+        // get the a map of the users Variables available.
         const std::unordered_map<int, Variables>& getUserVariables();
 
         // add a new user to the list of available users given the player id
