@@ -71,20 +71,10 @@ namespace game {
     struct RuleContainer {
         std::map<RuleField, Value> ruleInformation;
 
-        void add(RuleField item, Value value) {
-            ruleInformation[item] = value;
-        }
-
-        std::string toString() {
-            std::string str = "";
-            for(auto& mapElem : ruleInformation) {
-                str += ruleFieldToString[mapElem.first] + ": " + std::get<std::string>(mapElem.second) + "\n";
-            }
-            
-            return str;
-        }
+        void add(RuleField item, Value value);
+        const Value& get(RuleField item);
+        std::string toString();
     };
-
 
     // The Rule class is responsible for holding information relevent
     // to executing a rule
@@ -105,6 +95,7 @@ namespace game {
         
         const RuleContainer& getRuleContainer() const;
         const std::vector<Rule>& getNestedRules();
+        const std::vector<Case>& getCases();
 
         bool hasNestedRules();
         bool hasCases();
@@ -117,7 +108,7 @@ namespace game {
     private:
         RuleContainer ruleContainer;
         std::vector<Rule> nestedRules;
-        std::vector<Rule::Case> cases; 
+        std::vector<Case> cases; 
 
         RuleType ruleType;
 

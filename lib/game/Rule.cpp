@@ -87,6 +87,11 @@ const std::vector<Rule>& Rule::getNestedRules() {
     return nestedRules;
 }
 
+const std::vector<Rule::Case>& Rule::getCases() {
+    assert(m_hasCases);
+    return cases;
+}
+
 bool Rule::hasNestedRules() {
     return m_hasNestedRules;
 }
@@ -114,6 +119,23 @@ std::string Rule::toString() {
     }
     
     return ruleStr;
+}
+
+void game::RuleContainer::add(RuleField item, Value value) {
+    ruleInformation[item] = value;
+}
+
+const game::Value& game::RuleContainer::get(RuleField item) {
+    return ruleInformation[item];
+}
+
+std::string game::RuleContainer::toString() {
+    std::string str = "";
+    for(auto& mapElem : ruleInformation) {
+        str += ruleFieldToString[mapElem.first] + ": " + std::get<std::string>(mapElem.second) + "\n";
+    }
+            
+    return str;
 }
 
 std::string Rule::Case::toString() {
