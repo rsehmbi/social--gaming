@@ -7,7 +7,6 @@
 #include "UserVariables.h"
 
 using game::Variables;
-using game::UserVariables;
 
 namespace game{
     

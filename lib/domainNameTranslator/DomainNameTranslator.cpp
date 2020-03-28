@@ -5,6 +5,15 @@
 
 using domainnametranslator::DomainNameTranslator;
 
+std::string
+getVariableFromBrackets(std::string variable, std::string forwardBracket, std::string reverseBracket) {
+    unsigned firstLim = variable.find(forwardBracket);
+    unsigned lastLim = variable.find(reverseBracket);
+    std::string strNew = variable.substr(firstLim,lastLim);
+    strNew = strNew.substr(firstLim + 1);
+    return strNew;
+}
+
 enum class OpType{
     GreaterOrEqual,
     Greater,
@@ -23,14 +32,47 @@ Variable evaluate(const std::vector<std::string>& commandChain,
                 const std::vector<std::string>& funcArgs, GameState& state);
 
 
-//needs to return variable entry point from rules
-Variable
-DomainNameTranslator::parseInstruction(std::string& instruction, GameState& state) {
+
+//needs to return variable entry point from rules, please update
+
+//Variable
+//DomainNameTranslator::parseInstruction(std::string& instruction, GameState& state) {
+
+std::vector<std::string>
+DomainNameTranslator::parseInstruction(std::string& instruction) {
+    std::string leftCurlyBracket = "{";
+    std::string rightCurlyBracket = "}";
+    std::string leftParenthesis = "(";
+    std::string rightParenthesis = ")";
+    // Handles parsing instructions enclosed by curly braces e.g. {player.name}
+    if (boost::algorithm::contains(instruction, leftCurlyBracket)) {
+        std::string variable = getVariableFromBrackets(instruction, leftCurlyBracket, rightCurlyBracket);
+        return parseInstruction(variable);
+    }
+
     std::vector<std::string> result; 
     std::string delimiter = ".";
-    boost::split(result, instruction, boost::is_any_of(delimiter));
-    Variable var = evaluate(result, {}, state);
-    return var;
+    std::string instructionWithoutParenthesis = instruction.substr(0, instruction.find(leftParenthesis));
+    boost::split(result, instructionWithoutParenthesis, boost::is_any_of(delimiter)); 
+    
+    // Handles parsing methods and their associated parameters
+    // e.g. contains(weapon.name)
+    if (boost::algorithm::contains(instruction, leftParenthesis)) {
+        if (boost::algorithm::contains(instruction, "upfrom")) {
+            result.erase(std::remove(result.begin(), result.end(), "upfrom"), result.end());
+            // TODO: once we have method to process "upfrom" function, call this method here
+        }
+        else if (boost::algorithm::contains(instruction, "contains")) {
+            result.erase(std::remove(result.begin(), result.end(), "contains"), result.end());
+            // TODO: once we have method to process "contains" function, call this method here
+        }
+        else if (boost::algorithm::contains(instruction, "collect")) {
+            result.erase(std::remove(result.begin(), result.end(), "collect"), result.end());
+            // TODO: once we have method to process "collect" function, call this method here
+        }
+    }
+    return result;
+
 }
 
 //comparator for each "player.weapon == weapon.beats"
@@ -128,6 +170,7 @@ std::vector<std::string> getFuncOperands(const std::string& funcArgs, OpType op)
 }
 
 //collect for maps ie "players.elements.collect(player, player.weapon == weapon.beats)"
+
 //currently only specialized for player.weapon == weapon.beats
 //TODO generalize to other commands
 Variable collect(Variable& list, const std::vector<std::string>& funcArgs, GameState& state){
@@ -136,6 +179,7 @@ Variable collect(Variable& list, const std::vector<std::string>& funcArgs, GameS
     std::vector<std::string> operands = getFuncOperands(funcArgs[1], operation);
     Variable result;
     result.varType = VariableType::ListType;
+
 
     //register list to name so subsequent parseInstruction calls will be able to find the element
     

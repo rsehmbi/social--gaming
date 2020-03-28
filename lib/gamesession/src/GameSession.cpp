@@ -78,6 +78,18 @@ GameSession::msgUsersOfType(UserType userType, const std::string& text){
 }
 
 void 
+GameSession::msgUser(int id, const std::string& text){
+    auto it = std::find_if(sessionUsers.begin(), sessionUsers.end(), 
+        [id] (User& user) { return user.getId() == id; }
+    );
+
+    if (it != sessionUsers.end()){
+        User user = *it;
+        msgConnection(user.getConnectionID(), text);
+    }
+}
+
+void 
 GameSession::msgConnection(const ConnectionID& target, const std::string& msg){
     LOG(INFO) << "Sending message to connection: " << target;
     outMsgs.push_back({{target}, msg});
@@ -140,7 +152,7 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
 }
 
 void 
-GameSession::addUserToState(UserType userType, int userId){\
+GameSession::addUserToState(UserType userType, int userId){
     std::cout << "adding state" << std::endl;
     if (userType == UserType::Player){
         currentState.perPlayer.addNewUser(userId, initialState.perPlayer);
