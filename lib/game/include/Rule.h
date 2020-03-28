@@ -65,6 +65,7 @@ namespace game {
 
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
     bool isNestedJsonRule(const nlohmann::json& jsonRule);
+    bool hasCasesInRule(const nlohmann::json& jsonRule);
 
     // Type defenition for RuleContainer struct
     struct RuleContainer {
@@ -84,23 +85,29 @@ namespace game {
         }
     };
 
+
     // The Rule class is responsible for holding information relevent
     // to executing a rule
     class Rule {
-        public:
+    public:
+        struct Case {
+            std::variant<std::string, bool> condition;
+            std::vector<game::Rule> rules;
+            std::string toString();
+        };
 
-        Rule() {
-            // This constructor is required to be explicity declared
-            // because it is called by the constructors of subclasses
-        }
-
+        Rule();
         Rule(RuleType ruleType, RuleContainer& rule);
         Rule(RuleType ruleType, RuleContainer& rule, std::vector<Rule>& nestedRules);
+        Rule(RuleType ruleType, RuleContainer& rule, std::vector<Rule::Case>& cases);
 
         RuleType getRuleType() const;
         
         const RuleContainer& getRuleContainer() const;
         const std::vector<Rule>& getNestedRules();
+
+        bool hasNestedRules();
+        bool hasCases();
 
         void setRuleContainer(RuleContainer& rule);
 
@@ -110,10 +117,11 @@ namespace game {
     private:
         RuleContainer ruleContainer;
         std::vector<Rule> nestedRules;
+        std::vector<Rule::Case> cases; 
 
         RuleType ruleType;
 
-        bool hasNestedRules;
+        bool m_hasNestedRules;
+        bool m_hasCases;
     };
-
 }
