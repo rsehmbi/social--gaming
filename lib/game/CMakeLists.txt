@@ -9,6 +9,7 @@ add_library(game
     Configurations.cpp 
     Variables.cpp
     Rule.cpp
+    UserVariables.cpp
 )
 
 target_include_directories(game

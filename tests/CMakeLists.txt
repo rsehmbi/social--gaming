@@ -22,3 +22,4 @@ target_link_libraries(runDomainInterpreterTests domainnametranslator gtest gtest
 add_test(NAME convertGameRulesTests COMMAND runConvertGameRulesTests)
 add_test(NAME DomainNameInterpreterTests COMMAND runDomainInterpreterTests)
 
+target_link_libraries(runConvertGameRulesTests interpreter gameSessionInterface)

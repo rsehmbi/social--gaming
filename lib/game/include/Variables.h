@@ -7,7 +7,19 @@
 #include <unordered_map>
 #include <memory>
 
+
+
 namespace game {
+    struct Variable;
+    class Variables;
+    using VariablePtr = std::shared_ptr<Variable>;
+    //for perplayer class
+    using Variable_s_Ptr = std::shared_ptr<Variables>;
+    using PlayerIterator = std::unordered_map<std::string, VariablePtr>::iterator;
+    using VariableIterator = std::vector<VariablePtr>::iterator;
+    
+
+
     //From project spec: "Values may themselves be (1) maps from names to values, 
     //(2) lists of values, or (3) literal strings, numbers, or booleans."
 
@@ -17,7 +29,9 @@ namespace game {
         ListType,
         StringType,
         NumberType,
-        BoolType
+        BoolType,
+        PlayerIteratorType, //for supporting domainlanguage translation
+        VariableIteratorType //for supporting scoping in nested loops
     };
 
     struct Variable {
@@ -26,21 +40,24 @@ namespace game {
         int intVar;
         bool boolVar;
         std::string stringVar;
-        std::unordered_map<std::string, std::shared_ptr<Variable>> mapVar;
-        std::vector<std::shared_ptr<Variable>> listVar;
+        std::unordered_map<std::string, VariablePtr> mapVar;
+        std::vector<VariablePtr> listVar;
+        PlayerIterator playerIterator;
+        VariableIterator variableIterator;
+        
     };
 
     class Variables {
         public:
             //return ptr to variable held and allows modification directly
-            std::shared_ptr<Variable> getVariable(const std::string& variableName) const;
+            VariablePtr getVariable(const std::string& variableName) const;
             
             //take shared_ptr by value to create copy and move copy into variables map
-            void createVariable (const std::string& key, std::shared_ptr<Variable> val);
+            void createVariable (const std::string& key, VariablePtr val);
                         
         private:
             //map of string name given in JSON to a specific variable
-            std::unordered_map<std::string, std::shared_ptr<Variable>> variables;
+            std::unordered_map<std::string, VariablePtr> variables;
 
     };
 }

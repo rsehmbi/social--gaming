@@ -11,15 +11,24 @@
 #define SESSION_ID_LEN 10
 #define CREATE_COMMAND "/create"
 #define JOIN_COMMAND "/join"
+#define JOIN_PLAYER_COMMAND "/join_player"
+#define JOIN_AUDIENCE_COMMAND "/join_audience"
+#define START_GAME_COMMAND "/start"
+
+// Messages to clients
+#define START_GAME_MESSGAGE "When ready, use /start command to start game."
 
 
 //----------Session Manager Class----------------------
 SessionManager::SessionManager() : 
     generator(std::chrono::high_resolution_clock::now().time_since_epoch().count())
 {
+    interpreter = std::make_unique<Interpreter>();
     gamePrompt = "\nTo create a game use /create {Game name}.\n"
-        "To join existing game use /join {Session ID}."
-        "\n\nThe server supports following games:\n";
+        "To join an existing game use /join {Session ID}.\n"
+        "To join an existing game as a player use /join_player {Session ID}.\n"
+        "To join an existing game as an audience use /join_audience {Session ID}.\n"
+        "\nThe server supports following games:\n";
 }
 
 void SessionManager::processMessages(const std::deque<Message>& incoming) {
@@ -34,32 +43,41 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
 
         switch(command) {
             case CommandType::Create:
-            {
                 createSession(message.connection.id, message);
-                //console debugging message
-                std::cout << "Request for create.\n";
+                LOG(INFO) << "Request for create.\n";
                 break;
-            }
             case CommandType::Join:
-                joinSession(message.connection.id, commandChecker.getArgument());
-                //console debugging message
-                std::cout << "Request for join.\n";
+                joinSession(message.connection.id, command, commandChecker.getArgument());
+                LOG(INFO) << "Request for join.\n";
                 break;
+            case CommandType::JoinPlayer:
+                joinSession(message.connection.id, command, commandChecker.getArgument());
+                LOG(INFO) << "Request to join as player.";
+                break;
+            case CommandType::JoinAudience:
+                joinSession(message.connection.id, command, commandChecker.getArgument());
+                LOG(INFO) << "Request to join as an audience";
+                break; 
+            case CommandType::StartGame:
+                startGame(message.connection.id);
+                LOG(INFO) << "Request to start a game";
+                break;    
             default:
                 sortMessage(message);
         }
-        
     }
+
     //Send sorted messages out to sessions. Since server execution is sequential, control is also passed
     //to each session to execute its game turn
     for(auto& pair : sessionMap){
         //first = session ID, second = session object
         //Pass session messages to each session and append (by moving) session output messages
         //to outgoing messages for server to send
-        MessageBatch sessionOut = pair.second.processGameTurn(msgsForSession[pair.first]);
+        MessageBatch& inMessages = msgsForSession[pair.first];
+        GameSession& session = pair.second; 
+        MessageBatch sessionOut = session.processGameTurn(inMessages, interpreter);
         outgoing.insert(outgoing.end(), sessionOut.begin(), sessionOut.end());
     }
-  
 }
 
 void SessionManager::sortMessage(const Message& message){
@@ -67,8 +85,10 @@ void SessionManager::sortMessage(const Message& message){
         std::ostringstream publicStr;
         publicStr << message.connection.id << "> " << message.text << "\n";
         chatLogs["public"] += publicStr.str();
+        std::cout << "This is a public message " << message.text << std::endl;
     } else {
         SessionID sid = connectionSessionMap[message.connection.id];
+        std::cout << "This is a section message " << message.text << ", " << sid << std::endl;
         msgsForSession[sid].push_back(message);
     }
 }
@@ -109,33 +129,50 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
     connectionSessionMap[connectionID] = sessionID;
     std::ostringstream outStr;
     outStr << "Session created. Session ID: " << sessionID << "\n";
+    outStr << START_GAME_MESSGAGE << "\n";
     outgoing.push_back({{connectionID}, outStr.str()});
 
     return;
 }
 
-void SessionManager::joinSession(const ConnectionID& connectionID, const SessionID& sessionID) {
+void SessionManager::startGame(const ConnectionID& cid){
+    //check if sessionID exists
+    if(connectionSessionMap.find(cid) == connectionSessionMap.end()){
+        outgoing.push_back({{cid}, "Error starting game. You need to create a session first\n"});
+        return;
+    }
+
+    SessionID sessionId = connectionSessionMap[cid];
+
+    // Tell the session to start the game.
+    sessionMap.at(sessionId).startGame(cid);
+}
+
+void SessionManager::joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID) {
     
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
         outgoing.push_back({{connectionID},
-                            "You are already in a session. Open a new connection to join another session.\n"});
+            "You are already in a session. Open a new connection to join another session.\n"});
         return;
     }
+
     //check if sessionID exists
     if(sessionMap.find(sessionID) == sessionMap.end()){
         outgoing.push_back({{connectionID}, "Invalid session ID\n"});
         return;
     }
-
-    //update records and inform connection of status
-    connectionSessionMap[connectionID] = sessionID;
-    std::ostringstream outStr;
-    outStr << "Connected to session: " << sessionID << "\n";
-    outgoing.push_back({{connectionID}, outStr.str()});
     
-    //tell the session object to add connection to its record
-    sessionMap.at(sessionID).connect(connectionID);
+    connectionSessionMap[connectionID] = sessionID;
+    // Find the userType for the new user from the command.
+    NewUserType userType = NewUserType::Default;
+    if (command == CommandType::JoinPlayer)
+        userType = NewUserType::Player;
+    else if (command == CommandType::JoinAudience)
+        userType = NewUserType::Audience;
+    
+    // Tell the session add the user as a client of selected userType.
+    sessionMap.at(sessionID).connect(connectionID, userType);
     return;
 }
 
@@ -186,29 +223,6 @@ std::string SessionManager::getGamesList(){
     return gamePrompt + availableGamesPrompt;
 }
 
-//----------------CommandChecker Class---------------------
-
-
-CommandChecker::CommandChecker(){
-    commandMap[CREATE_COMMAND] = CommandType::Create;
-    commandMap[JOIN_COMMAND] = CommandType::Join;
-}
-
-//checks first word of string and returns CommandType and updates argument accordingly
-CommandType CommandChecker::checkString(const Message& message){
-    argument = "";
-    std::istringstream iss(message.text);
-    std::string firstWord;
-    iss >> firstWord;
-    if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
-    iss >> argument;
-    return commandMap[firstWord];
-}
-
-std::string CommandChecker::getArgument(){
-    return argument;
-}
-
 std::vector <std::string> 
 SessionManager::getAvailableGamesNames(){
     std::vector<std::string> gameNames;
@@ -231,4 +245,30 @@ SessionManager::findSelectedGame(std::string gameName){
     } 
 
     return iter->game;
+}
+
+//----------------CommandChecker Class---------------------
+
+
+CommandChecker::CommandChecker(){
+    commandMap[CREATE_COMMAND] = CommandType::Create;
+    commandMap[JOIN_COMMAND] = CommandType::Join;
+    commandMap[JOIN_PLAYER_COMMAND] = CommandType::JoinPlayer;
+    commandMap[JOIN_AUDIENCE_COMMAND] = CommandType::JoinAudience;
+    commandMap[START_GAME_COMMAND] = CommandType::StartGame;
+}
+
+//checks first word of string and returns CommandType and updates argument accordingly
+CommandType CommandChecker::checkString(const Message& message){
+    argument = "";
+    std::istringstream iss(message.text);
+    std::string firstWord;
+    iss >> firstWord;
+    if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
+    iss >> argument;
+    return commandMap[firstWord];
+}
+
+std::string CommandChecker::getArgument(){
+    return argument;
 }
