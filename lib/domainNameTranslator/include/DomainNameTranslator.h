@@ -1,8 +1,10 @@
 #ifndef DOMAINNAMETRANSLATOR_H
 #define DOMAINNAMETRANSLATOR_H
 
+#include "Game.h"
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace domainnametranslator {
 
