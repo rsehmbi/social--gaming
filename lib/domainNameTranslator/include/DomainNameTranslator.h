@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+using namespace game;
+
 namespace domainnametranslator {
 
     class DomainNameTranslator {
@@ -14,7 +16,7 @@ namespace domainnametranslator {
             // and parses this instruction.
             // Returns a vector contatining the parsed instruction.
             // E.g. Input = player.name Output = {player,name}
-            static std::vector<std::string> parseInstruction(std::string& instruction); 
+            static Variable parseInstruction(std::string& instruction, GameState& state); 
     };
 }
 
