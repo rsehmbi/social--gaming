@@ -57,7 +57,9 @@ namespace game {
         prompt,
         result,
         score,
-        ascending
+        ascending,
+        timeout,
+        choices
     };
 
     extern std::unordered_map<game::RuleField, std::string> ruleFieldToString;

@@ -33,6 +33,8 @@ using game::RuleType;
         {RuleField::result, "result"},
         {RuleField::score, "score"},
         {RuleField::ascending, "ascending"},
+        {RuleField::timeout, "timeout"},
+        {RuleField::choices, "choices"}
     };
 
     std::unordered_map<std::string, game::RuleField> game::stringToRuleField = {
@@ -55,6 +57,8 @@ using game::RuleType;
         {"result", RuleField::result},
         {"score", RuleField::score},
         {"ascending", RuleField::ascending},
+        {"timeout", RuleField::timeout},
+        {"choices", RuleField::choices}
     };
 
 Rule::Rule() : m_hasNestedRules(false), m_hasCases(false) {}
@@ -132,7 +136,18 @@ const game::Value& game::RuleContainer::get(RuleField item) {
 std::string game::RuleContainer::toString() {
     std::string str = "";
     for(auto& mapElem : ruleInformation) {
-        str += ruleFieldToString[mapElem.first] + ": " + std::get<std::string>(mapElem.second) + "\n";
+        str += ruleFieldToString[mapElem.first] + ": ";
+
+        if(auto boolValue = std::get_if<bool>(&mapElem.second)) {
+            str += std::string(*boolValue ? "true" : "false") + "\n";
+        }
+        else if (auto intValue = std::get_if<int>(&mapElem.second)) {
+            str += std::to_string(*intValue) + "\n";
+
+        }
+        else {
+            str += std::get<std::string>(mapElem.second) + "\n";
+        }
     }
             
     return str;
@@ -143,7 +158,8 @@ std::string Rule::Case::toString() {
     
     if(auto boolCondition = std::get_if<bool>(&condition)) {
         str += "condition: " + std::string(*boolCondition ? "true" : "false") + "\n";
-    } else {
+    } 
+    else {
         str += "condition: " + std::get<std::string>(condition) + "\n";
     }
 
