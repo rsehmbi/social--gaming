@@ -1,6 +1,7 @@
 #include "include/DomainNameTranslator.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
+#include "GameState.h"
 
 using namespace game;
 using domainnametranslator::DomainNameTranslator;
@@ -13,11 +14,12 @@ enum class OpType{
     Equal
 };
 
+
 /*
 Notes: example command: 
 "players.elements.collect(player, player.weapon == weapon.beats)"
 */
-
+//needs to return variable
 std::vector<std::string>
 DomainNameTranslator::parseInstruction(std::string& instruction) {
     std::vector<std::string> result; 
@@ -66,13 +68,40 @@ bool compare(int lhs, int rhs, OpType optype){
     }
 }
 
+Variable* fetchIdentifier(std::string& identifier; GameState& state){
+    Variable* varPtr = state.gameVariables.getVariable(identifier);
+    std::vector<Variable*> playerVariables;
+    return playerVariables;
+}
+
+//evaluates output from parseInstructions
+//eg "players.elements.collect(player, player.weapon == weapon.beats)":
+//commandChain = {"players", "elements", "collect"}, funcArgs = {player, player.weapon == weapon.beats}
+Variable evaluate(const std::vector<std::string>& commandChain, 
+                const std::vector<std::string>& funcArgs, GameSate& state){
+    //check identifier
+    std::vector<Variable*> identifier = fetchIdentifier(commandChain[0], state);
+    if(commandChain[3] == "collect"){
+        collect(playerElements, funcArgs);
+    }
+
+}
+
 //collect for maps ie "players.elements.collect(player, player.weapon == weapon.beats)"
 //may need to overload for other types
-std::vector<Variable> collect(
-            /*PerPlayer& identifier,*/
-            const std::string& targetName, 
-            const std::string& compareArgs, 
-            GameState& state){
+Variable collect(std::vector<Variable*> list, const std::vector<std::string>& funcArgs, GameState& state){
+    std::string elementName = funcArgs[0];
+    //TODO split player.weapon == weapon.beats to 3 parts and convert to Variable
+    Variable lhs;
+    Variable rhs;
+    OpType comparison;
+
+    
+    if(lhs.varType == VariableType::StringType){
+
+    }
+
+    Variable lhs 
     VariablePtr varPtr = std::make_shared<Variable>();
     varPtr->varType = VariableType::PlayerIteratorType;
     // var->playerIterator = identifier.begin();

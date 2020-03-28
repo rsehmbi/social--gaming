@@ -15,7 +15,7 @@ namespace game {
     using VariablePtr = std::shared_ptr<Variable>;
     //for perplayer class
     using Variable_s_Ptr = std::shared_ptr<Variables>;
-    using PlayerIterator = std::unordered_map<std::string, VariablePtr>::iterator;
+    using PlayerIterator = std::unordered_map<std::string, Variable_s_Ptr>::iterator;
     using VariableIterator = std::vector<VariablePtr>::iterator;
     
 
