@@ -12,14 +12,32 @@ using networking::Message;
 using networking::MessageBatch;
 using networking::SessionID;
 using networking::ConnectionID;
-using game::UserVariables;
+using networking::UserIdType;
 
 using user::UserType;
+using game::Variable;
+using game::VariableType;
 
-struct CurrentGameState {
-    UserVariables perPlayer;
-    UserVariables perAudience;
-    UserVariables gameVariables;
+struct RunningGameState {
+    std::shared_ptr<Variables> variables;
+
+    // when a new game starts it starts by creating a copy of the default
+    // variables. This constructor initializes all the necessay top level variables.
+    RunningGameState(){
+        variables = std::make_shared<Variables>();
+        
+        auto players = std::make_shared<Variable>();
+        auto audiences = std::make_shared<Variable>();
+        auto gameVariables = std::make_shared<Variable>();
+
+        players->varType = VariableType::ListType;
+        audiences->varType = VariableType::ListType;
+        gameVariables->varType = VariableType::MapType;
+    
+        variables->createVariable("players", players);
+        variables->createVariable("audiences", players);
+        variables->createVariable("variables", gameVariables);
+    }
 };
 
 class GameSessionInterface
@@ -29,7 +47,7 @@ class GameSessionInterface
 
         virtual void msgUsersOfType(UserType userType, const std::string& text) = 0;
 
-        virtual void msgUser(int id, const std::string& text) = 0;
+        virtual void msgUser(UserIdType id, const std::string& text) = 0;
 
         // TODO: need to implement these inside the game Session.
         // virtual void setGlobalTimer() = 0;

@@ -3,8 +3,9 @@
 
 using user::User;
 using user::UserType;
+using networking::UserIdType;
 
-User::User(std::string_view _username, int _id, ConnectionID _connectionID, UserType _userType)
+User::User(std::string_view _username, UserIdType _id, ConnectionID _connectionID, UserType _userType)
     : username{_username},
       id{_id},
       connectionID{_connectionID},
@@ -20,11 +21,11 @@ std::string User::getName() const {
     return this->username;
 }
 
-void User::setId(int _id){
+void User::setId(UserIdType _id){
     this->id = _id;
 }
 
-int User::getId() const {
+UserIdType User::getId() const {
     return this->id;
 }
 

@@ -137,18 +137,6 @@ GameConverter::convertConstants(const nlohmann::json& jsonConstants){
     return constants;
 }
 
-GameState 
-GameConverter::convertState(const nlohmann::json& gameVariables, 
-    const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
-    
-    GameState gameState;
-    gameState.gameVariables = convertVariables(gameVariables);
-    gameState.perPlayer = convertVariables(perPlayer);
-    gameState.perAudience = convertVariables(perAudience);
-
-    return gameState;
-}
-
 //typecheck helper function
 VariableType determineValueTypeJSON(const nlohmann::json& value){
     if(value.is_number()){return VariableType::NumberType;}
@@ -203,6 +191,29 @@ void convertVariableHelperJSON(std::shared_ptr<Variable> variablePtr, const nloh
         default:
             LOG(ERROR) << "unsupported valType, please implement";
     }
+}
+
+GameState 
+GameConverter::convertState(const nlohmann::json& gameVariables, 
+    const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
+    
+    // create variable objects for all the starting variables and 
+    // strore them in the gameState class object. When playing game
+    // game start with a copy of these (each player or user will have
+    // his own copy).
+    auto gameVariablesPtr = std::make_shared<Variable>();
+    auto playerVariablesPtr = std::make_shared<Variable>();
+    auto audienceVariablesPtr = std::make_shared<Variable>();
+
+    convertVariableHelperJSON(gameVariablesPtr, gameVariables);
+    convertVariableHelperJSON(playerVariablesPtr, perPlayer);
+    convertVariableHelperJSON(audienceVariablesPtr, perAudience);
+
+    return GameState {
+        std::move(gameVariablesPtr),
+        std::move(playerVariablesPtr),
+        std::move(audienceVariablesPtr)
+    };
 }
 
 Variables GameConverter::convertVariables(const nlohmann::json& gameVariables){
