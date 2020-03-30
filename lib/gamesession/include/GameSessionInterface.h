@@ -18,13 +18,20 @@ using user::UserType;
 using game::Variable;
 using game::VariableType;
 
+using MessageText = std::string;
+
 struct RunningGameState {
+
     std::shared_ptr<Variables> variables;
+
+    // Map from User id to incoming message from that user.
+    std::unordered_map<UserIdType, MessageText> messageMap;
 
     // when a new game starts it starts by creating a copy of the default
     // variables. This constructor initializes all the necessay top level variables.
     RunningGameState(){
         variables = std::make_shared<Variables>();
+        messageMap = std::unordered_map<UserIdType, MessageText>();
         
         auto players = std::make_shared<Variable>();
         auto audiences = std::make_shared<Variable>();

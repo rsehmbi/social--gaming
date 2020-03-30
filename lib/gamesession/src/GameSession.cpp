@@ -37,11 +37,24 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
 
         //-----------perform game turn-------
 
-        //FOR TESTING: send msg back to each player
         for(auto& msg : inMsgs){
             std::ostringstream out;
-            out << msg.connection.id << "> " << msg.text << "\n";
-            msgBuffer.push_back({{msg.connection.id}, out.str()});
+
+            // Find the user sending the message.
+            auto it = std::find_if(sessionUsers.begin(), sessionUsers.end(), 
+                [&msg] (User& user) { return user.getConnectionID() == msg.connection.id; }
+            );
+
+            // Save the incoming message from the user in the map to be used by the interpreter.
+            if (it != sessionUsers.end()){
+                User user = *it;
+                MessageText messageText = {msg.text};
+                currentState.messageMap[user.getId()] = messageText;
+            }
+
+            //FOR TESTING: send msg back to each player
+            // out << msg.connection.id << "> " << msg.text << "\n";
+            // msgBuffer.push_back({{msg.connection.id}, out.str()});
         }
 
         //-----------end of perform game turn-------
@@ -142,7 +155,7 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType, con
     // Send messgae to owner informing a new user in session.
     std::string userTypeStr = UserType::Player == userType ? "Player" : "Audience";
     std::ostringstream stream;
-    stream << userTypeStr << " joined with id " << cid;
+    stream << userName << " joined as a " << userTypeStr;
     msgConnection(owner.getConnectionID(), stream.str());
 
     // Send message to client to inform connection status
@@ -193,7 +206,7 @@ GameSession::startGame(const ConnectionID& cid){
         if (getUserCountWithType(UserType::Player) >= configurations.getMinNoOfPlayers()){
             gameStarted = true;
             std::string msg = "Game started";
-            msgConnection(cid, msg);
+            sessionBroadCast(msg);
         } else {
             std::ostringstream stream;
             stream << "Error starting the game. Minimum number of players needed: "
