@@ -165,6 +165,7 @@ using MessageBatch = std::deque<Message>;
 using SessionID = std::string;
 using ConnectionID = uintptr_t;
 using SessionID = std::string;
+using UserIdType = size_t;
 }
 
 

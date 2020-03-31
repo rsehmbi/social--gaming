@@ -19,7 +19,6 @@ using game::GameState;
 using game::GameRules;
 using game::Constants;
 using game::Configurations;
-using game::UserVariables;
 
 using interpreter::Interpreter;
 
@@ -51,13 +50,13 @@ class GameSession : public GameSessionInterface {
         void msgUsersOfType(UserType userType, const std::string& text);
 
         // Send message to a user using the id.
-        void msgUser(int id, const std::string& text);
+        void msgUser(UserIdType id, const std::string& text);
 
         //remove user from game session
         void disconnect(const ConnectionID& cid);
         
         //add user to game session
-        void connect(const ConnectionID& cid, const NewUserType newUserType);
+        void connect(const ConnectionID& cid, const NewUserType newUserType, const std::string_view& userName);
 
         // start the game if the conditions are met.
         void startGame(const ConnectionID& cid);
@@ -76,7 +75,7 @@ class GameSession : public GameSessionInterface {
 
         GameState initialState;
 
-        CurrentGameState currentState;
+        RunningGameState currentState;
         // --------------------------------------
 
 
@@ -103,13 +102,9 @@ class GameSession : public GameSessionInterface {
 
         // When a new user is added initialize the state for that user in perPlayer or 
         // perAudience based on the userType.
-        void addUserToState(UserType userType, int userId);
+        void addUserToState(const User& user);
 
         // create a buffer for player messages.
 
         // create and hold a timer to handle the timer rules
-
-        // create an interpreter and send messages to the interpreter.
-
-        // check if the messages are comming from the interpreter.
 };

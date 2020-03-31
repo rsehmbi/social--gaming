@@ -46,11 +46,11 @@ class CommandChecker{
         CommandType checkString(const Message& message);
         
         //Returns current value of argument variable
-        std::string getArgument();
+        std::vector<std::string> getArguments();
 
     private:
         //a hashed key value pair to map connection id to session id
-        std::string argument;
+        std::vector<std::string> arguments;
         std::unordered_map<std::string, CommandType> commandMap;
 };
 
@@ -107,7 +107,7 @@ class SessionManager {
         void createSession(const ConnectionID& id, const Message& message);
 
         //join a session
-        void joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID);
+        void joinSession(const ConnectionID& connectionID, const CommandType command, const std::vector<std::string>& arguments);
 
         //generate a session id for session creation
         std::string generateID();
