@@ -40,10 +40,10 @@ std::shared_ptr<Variable> processToList(std::string domainLanguage){
     return listVariablePtr;
 }
 
-void interpreter::Interpreter::executeExtend(GameState& state, Rule& rule) {
+void interpreter::Interpreter::executeExtend(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string targetList = std::get<std::string>(container.ruleInformation.at(RuleField::target));
-    std::shared_ptr<Variable> targetListPtr = state.gameVariables.getVariable(targetList);
+    std::shared_ptr<Variable> targetListPtr =this->gameState->variables->getVariable(targetList);
     //must be a list type
     if(targetListPtr->varType != VariableType::ListType){
         std::cout << std::endl << "executeExtend error, type mismatch; not ListType" <<std::endl;
@@ -55,10 +55,10 @@ void interpreter::Interpreter::executeExtend(GameState& state, Rule& rule) {
                     sourceVariablePtr->listVar.begin(), sourceVariablePtr->listVar.end());
 }
 
-void interpreter::Interpreter::executeReverse(GameState& state, Rule& rule){
+void interpreter::Interpreter::executeReverse(Rule &rule){
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
-    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
+    std::shared_ptr<Variable> listVariablePtr = this->gameState->variables->getVariable(listName);
     //must be a list type
     if(listVariablePtr->varType != VariableType::ListType){
         std::cout << std::endl << "executeReverse error, type mismatch; not ListType" <<std::endl;
@@ -70,10 +70,10 @@ void interpreter::Interpreter::executeShuffle(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
 
-    //std::shared_ptr<Variable> listVariablePtr = this->gameState->gameVariables.getVariable(listName);
+    std::shared_ptr<Variable> listVariablePtr = this->gameState->variables->getVariable(listName);
     try {
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-      //  std::shuffle(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end(),std::default_random_engine(seed));
+        std::shuffle(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end(),std::default_random_engine(seed));
     }
     catch (exception &e)
     {
@@ -85,9 +85,9 @@ void interpreter::Interpreter::executeSort(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
 
-    std::shared_ptr<Variable> listVariablePtr = this->gameState->gameVariables.getVariable(listName);
+    std::shared_ptr<Variable> listVariablePtr = this->gameState->variables->getVariable(listName);
     try {
-       // std::sort(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
+        std::sort(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
     }
     catch (exception &e)
     {

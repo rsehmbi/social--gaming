@@ -64,8 +64,8 @@ namespace interpreter{
         void executeWhen(Rule &rule);
 
         //List Operations
-        void executeExtend(GameState &state, Rule& rule);
-        void executeReverse(GameState &state, Rule& rule);
+        void executeExtend(Rule& rule);
+        void executeReverse(Rule& rule);
 
         void executeShuffle(Rule& rule);
         void executeSort(Rule& rule);
