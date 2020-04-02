@@ -1,5 +1,6 @@
 #include <GameSession.h>
 
+#include <ctime>
 #include <glog/logging.h>
 #include <sstream>
 #include <iostream>
@@ -32,11 +33,10 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
         This set of statements checks at every tick if the game has started
         and process the rules only if the game has started.
     */
-    if (gameStarted) { 
+    if (gameStarted && checkTimeOuts()) { 
         interpreter->setCurrentGameSession(this, &currentState, &constants, &rules);
 
         //-----------perform game turn-------
-
         for(auto& msg : inMsgs){
             std::ostringstream out;
 
@@ -248,4 +248,34 @@ GameSession::getUserCountWithType(const UserType& userType){
     return std::count_if(sessionUsers.begin(), sessionUsers.end(), 
         [&userType ](User& user) { return user.getUserType() == userType; }
     );
+}
+
+void 
+GameSession::setGlobalTimeout(){
+    // TODO: implementation.
+}
+
+void 
+GameSession::setTimeout(UserIdType id, Time delay){
+    Time currentTime;
+    std::time(&currentTime);
+    timeoutMap.emplace(id, currentTime + delay);
+}
+
+bool
+GameSession::checkTimeOuts(){
+    bool allResponsesAvailable = std::all_of(currentState.messageMap.begin(),
+        currentState.messageMap.end(),
+        [] (const auto& message) { return message.second.length() > 0; }
+    );
+
+    if (allResponsesAvailable) 
+        return true;
+
+    Time currentTime;
+    std::time(&currentTime);
+    
+    return std::all_of(timeoutMap.begin(), timeoutMap.end(),
+        [currentTime] (const auto& timeMap) { return timeMap.second > currentTime; }
+    );    
 }

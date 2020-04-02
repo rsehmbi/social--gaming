@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 #include <vector>
+#include <unordered_map>
 #include <Server.h>
 #include <User.h>
 #include <Game.h>
@@ -76,6 +77,8 @@ class GameSession : public GameSessionInterface {
         GameState initialState;
 
         RunningGameState currentState;
+
+        std::unordered_map<UserIdType, Time> timeoutMap;
         // --------------------------------------
 
 
@@ -104,7 +107,9 @@ class GameSession : public GameSessionInterface {
         // perAudience based on the userType.
         void addUserToState(const User& user);
 
-        // create a buffer for player messages.
+        void setGlobalTimeout();
 
-        // create and hold a timer to handle the timer rules
+        void setTimeout(UserIdType id, Time delay);
+
+        bool checkTimeOuts();
 };
