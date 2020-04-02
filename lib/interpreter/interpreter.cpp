@@ -85,7 +85,7 @@ void interpreter::Interpreter::executeSort(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
 
-    //std::shared_ptr<Variable> listVariablePtr = this->gameState->gameVariables.getVariable(listName);
+    std::shared_ptr<Variable> listVariablePtr = this->gameState->gameVariables.getVariable(listName);
     try {
        // std::sort(listVariablePtr->listVar.begin(), listVariablePtr->listVar.end());
     }
@@ -97,6 +97,70 @@ void interpreter::Interpreter::executeSort(Rule &rule) {
 
 void interpreter::Interpreter::executeDeal(Rule &rule) {
     // TODO: More info or example needed
+
+}
+
+void interpreter::Interpreter::executeForEach(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeLoop(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeInparallel(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeParallelFor(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeSwitch(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeWhen(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeDiscard(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeAdd(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeTimer(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::processRules(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeInputChoice(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeInputVote(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeInputText(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeMessage(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeGlobalMessage(Rule &rule) {
+
+}
+
+void interpreter::Interpreter::executeScores(Rule &rule) {
 
 }
 
