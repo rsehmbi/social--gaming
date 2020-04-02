@@ -95,9 +95,35 @@ void interpreter::Interpreter::executeSort(Rule &rule) {
     }
 }
 
-void interpreter::Interpreter::executeDeal(Rule &rule) {
-    // TODO: More info or example needed
+void interpreter::Interpreter::executeDeal(Rule &rule, ListName from, ListName to, Count count) {
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string From = std::get<std::string>(container.ruleInformation.at(RuleField::from));
+    std::string To = std::get<std::string>(container.ruleInformation.at(RuleField::to));
+    std::string Count =  std::get<std::string>(container.ruleInformation.at(RuleField::count));
+    int numberOfElements = 0;
 
+    try
+    {
+        numberOfElements = std::stoi(Count);
+    }
+    catch (std::invalid_argument const &e)
+    {
+        LOG(INFO) << "Deal failed in Interpreter" << e.what();
+    }
+    std::shared_ptr<Variable> fromVariablePtr = processToList(From);
+    std::shared_ptr<Variable> toVariablePtr = processToList(To);
+
+    try {
+        for (int iterator = 0; iterator < numberOfElements;iterator++ )
+        {
+            toVariablePtr->listVar.push_back(fromVariablePtr->listVar.front());
+            fromVariablePtr->listVar.erase(fromVariablePtr->listVar.begin());
+        }
+    }
+    catch (exception &e)
+    {
+        LOG(INFO) << "Deal failed in Interpreter while processing a list" << e.what();
+    }
 }
 
 void interpreter::Interpreter::executeForEach(Rule &rule) {

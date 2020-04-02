@@ -33,13 +33,9 @@ namespace interpreter{
     private:
 
         const GameSessionInterface* mSession;
-
         RunningGameState* gameState;
-
         const Constants* constants;
-
         const GameRules* rules;
-
 
         json gameRules;
         json gameData;  
@@ -51,7 +47,6 @@ namespace interpreter{
     public:
 
         Interpreter();
-
         void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
                 const Constants* constatnts, const GameRules* rules);
 
@@ -69,7 +64,7 @@ namespace interpreter{
 
         void executeShuffle(Rule& rule);
         void executeSort(Rule& rule);
-        void executeDeal(Rule& rule);
+        void executeDeal(Rule& rule, ListName from, ListName to, Count count);
         void executeDiscard(Rule &rule);
 
         void executeAdd(Rule &rule);
