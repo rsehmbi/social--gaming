@@ -94,8 +94,8 @@ void Interpreter::executeInputChoice(const Constants &constants, GameSessionInte
         }
         else{
             std::string input = session->retrieveMsg;
-            //to.getUserVariables.insert() TODO: function to insert variable
-            session->getWaitingInputFlag=true;
+            //to.UserVariables.variables.insert() //TODO: function to insert variable
+            //session->getWaitingInputFlag=true;
             
         }
     }
