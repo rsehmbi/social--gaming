@@ -95,7 +95,7 @@ void interpreter::Interpreter::executeSort(Rule &rule) {
     }
 }
 
-void interpreter::Interpreter::executeDeal(Rule &rule, ListName from, ListName to, Count count) {
+void interpreter::Interpreter::executeDeal(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string From = std::get<std::string>(container.ruleInformation.at(RuleField::from));
     std::string To = std::get<std::string>(container.ruleInformation.at(RuleField::to));

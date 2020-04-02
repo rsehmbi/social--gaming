@@ -64,7 +64,7 @@ namespace interpreter{
 
         void executeShuffle(Rule& rule);
         void executeSort(Rule& rule);
-        void executeDeal(Rule& rule, ListName from, ListName to, Count count);
+        void executeDeal(Rule& rule);
         void executeDiscard(Rule &rule);
 
         void executeAdd(Rule &rule);
