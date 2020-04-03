@@ -10,10 +10,9 @@ static const std::string MSG_NO_ROOM_FOR_PLAYER = "No room for a new player";
 
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
-GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-    const GameRules& _rules, const GameState& _gameState, Configurations _configurations)
-    :   constants(_constants), 
-        rules(_rules),
+GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const GameRules& _rules, 
+    const GameState& _gameState, Configurations _configurations)
+    :   rules(_rules),
         configurations(_configurations),
         initialState(_gameState),
         sessionID{id},
@@ -34,7 +33,7 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
         and process the rules only if the game has started.
     */
     if (gameStarted && checkTimeOuts()) { 
-        interpreter->setCurrentGameSession(this, &currentState, &constants, &rules);
+        interpreter->setCurrentGameSession(this, &currentState, &rules);
 
         //-----------perform game turn-------
         for(auto& msg : inMsgs){
@@ -205,6 +204,7 @@ GameSession::startGame(const ConnectionID& cid){
     if (cid == owner.getConnectionID()){
         if (getUserCountWithType(UserType::Player) >= configurations.getMinNoOfPlayers()){
             gameStarted = true;
+            initializeGameState();
             std::string msg = "Game started";
             sessionBroadCast(msg);
         } else {
@@ -278,4 +278,21 @@ GameSession::checkTimeOuts(){
     return std::all_of(timeoutMap.begin(), timeoutMap.end(),
         [currentTime] (const auto& timeMap) { return timeMap.second > currentTime; }
     );    
+}
+
+void 
+GameSession::initializeGameState(){
+    moveVariable(initialState.gameVariables);
+    moveVariable(initialState.constants);
+}
+
+void 
+GameSession::moveVariable(std::shared_ptr<Variable> from){
+    auto variableCloner = game::VaribaleCloner();
+    auto variable = std::make_shared<Variable>();
+    variableCloner.copyVariables(from, variable);
+
+    for (auto& var : variable->mapVar){
+        currentState.variables->createVariable(var.first, std::move(var.second));
+    }
 }

@@ -14,11 +14,9 @@ Interpreter::Interpreter () {
 }
 
 void 
-Interpreter::setCurrentGameSession(const GameSessionInterface* session, RunningGameState* _gameState, 
-    const Constants* _constants, const GameRules* _rules){
+Interpreter::setCurrentGameSession(const GameSessionInterface* session, RunningGameState* _gameState, const GameRules* _rules){
     mSession = session;
     gameState = _gameState;
-    constants = _constants;
     rules = _rules;
 }
 

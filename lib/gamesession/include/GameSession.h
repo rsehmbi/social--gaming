@@ -34,8 +34,8 @@ class GameSession : public GameSessionInterface {
     public:
         //Initialized by the session manager, session manager will pass 
         //in game type argument containing game information
-        GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-            const GameRules& _rules, const GameState& _gameState, Configurations _configurations);
+        GameSession(SessionID id, ConnectionID ownerConnectionId, const GameRules& _rules, 
+            const GameState& _gameState, Configurations _configurations);
         
         //Entry point for session manager to pass execution to a game session.
         //Session manager passes the messages from clients of this session to processGameTurn
@@ -68,8 +68,6 @@ class GameSession : public GameSessionInterface {
     private:
 
         // ------- Game Data --------------------
-        const Constants& constants;
-
         const GameRules& rules;
 
         Configurations configurations;
@@ -112,4 +110,8 @@ class GameSession : public GameSessionInterface {
         void setTimeout(UserIdType id, Time delay);
 
         bool checkTimeOuts();
+
+        void initializeGameState();
+
+        void moveVariable(std::shared_ptr<Variable> from);
 };

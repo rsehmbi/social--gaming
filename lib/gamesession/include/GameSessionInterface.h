@@ -36,15 +36,12 @@ struct RunningGameState {
         
         auto players = std::make_shared<Variable>();
         auto audiences = std::make_shared<Variable>();
-        auto gameVariables = std::make_shared<Variable>();
 
         players->varType = VariableType::ListType;
         audiences->varType = VariableType::ListType;
-        gameVariables->varType = VariableType::MapType;
     
         variables->createVariable("players", players);
         variables->createVariable("audiences", players);
-        variables->createVariable("variables", gameVariables);
     }
 };
 
