@@ -5,7 +5,8 @@ using game::Variables;
 using game::VariableType;
 
 
-std::shared_ptr<Variable> Variables::getVariable (const std::string& varName) const {
+
+Variable Variables::getVariable (const std::string& varName) const {
     //for debugging, should not happen
     if(variables.find(varName) == variables.end()){
         std::cout << "Interal error: invalid variable error" << std::endl;
@@ -13,7 +14,7 @@ std::shared_ptr<Variable> Variables::getVariable (const std::string& varName) co
     return variables.at(varName);
 }
 
-void Variables::createVariable (const std::string& key, std::shared_ptr<Variable> val) {
+void Variables::createVariable (const std::string& key, Variable val) {
         if(variables.find(key) != variables.end()){
             std::cout << "Interal error: key already exists. use getVariable to modify instead" << std::endl;
         } else{
