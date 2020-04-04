@@ -38,10 +38,10 @@ std::shared_ptr<Variable> processToList(std::string domainLanguage){
     return listVariablePtr;
 }
 
-void interpreter::Interpreter::executeExtend(GameState& state, Rule& rule) {
+void interpreter::Interpreter::executeExtend(RunningGameState& state, Rule& rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string targetList = std::get<std::string>(container.ruleInformation.at(RuleField::target));
-    std::shared_ptr<Variable> targetListPtr = state.gameVariables.getVariable(targetList);
+    std::shared_ptr<Variable> targetListPtr = state.variables->getVariable(targetList);
     //must be a list type
     if(targetListPtr->varType != VariableType::ListType){
         std::cout << std::endl << "executeExtend error, type mismatch; not ListType" <<std::endl;
@@ -53,10 +53,10 @@ void interpreter::Interpreter::executeExtend(GameState& state, Rule& rule) {
                     sourceVariablePtr->listVar.begin(), sourceVariablePtr->listVar.end());
 }
 
-void interpreter::Interpreter::executeReverse(GameState& state, Rule& rule){
+void interpreter::Interpreter::executeReverse(RunningGameState& state, Rule& rule){
     const RuleContainer& container = rule.getRuleContainer();
     std::string listName = std::get<std::string>(container.ruleInformation.at(RuleField::target));
-    std::shared_ptr<Variable> listVariablePtr = state.gameVariables.getVariable(listName);
+    std::shared_ptr<Variable> listVariablePtr = state.variables->getVariable(listName);
     //must be a list type
     if(listVariablePtr->varType != VariableType::ListType){
         std::cout << std::endl << "executeReverse error, type mismatch; not ListType" <<std::endl;

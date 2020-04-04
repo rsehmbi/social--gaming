@@ -55,11 +55,11 @@ namespace interpreter{
         void executeSort(Rule& rule);
         void executeDeal(Rule& rule);
 
-        void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
-        void executeTimer(GameState &state, VariableName& value);
+        void executeAdd(RunningGameState &state, VariableName& toVariable, VariableName& value);
+        void executeTimer(RunningGameState &state, VariableName& value);
         void processRules(json gameRules, json gameData);
-        void executeReverse(GameState &state, Rule& rule);
-        void executeExtend(GameState &state, Rule& rule);
+        void executeReverse(RunningGameState &state, Rule& rule);
+        void executeExtend(RunningGameState &state, Rule& rule);
         
     };
 }

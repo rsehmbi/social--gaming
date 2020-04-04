@@ -23,6 +23,15 @@ void Variables::createVariable (const std::string& key, std::shared_ptr<Variable
         }
 }
 
+
+void Variables::removeVariable (const std::string& key) {
+        if(variables.find(key) == variables.end()){
+            std::cout << "Interal error: key does not exist. use getVariable to modify instead" << std::endl;
+        } else{
+            variables.erase(key);
+        }
+}
+
 void 
 VariableCloner::copyVariables(const game::VariablePtr& from, std::shared_ptr<Variable> to){
     to->varType = from->varType;
@@ -65,4 +74,5 @@ VariableCloner::copyVariables(const game::VariablePtr& from, std::shared_ptr<Var
         default:
             LOG(ERROR) << "unsupported valType, please implement";
     }
+
 }
