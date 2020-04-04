@@ -13,9 +13,9 @@ using namespace std;
 Interpreter::Interpreter () {
 }
 
-void 
+void
 Interpreter::setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState,
-                                   const Constants* constants, const GameRules* rules){
+                                   const Constants* constants, const GameRules* rules) {
     mSession = session;
     gameState = gameState;
     rules = rules;

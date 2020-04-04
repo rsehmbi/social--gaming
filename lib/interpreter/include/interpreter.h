@@ -34,7 +34,11 @@ namespace interpreter{
 
         const GameSessionInterface* mSession;
         RunningGameState* gameState;
+<<<<<<< HEAD
         const Constants* constants;
+=======
+
+>>>>>>> 6faf97372c62a5cd66e73d7b12eb5ce38d73f283
         const GameRules* rules;
 
         json gameRules;

@@ -1,10 +1,11 @@
 #include "include/DomainNameTranslator.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
-#include "GameState.h"
 #include <iostream>
+#include <glog/logging.h>
 
 using domainnametranslator::DomainNameTranslator;
+
 
 std::string
 getVariableFromBrackets(std::string variable, std::string forwardBracket, std::string reverseBracket) {
@@ -31,12 +32,13 @@ enum class OpType{
 Notes: example command: 
 "players.elements.collect(player, player.weapon == weapon.beats)"
 */
-Variable evaluate(const std::vector<std::string>& commandChain, 
-                const std::vector<std::string>& funcArgs, GameState& state);
+Variable
+evaluate(std::vector<std::string> commandChain, 
+                const std::vector<std::string>& funcArgs, RunningGameState& state);
 
+Variable
+evaluateBinaryOperationCommand(const std::string& compareStatement, RunningGameState& state);
 
-
-//needs to return variable entry point from rules, please update
 
 std::vector<std::string>
 DomainNameTranslator::parseCommandChain(std::string instruction) {
@@ -69,26 +71,41 @@ DomainNameTranslator::parseFuncArgs(std::string instruction) {
     return result;
 }
 
+
+//TODO: add support for "winners.size == players.size" by
 Variable
-DomainNameTranslator::parseInstruction(std::string& instruction, GameState& state) {
+DomainNameTranslator::parseInstruction(const std::string& instruction, RunningGameState& state) {
+
+    if(1){
+        //case with operators (==, <=, ...) AND no brackets ie: "winners.size == players.size"
+        //can directly call evaluateBinaryOperationCommand
+        Variable result = evaluateBinaryOperationCommand(instruction, state);
+        return result;
+    }
+
     std::vector<std::string> commandChain = parseCommandChain(instruction);
     std::vector<std::string> funcArgs = parseFuncArgs(instruction);
-    evaluate(commandChain, funcArgs, state);    
+    Variable result = evaluate(commandChain, funcArgs, state);
+    
+    return result;
 }
 
 //comparator for each "player.weapon == weapon.beats"
 //restrict to string, bool, or int
-bool compare(const std::string& lhs, const std::string& rhs){
+bool
+compare(const std::string& lhs, const std::string& rhs){
     //can only be OpType::Equal
     return lhs == rhs;
 }
 
-bool compare(bool lhs, bool rhs){
+bool
+compare(bool lhs, bool rhs){
     //can only be OpType::Equal
     return lhs == rhs;
 }
 
-bool compare(int lhs, int rhs, OpType optype){
+bool
+compare(int lhs, int rhs, OpType optype){
     switch(optype) {
         case OpType::Equal: 
         {
@@ -111,12 +128,13 @@ bool compare(int lhs, int rhs, OpType optype){
             return lhs >= rhs;
         }
         default:
-            std::cout << "unsupported int OpType";
+            LOG(ERROR) << "unsupported int OpType";
             return false;
     }
 }
 
-std::unordered_map<OpType, std::string> opMap{
+std::unordered_map<OpType, std::string>
+opMap{
     {OpType::Equal, "=="},
 	{OpType::LessOrEqual, "<="},
 	{OpType::GreaterOrEqual, ">="},
@@ -124,7 +142,8 @@ std::unordered_map<OpType, std::string> opMap{
 	{OpType::Greater, ">"},
 };
 
-OpType getOpType(const std::string& funcArgs){
+OpType
+getOpType(const std::string& funcArgs){
     if(funcArgs.find("==") != std::string::npos){
         return OpType::Equal;
     }
@@ -140,26 +159,12 @@ OpType getOpType(const std::string& funcArgs){
     if(funcArgs.find("<") != std::string::npos){
         return OpType::Greater;
     }
-    std::cout << "Error: operation not support" << std::endl;
+    LOG(ERROR) << "Error: operation not support" << std::endl;
     return OpType::Equal;
 }
 
-Variable fetchIdentifier(const std::string& identifier, GameState& state){
-    std::shared_ptr<Variable> varPtr = state.gameVariables.getVariable(identifier);
-    if(identifier == "players"){
-        //convert to variable of vector pointer
-        Variable players;
-        players.varType = VariableType::ListType;
-        for(auto& [key, val] : varPtr->mapVar){
-            players.listVar.push_back(val);
-        }
-        return players;
-    }
-    std::cout << "Error: identifer not supported" << std::endl;
-    return Variable();
-}
-
-std::vector<std::string> getFuncOperands(const std::string& funcArgs, OpType op){
+std::vector<std::string>
+getFuncOperands(const std::string& funcArgs, OpType op){
     std::vector<std::string> result; 
     std::string delimiter = opMap.at(op);
     boost::split(result, funcArgs, boost::is_any_of(delimiter));
@@ -170,45 +175,112 @@ std::vector<std::string> getFuncOperands(const std::string& funcArgs, OpType op)
     return result;
 }
 
-//collect for maps ie "players.elements.collect(player, player.weapon == weapon.beats)"
-
-//currently only specialized for player.weapon == weapon.beats
-//TODO generalize to other commands
-Variable collect(Variable& list, const std::vector<std::string>& funcArgs, GameState& state){
-    std::string elementName = funcArgs[0];
-    OpType operation = getOpType(funcArgs[1]);
-    std::vector<std::string> operands = getFuncOperands(funcArgs[1], operation);
+Variable evaluateBinaryOperationCommand(const std::string& compareStatement, RunningGameState& state){
+    OpType operation = getOpType(compareStatement);
+    std::vector<std::string> operands = getFuncOperands(compareStatement, operation);
+    Variable lhs = DomainNameTranslator::parseInstruction(operands[0], state);
+    Variable rhs = DomainNameTranslator::parseInstruction(operands[1], state);
     Variable result;
-    result.varType = VariableType::ListType;
+    result.varType = VariableType::BoolType;
 
-
-    //register list to name so subsequent parseInstruction calls will be able to find the element
-    
-    std::vector<VariablePtr> listVar = list.listVar;
-    for(auto& elementPtr : listVar){
-        state.gameVariables.createVariable(elementName, elementPtr);
-        Variable lhs = DomainNameTranslator::parseInstruction(operands[0], state);
-        Variable rhs = DomainNameTranslator::parseInstruction(operands[1], state);
-        if(compare(lhs.stringVar, rhs.stringVar)){
-            result.listVar.push_back(elementPtr);
-        }
+    switch(lhs.varType) {
+        case VariableType::StringType: 
+        {
+            result.boolVar = compare(lhs.stringVar, rhs.stringVar);
+        } break;
+        default:
+            LOG(ERROR) << "evaluateBinaryOperationCommand unsupported type, please implement" << std::endl;
+            return Variable();
     }
+
     return result;
 }
+
+std::shared_ptr<Variable>
+collect(std::shared_ptr<Variable> list, const std::vector<std::string>& funcArgs, RunningGameState& state){
+
+    
+    std::shared_ptr<Variable> result = std::make_shared<Variable>();
+    result->varType = VariableType::ListType;
+
+    for(auto& varPtr : list->listVar){
+        //register list to name so subsequent parseInstruction calls will be able to find the element
+        state.variables->updateVariable(funcArgs[0], varPtr);
+
+        //expect true or false
+        Variable validator = DomainNameTranslator::parseInstruction(funcArgs[1], state);
+
+        if(validator.boolVar == true){
+            result->listVar.push_back(varPtr);
+        }
+    }
+
+    state.variables->removeVariable(funcArgs[0]);
+    return result;
+}
+
+std::shared_ptr<Variable>
+identify(const std::string& identifier, RunningGameState& state){
+    std::shared_ptr<Variable> varPtr = state.variables->getVariable(identifier);
+    return varPtr;
+}
+
+std::shared_ptr<Variable>
+modify(std::shared_ptr<Variable> varPtr, const std::string& modifier, RunningGameState& state){
+    if(modifier == "elements"){
+        if(varPtr->varType == VariableType::MapType){
+            std::shared_ptr<Variable> flattened = std::make_shared<Variable>();
+            flattened->varType = VariableType::ListType;
+            for(auto& [key, val] : varPtr->mapVar){
+                flattened->listVar.push_back(val);
+            }
+            return flattened;
+        } else {return varPtr;}        
+    }
+    LOG(ERROR) << "Error: identifer not supported" << std::endl;
+    return nullptr;
+}
+
+std::shared_ptr<Variable>
+performFunction(std::shared_ptr<Variable> varPtr,
+                const std::string& funcName,
+                const std::vector<std::string>& funcArgs,
+                RunningGameState& state){
+    
+    if(funcName == "collect"){
+        return collect(varPtr, funcArgs, state);
+    }
+    LOG(ERROR) << "Error: identifer not supported" << std::endl;
+    return nullptr;
+}
+
 
 //evaluates output from parseInstructions
 //eg "players.elements.collect(player, player.weapon == weapon.beats)":
 //commandChain = {"players", "elements", "collect"}, funcArgs = {player, player.weapon == weapon.beats}
-Variable evaluate(const std::vector<std::string>& commandChain, 
-                const std::vector<std::string>& funcArgs, GameState& state){
-    //check identifier
-    Variable identifier = fetchIdentifier(commandChain[0], state);
-    if(commandChain[2] == "elements"){
-        if(commandChain[3] == "collect"){
-            Variable result = collect(identifier, funcArgs, state);
-            return result;
-        }
+Variable
+evaluate(std::vector<std::string> commandChain, 
+                const std::vector<std::string>& funcArgs, RunningGameState& state){
+    
+    std::string funcName;
+    //dealing with function
+    if(!funcArgs.empty()){
+        funcName = commandChain.back();
+        commandChain.pop_back();
+    }
+    //evaluate chain
+    std::shared_ptr<Variable> resultPtr = identify(commandChain[0], state);
+    auto it = commandChain.begin();
+    std::advance(it, 1);
+    while(it != commandChain.end()){
+        resultPtr = modify(resultPtr, *it, state);
+        it++;
+    }
+    
+    if(!funcArgs.empty()){
+        resultPtr = performFunction(resultPtr, funcName, funcArgs, state);
     }
 
+    return *resultPtr;
 }
 
