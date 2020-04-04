@@ -20,3 +20,11 @@ void Variables::createVariable (const std::string& key, std::shared_ptr<Variable
             variables.emplace(key, std::move(val));
         }
 }
+
+void Variables::removeVariable (const std::string& key) {
+        if(variables.find(key) == variables.end()){
+            std::cout << "Interal error: key does not exist. use getVariable to modify instead" << std::endl;
+        } else{
+            variables.erase(key);
+        }
+}
