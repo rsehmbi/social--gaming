@@ -48,7 +48,7 @@ namespace interpreter{
 
         Interpreter();
         void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
-                const Constants* constatnts, const GameRules* rules);
+                const Constants* constants, const GameRules* rules);
 
         // Control Structures
         void executeForEach(Rule &rule);

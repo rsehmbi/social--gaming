@@ -19,6 +19,7 @@ using game::Variable;
 using game::VariableType;
 
 using MessageText = std::string;
+using Time = long;
 
 struct RunningGameState {
 
@@ -35,15 +36,12 @@ struct RunningGameState {
         
         auto players = std::make_shared<Variable>();
         auto audiences = std::make_shared<Variable>();
-        auto gameVariables = std::make_shared<Variable>();
 
         players->varType = VariableType::ListType;
         audiences->varType = VariableType::ListType;
-        gameVariables->varType = VariableType::MapType;
     
         variables->createVariable("players", players);
         variables->createVariable("audiences", players);
-        variables->createVariable("variables", gameVariables);
     }
 };
 
@@ -56,8 +54,7 @@ class GameSessionInterface
 
         virtual void msgUser(UserIdType id, const std::string& text) = 0;
 
-        // TODO: need to implement these inside the game Session.
-        // virtual void setGlobalTimer() = 0;
+        virtual void setGlobalTimeout() = 0;
 
-        // virtual void setTimer(UserType userType, int id) = 0;
+        virtual void setTimeout(UserIdType id, Time delay) = 0;
 };
