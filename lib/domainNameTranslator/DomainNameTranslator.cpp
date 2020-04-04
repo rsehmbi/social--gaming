@@ -1,7 +1,7 @@
 #include "include/DomainNameTranslator.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
-#include "GameState.h"
+#include "RunningGameState.h"
 #include <iostream>
 
 using domainnametranslator::DomainNameTranslator;
@@ -34,10 +34,10 @@ Notes: example command:
 */
 Variable
 evaluate(std::vector<std::string> commandChain, 
-                const std::vector<std::string>& funcArgs, GameState& state);
+                const std::vector<std::string>& funcArgs, RunningGameState& state);
 
 Variable
-evaluateBinaryOperationCommand(const std::string& compareStatement, GameState& state);
+evaluateBinaryOperationCommand(const std::string& compareStatement, RunningGameState& state);
 
 
 std::vector<std::string>
@@ -74,7 +74,7 @@ DomainNameTranslator::parseFuncArgs(std::string instruction) {
 
 //TODO: add support for "winners.size == players.size" by
 Variable
-DomainNameTranslator::parseInstruction(const std::string& instruction, GameState& state) {
+DomainNameTranslator::parseInstruction(const std::string& instruction, RunningGameState& state) {
 
     if(1){
         //case with operators (==, <=, ...) AND no brackets ie: "winners.size == players.size"
@@ -175,7 +175,7 @@ getFuncOperands(const std::string& funcArgs, OpType op){
     return result;
 }
 
-Variable evaluateBinaryOperationCommand(const std::string& compareStatement, GameState& state){
+Variable evaluateBinaryOperationCommand(const std::string& compareStatement, RunningGameState& state){
     OpType operation = getOpType(compareStatement);
     std::vector<std::string> operands = getFuncOperands(compareStatement, operation);
     Variable lhs = DomainNameTranslator::parseInstruction(operands[0], state);
@@ -197,7 +197,7 @@ Variable evaluateBinaryOperationCommand(const std::string& compareStatement, Gam
 }
 
 std::shared_ptr<Variable>
-collect(std::shared_ptr<Variable> list, const std::vector<std::string>& funcArgs, GameState& state){
+collect(std::shared_ptr<Variable> list, const std::vector<std::string>& funcArgs, RunningGameState& state){
 
     
     std::shared_ptr<Variable> result = std::make_shared<Variable>();
@@ -220,13 +220,13 @@ collect(std::shared_ptr<Variable> list, const std::vector<std::string>& funcArgs
 }
 
 std::shared_ptr<Variable>
-identify(const std::string& identifier, GameState& state){
+identify(const std::string& identifier, RunningGameState& state){
     std::shared_ptr<Variable> varPtr = state.gameVariables.getVariable(identifier);
     return varPtr;
 }
 
 std::shared_ptr<Variable>
-modify(std::shared_ptr<Variable> varPtr, const std::string& modifier, GameState& state){
+modify(std::shared_ptr<Variable> varPtr, const std::string& modifier, RunningGameState& state){
     if(modifier == "elements"){
         if(varPtr->varType == VariableType::MapType){
             std::shared_ptr<Variable> flattened = std::make_shared<Variable>();
@@ -245,7 +245,7 @@ std::shared_ptr<Variable>
 performFunction(std::shared_ptr<Variable> varPtr,
                 const std::string& funcName,
                 const std::vector<std::string>& funcArgs,
-                GameState& state){
+                RunningGameState& state){
     
     if(funcName == "collect"){
         return collect(varPtr, funcArgs, state);
@@ -260,7 +260,7 @@ performFunction(std::shared_ptr<Variable> varPtr,
 //commandChain = {"players", "elements", "collect"}, funcArgs = {player, player.weapon == weapon.beats}
 Variable
 evaluate(std::vector<std::string> commandChain, 
-                const std::vector<std::string>& funcArgs, GameState& state){
+                const std::vector<std::string>& funcArgs, RunningGameState& state){
     
     std::string funcName;
     //dealing with function

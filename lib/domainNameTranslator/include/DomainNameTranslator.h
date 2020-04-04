@@ -16,7 +16,7 @@ namespace domainnametranslator {
             // variableName.instruction.function(parameters), parses this instruction
             // and calls the appropriate functions for this instruction.
             // Returns a Variable object.
-            static Variable parseInstruction(const std::string& instruction, GameState& state); 
+            static Variable parseInstruction(const std::string& instruction, RunningGameState& state); 
 
             // Takes an instruction and extracts the command chain into a vector.
             // Returns a vector of these command chain instructions.
