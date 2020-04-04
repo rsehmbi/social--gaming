@@ -33,11 +33,9 @@ namespace interpreter{
     private:
 
         const GameSessionInterface* mSession;
-
         RunningGameState* gameState;
-
+        const Constants* constants;
         const GameRules* rules;
-
 
         json gameRules;
         json gameData;  
@@ -49,18 +47,39 @@ namespace interpreter{
     public:
 
         Interpreter();
+        void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
+                const Constants* constants, const GameRules* rules);
 
-        void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, const GameRules* rules);
+        // Control Structures
+        void executeForEach(Rule &rule);
+        void executeLoop(Rule &rule);
+        void executeInparallel(Rule  &rule);
+        void executeParallelFor(Rule &rule);
+        void executeSwitch(Rule &rule);
+        void executeWhen(Rule &rule);
+
+        //List Operations
+        void executeExtend(Rule& rule);
+        void executeReverse(Rule& rule);
+
         void executeShuffle(Rule& rule);
         void executeSort(Rule& rule);
         void executeDeal(Rule& rule);
+        void executeDiscard(Rule &rule);
 
-        void executeAdd(RunningGameState &state, VariableName& toVariable, VariableName& value);
-        void executeTimer(RunningGameState &state, VariableName& value);
-        void processRules(json gameRules, json gameData);
-        void executeReverse(RunningGameState &state, Rule& rule);
-        void executeExtend(RunningGameState &state, Rule& rule);
-        
+        void executeAdd(Rule &rule);
+        void executeTimer(Rule &rule);
+        void processRules(Rule &rule);
+
+        //Human Input Rules
+        void executeInputChoice(Rule &rule);
+        void executeInputText(Rule &rule);
+        void executeInputVote(Rule &rule);
+
+        //Output
+        void executeMessage(Rule &rule);
+        void executeGlobalMessage(Rule &rule);
+        void executeScores(Rule &rule);
     };
 }
 
