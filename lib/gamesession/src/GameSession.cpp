@@ -178,7 +178,7 @@ GameSession::addUserToState(const User& user){
 
     if (user.getUserType() == UserType::Player){
         auto playerState = std::make_shared<Variable>();
-        auto variableCloner = game::VaribaleCloner();
+        auto variableCloner = game::VariableCloner();
         variableCloner.copyVariables(initialState.perPlayer, playerState);
 
         playerState->mapVar["name"] = nameVariable;
@@ -188,7 +188,7 @@ GameSession::addUserToState(const User& user){
         players->listVar.emplace_back(playerState);
     } else if (user.getUserType() == UserType::Audience){
         auto audienceState = std::make_shared<Variable>();
-        auto variableCloner = game::VaribaleCloner();
+        auto variableCloner = game::VariableCloner();
         variableCloner.copyVariables(initialState.perPlayer, audienceState);
 
         audienceState->mapVar["name"] = nameVariable;
@@ -288,7 +288,7 @@ GameSession::initializeGameState(){
 
 void 
 GameSession::moveVariable(std::shared_ptr<Variable> from){
-    auto variableCloner = game::VaribaleCloner();
+    auto variableCloner = game::VariableCloner();
     auto variable = std::make_shared<Variable>();
     variableCloner.copyVariables(from, variable);
 

@@ -4,7 +4,7 @@
 using game::Variable;
 using game::Variables;
 using game::VariableType;
-using game::VaribaleCloner;
+using game::VariableCloner;
 
 
 std::shared_ptr<Variable> Variables::getVariable (const std::string& varName) const {
@@ -24,7 +24,7 @@ void Variables::createVariable (const std::string& key, std::shared_ptr<Variable
 }
 
 void 
-VaribaleCloner::copyVariables(const game::VariablePtr& from, std::shared_ptr<Variable> to){
+VariableCloner::copyVariables(const game::VariablePtr& from, std::shared_ptr<Variable> to){
     to->varType = from->varType;
     switch (from->varType){
          case VariableType::NumberType: 
