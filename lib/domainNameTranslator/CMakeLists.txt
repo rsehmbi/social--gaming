@@ -6,7 +6,8 @@ add_library(domainnametranslator
 )
 
 target_link_libraries(domainnametranslator 
-    game
+    game,
+    gamesession
 )
 
 target_include_directories(domainnametranslator
