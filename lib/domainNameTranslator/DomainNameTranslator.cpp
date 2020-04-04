@@ -1,8 +1,8 @@
 #include "include/DomainNameTranslator.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
-#include "RunningGameState.h"
 #include <iostream>
+#include <glog/logging.h>
 
 using domainnametranslator::DomainNameTranslator;
 
@@ -128,7 +128,7 @@ compare(int lhs, int rhs, OpType optype){
             return lhs >= rhs;
         }
         default:
-            std::cout << "unsupported int OpType";
+            LOG(ERROR) << "unsupported int OpType";
             return false;
     }
 }
@@ -159,7 +159,7 @@ getOpType(const std::string& funcArgs){
     if(funcArgs.find("<") != std::string::npos){
         return OpType::Greater;
     }
-    std::cout << "Error: operation not support" << std::endl;
+    LOG(ERROR) << "Error: operation not support" << std::endl;
     return OpType::Equal;
 }
 
@@ -189,7 +189,7 @@ Variable evaluateBinaryOperationCommand(const std::string& compareStatement, Run
             result.boolVar = compare(lhs.stringVar, rhs.stringVar);
         } break;
         default:
-            std::cout << "evaluateBinaryOperationCommand unsupported type, please implement";
+            LOG(ERROR) << "evaluateBinaryOperationCommand unsupported type, please implement" << std::endl;
             return Variable();
     }
 
@@ -205,7 +205,7 @@ collect(std::shared_ptr<Variable> list, const std::vector<std::string>& funcArgs
 
     for(auto& varPtr : list->listVar){
         //register list to name so subsequent parseInstruction calls will be able to find the element
-        state.gameVariables.updateVariable(funcArgs[0], varPtr);
+        state.variables->updateVariable(funcArgs[0], varPtr);
 
         //expect true or false
         Variable validator = DomainNameTranslator::parseInstruction(funcArgs[1], state);
@@ -215,13 +215,13 @@ collect(std::shared_ptr<Variable> list, const std::vector<std::string>& funcArgs
         }
     }
 
-    state.gameVariables.removeVariable(funcArgs[0]);
+    state.variables->removeVariable(funcArgs[0]);
     return result;
 }
 
 std::shared_ptr<Variable>
 identify(const std::string& identifier, RunningGameState& state){
-    std::shared_ptr<Variable> varPtr = state.gameVariables.getVariable(identifier);
+    std::shared_ptr<Variable> varPtr = state.variables->getVariable(identifier);
     return varPtr;
 }
 
@@ -237,7 +237,7 @@ modify(std::shared_ptr<Variable> varPtr, const std::string& modifier, RunningGam
             return flattened;
         } else {return varPtr;}        
     }
-    std::cout << "Error: identifer not supported" << std::endl;
+    LOG(ERROR) << "Error: identifer not supported" << std::endl;
     return nullptr;
 }
 
@@ -250,7 +250,7 @@ performFunction(std::shared_ptr<Variable> varPtr,
     if(funcName == "collect"){
         return collect(varPtr, funcArgs, state);
     }
-    std::cout << "Error: identifer not supported" << std::endl;
+    LOG(ERROR) << "Error: identifer not supported" << std::endl;
     return nullptr;
 }
 

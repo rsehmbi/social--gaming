@@ -30,6 +30,7 @@ void Variables::removeVariable (const std::string& key) {
         } else{
             variables.erase(key);
         }
+}
 
 void 
 VaribaleCloner::copyVariables(const game::VariablePtr& from, std::shared_ptr<Variable> to){
