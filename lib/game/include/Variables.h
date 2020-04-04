@@ -62,7 +62,7 @@ namespace game {
     };
 
 
-    class VaribaleCloner {
+    class VariableCloner {
         public:
             // Clone Variables.
             void copyVariables(const game::VariablePtr& from, std::shared_ptr<Variable> to);            
