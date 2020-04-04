@@ -99,17 +99,8 @@ void interpreter::Interpreter::executeDeal(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string From = std::get<std::string>(container.ruleInformation.at(RuleField::from));
     std::string To = std::get<std::string>(container.ruleInformation.at(RuleField::to));
-    std::string Count =  std::get<std::string>(container.ruleInformation.at(RuleField::count));
+    int Count =  std::get<int >(container.ruleInformation.at(RuleField::count));
     int numberOfElements = 0;
-
-    try
-    {
-        numberOfElements = std::stoi(Count);
-    }
-    catch (std::invalid_argument const &e)
-    {
-        LOG(INFO) << "Deal failed in Interpreter" << e.what();
-    }
     std::shared_ptr<Variable> fromVariablePtr = processToList(From);
     std::shared_ptr<Variable> toVariablePtr = processToList(To);
 
