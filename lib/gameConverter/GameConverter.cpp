@@ -56,14 +56,15 @@ GameConverter::convertGameRules(const nlohmann::json& jsonRules){
         if(game::isNestedJsonRule(jsonRule)) {
             rule = constructNestedRule(jsonRule);
         }
+        else if(game::hasCasesInRule(jsonRule)) {
+            rule = constructRuleWithCases(jsonRule);
+        }
         else {
             rule = constructRule(jsonRule);
         }
-    
         // Adds rule to game rules
         gameRules.addRule(rule);
     }
-
 
     return gameRules;
 }
@@ -91,6 +92,7 @@ GameConverter::constructNestedRule(nlohmann::json jsonRule) {
     // GameRules is just a wrapper for a vector of rules so we can call convertGameRules
     // to convert the array of nested rules and then extract the vector
     auto& nestedJsonRules = jsonRule["rules"];
+    
     GameRules rules =  GameConverter::convertGameRules(nestedJsonRules);
     nestedRules = rules.getRules();
 
@@ -103,6 +105,38 @@ GameConverter::constructNestedRule(nlohmann::json jsonRule) {
 
     auto& ruleName = jsonRule["rule"];
     Rule rule(game::matchRuleType(ruleName), ruleContainer, nestedRules);
+    
+    return rule;
+}
+
+Rule
+GameConverter::constructRuleWithCases(nlohmann::json jsonRule) {
+    RuleContainer ruleContainer;
+    std::vector<Rule::Case> cases;
+
+    auto& ruleName = jsonRule["rule"];
+    auto& jsonCases = jsonRule["cases"];
+    
+    for(auto& caseItem: jsonCases.items()) {
+        Rule::Case caseContainer;
+        
+        if(caseItem.value()["condition"].type() == nlohmann::json::value_t::boolean) {
+            caseContainer.condition = caseItem.value()["condition"].get<bool>();
+        } else {
+            caseContainer.condition = caseItem.value()["condition"].get<std::string>();
+        }
+        
+        // convertGameRules returns a GameRules object
+        caseContainer.rules = convertGameRules(caseItem.value()["rules"]).getRules();
+        cases.push_back(caseContainer);
+    }
+    
+    jsonRule.erase("cases");
+    for (auto& item : jsonRule.items()) {
+        addJsonKeyValueToRuleContainer(ruleContainer, item.key(), item.value());
+    }
+
+    Rule rule(game::matchRuleType(ruleName), ruleContainer, cases);
     return rule;
 }
 
@@ -113,7 +147,7 @@ void GameConverter::addJsonKeyValueToRuleContainer(RuleContainer& ruleContainer,
         case nlohmann::json::value_t::string:
             ruleContainer.add(key, value.get<std::string>());
             break;
-        case nlohmann::json::value_t::number_integer:
+        case nlohmann::json::value_t::number_unsigned:
             ruleContainer.add(key, value.get<int>());
             break;
         case nlohmann::json::value_t::boolean:
@@ -135,18 +169,6 @@ GameConverter::convertConstants(const nlohmann::json& jsonConstants){
     
     game::Constants constants;
     return constants;
-}
-
-GameState 
-GameConverter::convertState(const nlohmann::json& gameVariables, 
-    const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
-    
-    GameState gameState;
-    gameState.gameVariables = convertVariables(gameVariables);
-    gameState.perPlayer = convertVariables(perPlayer);
-    gameState.perAudience = convertVariables(perAudience);
-
-    return gameState;
 }
 
 //typecheck helper function
@@ -203,6 +225,29 @@ void convertVariableHelperJSON(std::shared_ptr<Variable> variablePtr, const nloh
         default:
             LOG(ERROR) << "unsupported valType, please implement";
     }
+}
+
+GameState 
+GameConverter::convertState(const nlohmann::json& gameVariables, 
+    const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
+    
+    // create variable objects for all the starting variables and 
+    // strore them in the gameState class object. When playing game
+    // game start with a copy of these (each player or user will have
+    // his own copy).
+    auto gameVariablesPtr = std::make_shared<Variable>();
+    auto playerVariablesPtr = std::make_shared<Variable>();
+    auto audienceVariablesPtr = std::make_shared<Variable>();
+
+    convertVariableHelperJSON(gameVariablesPtr, gameVariables);
+    convertVariableHelperJSON(playerVariablesPtr, perPlayer);
+    convertVariableHelperJSON(audienceVariablesPtr, perAudience);
+
+    return GameState {
+        std::move(gameVariablesPtr),
+        std::move(playerVariablesPtr),
+        std::move(audienceVariablesPtr)
+    };
 }
 
 Variables GameConverter::convertVariables(const nlohmann::json& gameVariables){

@@ -34,7 +34,7 @@ namespace interpreter{
 
         const GameSessionInterface* mSession;
 
-        CurrentGameState* gameState;
+        RunningGameState* gameState;
 
         const Constants* constants;
 
@@ -52,7 +52,7 @@ namespace interpreter{
 
         Interpreter();
 
-        void setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* gameState, 
+        void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
                 const Constants* constatnts, const GameRules* rules);
         void executeShuffle(Rule& rule);
         void executeSort(Rule& rule);

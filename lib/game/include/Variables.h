@@ -55,4 +55,11 @@ namespace game {
             std::unordered_map<std::string, VariablePtr> variables;
 
     };
+
+
+    class VaribaleCloner {
+        public:
+            // Clone Variables.
+            void copyVariables(const game::VariablePtr& from, std::shared_ptr<Variable> to);            
+    };
 }
