@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 #include <vector>
+#include <unordered_map>
 #include <Server.h>
 #include <User.h>
 #include <Game.h>
@@ -19,7 +20,6 @@ using game::GameState;
 using game::GameRules;
 using game::Constants;
 using game::Configurations;
-using game::UserVariables;
 
 using interpreter::Interpreter;
 
@@ -34,8 +34,8 @@ class GameSession : public GameSessionInterface {
     public:
         //Initialized by the session manager, session manager will pass 
         //in game type argument containing game information
-        GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-            const GameRules& _rules, const GameState& _gameState, Configurations _configurations);
+        GameSession(SessionID id, ConnectionID ownerConnectionId, const GameRules& _rules, 
+            const GameState& _gameState, Configurations _configurations);
         
         //Entry point for session manager to pass execution to a game session.
         //Session manager passes the messages from clients of this session to processGameTurn
@@ -51,13 +51,13 @@ class GameSession : public GameSessionInterface {
         void msgUsersOfType(UserType userType, const std::string& text);
 
         // Send message to a user using the id.
-        void msgUser(int id, const std::string& text);
+        void msgUser(UserIdType id, const std::string& text);
 
         //remove user from game session
         void disconnect(const ConnectionID& cid);
         
         //add user to game session
-        void connect(const ConnectionID& cid, const NewUserType newUserType);
+        void connect(const ConnectionID& cid, const NewUserType newUserType, const std::string_view& userName);
 
         // start the game if the conditions are met.
         void startGame(const ConnectionID& cid);
@@ -72,15 +72,15 @@ class GameSession : public GameSessionInterface {
     private:
 
         // ------- Game Data --------------------
-        const Constants& constants;
-
         const GameRules& rules;
 
         Configurations configurations;
 
         GameState initialState;
 
-        CurrentGameState currentState;
+        RunningGameState currentState;
+
+        std::unordered_map<UserIdType, Time> timeoutMap;
         // --------------------------------------
 
 
@@ -107,13 +107,15 @@ class GameSession : public GameSessionInterface {
 
         // When a new user is added initialize the state for that user in perPlayer or 
         // perAudience based on the userType.
-        void addUserToState(UserType userType, int userId);
+        void addUserToState(const User& user);
 
-        // create a buffer for player messages.
+        void setGlobalTimeout();
 
-        // create and hold a timer to handle the timer rules
+        void setTimeout(UserIdType id, Time delay);
 
-        // create an interpreter and send messages to the interpreter.
+        bool checkTimeOuts();
 
-        // check if the messages are comming from the interpreter.
+        void initializeGameState();
+
+        void moveVariable(std::shared_ptr<Variable> from);
 };

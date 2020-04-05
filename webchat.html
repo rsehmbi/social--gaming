@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Web Chat</title>
+  <title>Choripan Game Server</title>
 
   <style>
     body, input, select, textarea {
@@ -15,7 +15,8 @@
       height: 40em;
       border: solid 1px #cccccc;
       margin-bottom: 5px;
-      overflow-y: hidden;
+      padding: 10px;
+      overflow-y: auto;
     }
   </style>
 
@@ -75,16 +76,16 @@
 
 <body>
 
-  <h1>Web Chat</h1>
+  <h1>Choripan Game Server</h1>
 
-  Chat Server: <input id="uri" size="40">
+  Server: <input id="uri" size="40">
   <button id="connect">Connect</button>
   <button id="disconnect">Disconnect</button><br />
 
   <pre id="messages"></pre>
 
   <div style="margin-bottom: 5px;">
-    Enter Message:<br />
+    Enter Command:<br />
     <input id="sendMessage" size="80" value="" />
     <button id="send">Send</button>
   </div>

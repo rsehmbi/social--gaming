@@ -4,8 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include <SessionManager.h>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string.hpp>
 #include <glog/logging.h>
 
 #define SESSION_ID_LEN 10
@@ -25,9 +24,9 @@ SessionManager::SessionManager() :
 {
     interpreter = std::make_unique<Interpreter>();
     gamePrompt = "\nTo create a game use /create {Game name}.\n"
-        "To join an existing game use /join {Session ID}.\n"
-        "To join an existing game as a player use /join_player {Session ID}.\n"
-        "To join an existing game as an audience use /join_audience {Session ID}.\n"
+        "To join an existing game use /join {Session ID} {username}.\n"
+        "To join an existing game as a player use /join_player {Session ID} {username}.\n"
+        "To join an existing game as an audience use /join_audience {Session ID} {username}.\n"
         "\nThe server supports following games:\n";
 }
 
@@ -47,15 +46,15 @@ void SessionManager::processMessages(const std::deque<Message>& incoming) {
                 LOG(INFO) << "Request for create.\n";
                 break;
             case CommandType::Join:
-                joinSession(message.connection.id, command, commandChecker.getArgument());
+                joinSession(message.connection.id, command, commandChecker.getArguments());
                 LOG(INFO) << "Request for join.\n";
                 break;
             case CommandType::JoinPlayer:
-                joinSession(message.connection.id, command, commandChecker.getArgument());
+                joinSession(message.connection.id, command, commandChecker.getArguments());
                 LOG(INFO) << "Request to join as player.";
                 break;
             case CommandType::JoinAudience:
-                joinSession(message.connection.id, command, commandChecker.getArgument());
+                joinSession(message.connection.id, command, commandChecker.getArguments());
                 LOG(INFO) << "Request to join as an audience";
                 break; 
             case CommandType::StartGame:
@@ -113,7 +112,6 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
             GameSession{ 
                 sessionID, 
                 connectionID,
-                selectedGame.getConstants(),
                 selectedGame.getGameRules(),
                 selectedGame.getGameState(),      
                 selectedGame.getConfigurations()
@@ -148,7 +146,7 @@ void SessionManager::startGame(const ConnectionID& cid){
     sessionMap.at(sessionId).startGame(cid);
 }
 
-void SessionManager::joinSession(const ConnectionID& connectionID, const CommandType command, const SessionID& sessionID) {
+void SessionManager::joinSession(const ConnectionID& connectionID, const CommandType command, const std::vector<std::string>& arguments) {
     
     //check if connection is already in a session
     if(connectionSessionMap.find(connectionID) != connectionSessionMap.end()){
@@ -156,6 +154,15 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Command
             "You are already in a session. Open a new connection to join another session.\n"});
         return;
     }
+
+    if (arguments.size() < 2){
+         outgoing.push_back({{connectionID},
+            "Please provide the {Session ID} and {userName}.\n"});
+        return;
+    }
+
+    SessionID sessionID = arguments[0];
+    std::string userName = arguments[1];
 
     //check if sessionID exists
     if(sessionMap.find(sessionID) == sessionMap.end()){
@@ -172,7 +179,7 @@ void SessionManager::joinSession(const ConnectionID& connectionID, const Command
         userType = NewUserType::Audience;
     
     // Tell the session add the user as a client of selected userType.
-    sessionMap.at(sessionID).connect(connectionID, userType);
+    sessionMap.at(sessionID).connect(connectionID, userType, userName);
     return;
 }
 
@@ -260,15 +267,19 @@ CommandChecker::CommandChecker(){
 
 //checks first word of string and returns CommandType and updates argument accordingly
 CommandType CommandChecker::checkString(const Message& message){
-    argument = "";
-    std::istringstream iss(message.text);
-    std::string firstWord;
-    iss >> firstWord;
-    if (commandMap.find(firstWord) == commandMap.end()){return CommandType::NotACommand;}
-    iss >> argument;
+    arguments = {};
+    boost::split(arguments, message.text, boost::is_any_of(" "));
+    std::string firstWord = arguments[0];
+    if (commandMap.find(firstWord) == commandMap.end()){
+        return CommandType::NotACommand;
+    } else if (arguments.size() == 1){
+        arguments = {};
+    } else {
+        arguments.erase(arguments.begin());
+    }
     return commandMap[firstWord];
 }
 
-std::string CommandChecker::getArgument(){
-    return argument;
+std::vector<std::string> CommandChecker::getArguments(){
+    return arguments;
 }

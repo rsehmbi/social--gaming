@@ -194,8 +194,103 @@ TEST_F(ConvertGameRulesTest, Foreach) {
     auto& nestedRules = rule.getNestedRules();
     EXPECT_EQ(RuleType::GlobalMessage, nestedRules[0].getRuleType());
     EXPECT_EQ(RuleType::Foreach, nestedRules[1].getRuleType());
-    EXPECT_EQ(RuleType::Scores, nestedRules[2].getRuleType());
-    
+    EXPECT_EQ(RuleType::Scores, nestedRules[2].getRuleType());  
 }
 
+TEST_F(ConvertGameRulesTest, When) {
+    nlohmann::json jsonRule = nlohmann::json::array({
+        {
+            {"rule", "when"},
+            {"cases",
+                {
+                    {
+                        {"condition", "winners.size == players.size"},
+                        {"rules", 
+                            {
+                                {
+                                    {"rule", "global-message"},
+                                    {"value", "Tie game!"}
+                                }
+                            }
+                        }
+                    },
+                    {
+                        {"condition", "winners.size == 0"},
+                        {"rules", 
+                            {
+                                {
+                                    {"rule", "global-message"},
+                                    {"value", "Tie game!"}
+                                }
+                            }
+                        }
+                    },
+                    {
+                        {"condition", true},
+                        {"rules", 
+                            {
+                                {
+                                    {"rule", "global-message"},
+                                    {"value", "Winners: {winners.elements.name}"}
+                                },
+                                {
+                                    {"rule", "foreach"},
+                                    {"list", "winners"},
+                                    {"element", "winner"},
+                                    {"rules", 
+                                        {
+                                            {
+                                                {"rule", "add"},
+                                                {"to", "winner.wins"},
+                                                {"value", 1}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                }
+            }
+
+        }
+    });
+
+    std::string expectedOutput = "rule: when\n"
+        "cases: \n"
+        "{\n"
+        "condition: winners.size == players.size\n"
+        "rules: \n"
+        "{\n"
+        "rule: global-message\n"
+        "value: Tie game!\n"
+        "}\n"
+        "condition: winners.size == 0\n"
+        "rules: \n"
+        "{\n"
+        "rule: global-message\n"
+        "value: Tie game!\n"
+        "}\n"
+        "condition: true\n"
+        "rules: \n"
+        "{\n"
+        "rule: global-message\n"
+        "value: Winners: {winners.elements.name}\n"
+        "rule: foreach\n"
+        "list: winners\n"
+        "element: winner\n"
+        "rules: \n"
+        "{\n"
+        "rule: add\n"
+        "to: winner.wins\n"
+        "}\n"
+        "}\n"
+        "}\n";
+
+    GameRules ruleList = convertGameRules(jsonRule);
+    Rule rule = ruleList.getRules().front();
+
+    EXPECT_EQ(expectedOutput, rule.toString());
+    EXPECT_EQ(RuleType::When, rule.getRuleType());
+}
 }

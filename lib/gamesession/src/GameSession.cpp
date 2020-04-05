@@ -1,5 +1,6 @@
 #include <GameSession.h>
 
+#include <ctime>
 #include <glog/logging.h>
 #include <sstream>
 #include <iostream>
@@ -9,14 +10,13 @@ static const std::string MSG_NO_ROOM_FOR_PLAYER = "No room for a new player";
 
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
-GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-    const GameRules& _rules, const GameState& _gameState, Configurations _configurations)
-    :   constants(_constants), 
-        rules(_rules),
+GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const GameRules& _rules, 
+    const GameState& _gameState, Configurations _configurations)
+    :   rules(_rules),
         configurations(_configurations),
         initialState(_gameState),
         sessionID{id},
-        owner{User {"", -1, ownerConnectionId, UserType::Owner} }
+        owner{User {"", static_cast<UserIdType>(1), ownerConnectionId, UserType::Owner} }
 {   
     sessionUsers.push_back(owner);
     gameStarted = false;
@@ -32,16 +32,28 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
         This set of statements checks at every tick if the game has started
         and process the rules only if the game has started.
     */
-    if (gameStarted) { 
-        interpreter->setCurrentGameSession(this, &currentState, &constants, &rules);
+    if (gameStarted && checkTimeOuts()) { 
+        interpreter->setCurrentGameSession(this, &currentState, &rules);
 
         //-----------perform game turn-------
-
-        //FOR TESTING: send msg back to each player
         for(auto& msg : inMsgs){
             std::ostringstream out;
-            out << msg.connection.id << "> " << msg.text << "\n";
-            msgBuffer.push_back({{msg.connection.id}, out.str()});
+
+            // Find the user sending the message.
+            auto it = std::find_if(sessionUsers.begin(), sessionUsers.end(), 
+                [&msg] (User& user) { return user.getConnectionID() == msg.connection.id; }
+            );
+
+            // Save the incoming message from the user in the map to be used by the interpreter.
+            if (it != sessionUsers.end()){
+                User user = *it;
+                MessageText messageText = {msg.text};
+                currentState.messageMap[user.getId()] = messageText;
+            }
+
+            //FOR TESTING: send msg back to each player
+            // out << msg.connection.id << "> " << msg.text << "\n";
+            // msgBuffer.push_back({{msg.connection.id}, out.str()});
         }
 
         //-----------end of perform game turn-------
@@ -78,7 +90,7 @@ GameSession::msgUsersOfType(UserType userType, const std::string& text){
 }
 
 void 
-GameSession::msgUser(int id, const std::string& text){
+GameSession::msgUser(UserIdType id, const std::string& text){
     auto it = std::find_if(sessionUsers.begin(), sessionUsers.end(), 
         [id] (User& user) { return user.getId() == id; }
     );
@@ -103,7 +115,7 @@ GameSession::disconnect(const ConnectionID& cid){
 }
 
 void 
-GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
+GameSession::connect(const ConnectionID& cid, const NewUserType newUserType, const std::string_view& userName){
     if (gameStarted){
         msgConnection(cid, "Cannot join this session. Game has already started.");
         return ;
@@ -133,15 +145,16 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
     } else if (newUserType == NewUserType::Audience) {
         userType = UserType::Audience;
     }
-            
-    User user {"", getUserCountWithType(userType) + 1, cid, userType};
+    
+    UserIdType userId = static_cast<UserIdType>(sessionUsers.size());
+    User user {userName, userId, cid, userType};
     sessionUsers.push_back(user);
-    addUserToState(userType, user.getId());
+    addUserToState(user);
 
     // Send messgae to owner informing a new user in session.
     std::string userTypeStr = UserType::Player == userType ? "Player" : "Audience";
     std::ostringstream stream;
-    stream << userTypeStr << " joined with id " << cid;
+    stream << userName << " joined as a " << userTypeStr;
     msgConnection(owner.getConnectionID(), stream.str());
 
     // Send message to client to inform connection status
@@ -152,12 +165,37 @@ GameSession::connect(const ConnectionID& cid, const NewUserType newUserType){
 }
 
 void 
-GameSession::addUserToState(UserType userType, int userId){
+GameSession::addUserToState(const User& user){
     std::cout << "adding state" << std::endl;
-    if (userType == UserType::Player){
-        currentState.perPlayer.addNewUser(userId, initialState.perPlayer);
-    } else if (userType == UserType::Audience){
-        currentState.perAudience.addNewUser(userId, initialState.perAudience);
+
+    auto nameVariable = std::make_shared<game::Variable>();
+    nameVariable->varType = VariableType::StringType;
+    nameVariable->stringVar = user.getName();
+
+    auto idVariable = std::make_shared<game::Variable>();
+    idVariable->varType = VariableType::StringType;
+    idVariable->stringVar = std::to_string(user.getId());
+
+    if (user.getUserType() == UserType::Player){
+        auto playerState = std::make_shared<Variable>();
+        auto variableCloner = game::VariableCloner();
+        variableCloner.copyVariables(initialState.perPlayer, playerState);
+
+        playerState->mapVar["name"] = nameVariable;
+        playerState->mapVar["id"] = idVariable;
+
+        auto players = currentState.variables->getVariable("players");
+        players->listVar.emplace_back(playerState);
+    } else if (user.getUserType() == UserType::Audience){
+        auto audienceState = std::make_shared<Variable>();
+        auto variableCloner = game::VariableCloner();
+        variableCloner.copyVariables(initialState.perPlayer, audienceState);
+
+        audienceState->mapVar["name"] = nameVariable;
+        audienceState->mapVar["id"] = idVariable;
+    
+        auto audiences = currentState.variables->getVariable("audiences");
+        audiences->listVar.emplace_back(audienceState);
     }
 }
 
@@ -166,8 +204,9 @@ GameSession::startGame(const ConnectionID& cid){
     if (cid == owner.getConnectionID()){
         if (getUserCountWithType(UserType::Player) >= configurations.getMinNoOfPlayers()){
             gameStarted = true;
+            initializeGameState();
             std::string msg = "Game started";
-            msgConnection(cid, msg);
+            sessionBroadCast(msg);
         } else {
             std::ostringstream stream;
             stream << "Error starting the game. Minimum number of players needed: "
@@ -209,4 +248,51 @@ GameSession::getUserCountWithType(const UserType& userType){
     return std::count_if(sessionUsers.begin(), sessionUsers.end(), 
         [&userType ](User& user) { return user.getUserType() == userType; }
     );
+}
+
+void 
+GameSession::setGlobalTimeout(){
+    // TODO: implementation.
+}
+
+void 
+GameSession::setTimeout(UserIdType id, Time delay){
+    Time currentTime;
+    std::time(&currentTime);
+    timeoutMap.emplace(id, currentTime + delay);
+}
+
+bool
+GameSession::checkTimeOuts(){
+    bool allResponsesAvailable = std::all_of(currentState.messageMap.begin(),
+        currentState.messageMap.end(),
+        [] (const auto& message) { return message.second.length() > 0; }
+    );
+
+    if (allResponsesAvailable) 
+        return true;
+
+    Time currentTime;
+    std::time(&currentTime);
+    
+    return std::all_of(timeoutMap.begin(), timeoutMap.end(),
+        [currentTime] (const auto& timeMap) { return timeMap.second > currentTime; }
+    );    
+}
+
+void 
+GameSession::initializeGameState(){
+    moveVariable(initialState.gameVariables);
+    moveVariable(initialState.constants);
+}
+
+void 
+GameSession::moveVariable(std::shared_ptr<Variable> from){
+    auto variableCloner = game::VariableCloner();
+    auto variable = std::make_shared<Variable>();
+    variableCloner.copyVariables(from, variable);
+
+    for (auto& var : variable->mapVar){
+        currentState.variables->createVariable(var.first, std::move(var.second));
+    }
 }
