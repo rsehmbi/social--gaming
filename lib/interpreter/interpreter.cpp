@@ -141,8 +141,25 @@ void interpreter::Interpreter::executeWhen(Rule &rule) {
 
 }
 
-void interpreter::Interpreter::executeDiscard(Rule &rule) {
+void interpreter::Interpreter::executeDiscard(Rule &rule) { 
+    //Count will not work as intended if count datatype is not Int, such as winner.size, because DomainNameTranslator doesn't have the function to parse
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string from = std::get<std::string>(container.ruleInformation.at(RuleField::from));
+    int count =  std::get<int>(container.ruleInformation.at(RuleField::count));
 
+    std::shared_ptr<Variable> fromPtr = processToList(from);
+
+    if(fromPtr->varType != VariableType::ListType){
+        std::cout << std::endl << "executeDiscard error, type mismatch; not ListType" <<std::endl;
+    }
+
+    try{
+        for(int i = 0; i < count; ++i){
+            fromPtr->listVar.erase(fromPtr->listVar.begin());
+        }
+    }catch(exception &e){
+        LOG(INFO) << "Discard failed in Interpreter while processing a list" << e.what();
+    }
 }
 
 void interpreter::Interpreter::executeAdd(Rule &rule) {
