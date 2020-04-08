@@ -150,7 +150,7 @@ void interpreter::Interpreter::executeDiscard(Rule &rule) {
     std::shared_ptr<Variable> fromPtr = processToList(from);
 
     if(fromPtr->varType != VariableType::ListType){
-        std::cout << std::endl << "executeDiscard error, type mismatch; not ListType" <<std::endl;
+        LOG(INFO) << "executeDiscard error, type mismatch; not ListType" <<std::endl;
     }
 
     try{
@@ -170,7 +170,7 @@ void interpreter::Interpreter::executeAdd(Rule &rule) {
     std::shared_ptr<Variable> toPtr = this->gameState->variables->getVariable(to);
 
     if(toPtr->varType != VariableType::NumberType){
-        std::cout << std::endl << "executeAdd error, type mismatch; not NumberType" <<std::endl;
+        LOG(INFO) <<  "executeAdd error, type mismatch; not NumberType" <<std::endl;
     }
 
     try{

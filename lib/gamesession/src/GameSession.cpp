@@ -34,7 +34,8 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
     */
     if (gameStarted && checkTimeOuts()) { 
         // interpreter->setCurrentGameSession(this, &currentState, &rules); ////**** Missing Constant argument
-        interpreter->setCurrentGameSession(this, &currentState, new Constants(), &rules); ////**** temporary fix
+        Constants constants;
+        interpreter->setCurrentGameSession(this, &currentState, &constants, &rules); ////**** temporary fix
 
 
         //-----------perform game turn-------
