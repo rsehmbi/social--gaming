@@ -142,10 +142,10 @@ void interpreter::Interpreter::executeWhen(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeDiscard(Rule &rule) { 
-    //Count will not work as intended if count datatype is not Int, such as winner.size, because DomainNameTranslator doesn't have the function to parse
     const RuleContainer& container = rule.getRuleContainer();
     std::string from = std::get<std::string>(container.ruleInformation.at(RuleField::from));
     int count =  std::get<int>(container.ruleInformation.at(RuleField::count));
+    //Count will not work as intended if count datatype is not Int, such as winner.size, because DomainNameTranslator doesn't have the function to parse
 
     std::shared_ptr<Variable> fromPtr = processToList(from);
 
@@ -163,7 +163,21 @@ void interpreter::Interpreter::executeDiscard(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeAdd(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string to = std::get<std::string>(container.ruleInformation.at(RuleField::to));
+    int value =  std::get<int>(container.ruleInformation.at(RuleField::value)); // only works with Int
 
+    std::shared_ptr<Variable> toPtr = this->gameState->variables->getVariable(to);
+
+    if(toPtr->varType != VariableType::NumberType){
+        std::cout << std::endl << "executeAdd error, type mismatch; not NumberType" <<std::endl;
+    }
+
+    try{
+        toPtr->intVar = toPtr->intVar + value;
+    }catch(exception &e){
+        LOG(INFO) << "Add failed in Interpreter while processing a list" << e.what();
+    }
 }
 
 void interpreter::Interpreter::executeTimer(Rule &rule) {
@@ -187,11 +201,32 @@ void interpreter::Interpreter::executeInputText(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeMessage(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string to = std::get<std::string>(container.ruleInformation.at(RuleField::to));
+    std::string value =  std::get<std::string>(container.ruleInformation.at(RuleField::value));
 
+    std::vector<user::User> userList;
+    try{
+        for(user::User user : userList){
+            // this->gameState->messageMap.insert(user.getId(), value); // function not overloaded
+        }
+    }catch(exception &e){
+        LOG(INFO) << "Global Message failed in Interpreter while processing a list" << e.what();
+    }
 }
 
 void interpreter::Interpreter::executeGlobalMessage(Rule &rule) {
-
+    const RuleContainer& container = rule.getRuleContainer();
+    std::string value =  std::get<std::string>(container.ruleInformation.at(RuleField::value));
+    // std::vector<user::User> userList = mSession->getPlayers();
+    
+    try{
+    //     for(user::User user : userList){
+    //         this->gameState->messageMap.insert(user.getId(), value);
+            // }
+    }catch(exception &e){
+        LOG(INFO) << "Global Message failed in Interpreter while processing a list" << e.what();
+    }
 }
 
 void interpreter::Interpreter::executeScores(Rule &rule) {
