@@ -33,7 +33,9 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
         and process the rules only if the game has started.
     */
     if (gameStarted && checkTimeOuts()) { 
-        interpreter->setCurrentGameSession(this, &currentState, &rules);
+        // interpreter->setCurrentGameSession(this, &currentState, &rules); ////**** Missing Constant argument
+        interpreter->setCurrentGameSession(this, &currentState, new Constants(), &rules); ////**** temporary fix
+
 
         //-----------perform game turn-------
         for(auto& msg : inMsgs){
