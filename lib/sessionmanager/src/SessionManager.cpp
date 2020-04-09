@@ -112,7 +112,6 @@ void SessionManager::createSession(const ConnectionID& connectionID, const Messa
             GameSession{ 
                 sessionID, 
                 connectionID,
-                selectedGame.getConstants(),
                 selectedGame.getGameRules(),
                 selectedGame.getGameState(),      
                 selectedGame.getConfigurations()

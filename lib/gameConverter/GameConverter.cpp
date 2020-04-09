@@ -20,8 +20,8 @@ GameConverter::createGame(const nlohmann::json& jsonGame){
     LOG(INFO) << "Creating Game From Json" << jsonGame.dump();
     game::Configurations configs = convertConfigurations(jsonGame["configuration"]);
     game::GameRules gameRules = convertGameRules(jsonGame["rules"]);
-    game::Constants constants = convertConstants(jsonGame["constants"]);
-    game::GameState gameState = convertState(jsonGame["variables"], jsonGame["per-player"], jsonGame["per-audience"]);
+    game::Constants constants;
+    game::GameState gameState = convertState(jsonGame["variables"], jsonGame["per-player"], jsonGame["per-audience"], jsonGame["constants"]);
 
     game::Game createdGame {configs, gameRules, constants, gameState};
     return createdGame;
@@ -229,7 +229,9 @@ void convertVariableHelperJSON(std::shared_ptr<Variable> variablePtr, const nloh
 
 GameState 
 GameConverter::convertState(const nlohmann::json& gameVariables, 
-    const nlohmann::json& perPlayer, const nlohmann::json& perAudience){
+    const nlohmann::json& perPlayer, 
+    const nlohmann::json& perAudience,
+    const nlohmann::json& constants){
     
     // create variable objects for all the starting variables and 
     // strore them in the gameState class object. When playing game
@@ -238,15 +240,19 @@ GameConverter::convertState(const nlohmann::json& gameVariables,
     auto gameVariablesPtr = std::make_shared<Variable>();
     auto playerVariablesPtr = std::make_shared<Variable>();
     auto audienceVariablesPtr = std::make_shared<Variable>();
+    auto constantsPtr = std::make_shared<Variable>();
 
     convertVariableHelperJSON(gameVariablesPtr, gameVariables);
     convertVariableHelperJSON(playerVariablesPtr, perPlayer);
     convertVariableHelperJSON(audienceVariablesPtr, perAudience);
+    convertVariableHelperJSON(constantsPtr, constants);
+    
 
     return GameState {
         std::move(gameVariablesPtr),
         std::move(playerVariablesPtr),
-        std::move(audienceVariablesPtr)
+        std::move(audienceVariablesPtr),
+        std::move(constantsPtr)
     };
 }
 

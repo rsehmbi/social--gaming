@@ -33,13 +33,9 @@ namespace interpreter{
     private:
 
         const GameSessionInterface* mSession;
-
         RunningGameState* gameState;
-
         const Constants* constants;
-
         const GameRules* rules;
-
 
         json gameRules;
         json gameData;  
@@ -51,22 +47,40 @@ namespace interpreter{
     public:
 
         Interpreter();
-
         void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
-                const Constants* constatnts, const GameRules* rules);
+                const Constants* constants, const GameRules* rules);
+
+        // Control Structures
+        void executeForEach(Rule &rule);
+        void executeLoop(Rule &rule);
+        void executeInparallel(Rule  &rule);
+        void executeParallelFor(Rule &rule);
+        void executeSwitch(Rule &rule);
+        void executeWhen(Rule &rule);
+
+        //List Operations
+        void executeExtend(Rule& rule);
+        void executeReverse(Rule& rule);
+
         void executeShuffle(Rule& rule);
         void executeSort(Rule& rule);
         void executeDeal(Rule& rule);
+        void executeDiscard(Rule &rule);
 
-        void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
-        void executeTimer(GameState &state, VariableName& value);
-        void processRules(json gameRules, json gameData);
+        void executeAdd(Rule &rule);
+        void executeTimer(Rule &rule);
+        void processRules(Rule &rule);
+
+        //Human Input Rules
         void executeInputChoice(const Constants &constants, GameSessionInterface* session, 
                 std::shared_ptr<Variable> to, Input& prompt, std::list<std::string>& choices, Input& result, Count& timeout);
+        void executeInputText(Rule &rule);
+        void executeInputVote(Rule &rule);
 
-        void executeReverse(GameState &state, Rule& rule);
-        void executeExtend(GameState &state, Rule& rule);
-        
+        //Output
+        void executeMessage(Rule &rule);
+        void executeGlobalMessage(Rule &rule);
+        void executeScores(Rule &rule);
     };
 }
 

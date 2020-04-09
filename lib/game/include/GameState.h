@@ -14,6 +14,7 @@ struct GameState {
     std::shared_ptr<Variable> gameVariables;
     std::shared_ptr<Variable> perPlayer;
     std::shared_ptr<Variable> perAudience;
+    std::shared_ptr<Variable> constants;
 };
 }
 

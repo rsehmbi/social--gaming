@@ -1,5 +1,6 @@
 #include <GameSession.h>
 
+#include <ctime>
 #include <glog/logging.h>
 #include <sstream>
 #include <iostream>
@@ -9,10 +10,9 @@ static const std::string MSG_NO_ROOM_FOR_PLAYER = "No room for a new player";
 
 //Initialized by the session manager, session manager will pass 
 //in game type argument containing game information
-GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const Constants& _constants, 
-    const GameRules& _rules, const GameState& _gameState, Configurations _configurations)
-    :   constants(_constants), 
-        rules(_rules),
+GameSession::GameSession(SessionID id, ConnectionID ownerConnectionId, const GameRules& _rules, 
+    const GameState& _gameState, Configurations _configurations)
+    :   rules(_rules),
         configurations(_configurations),
         initialState(_gameState),
         sessionID{id},
@@ -32,11 +32,10 @@ GameSession::processGameTurn(const MessageBatch& inMsgs, std::shared_ptr<Interpr
         This set of statements checks at every tick if the game has started
         and process the rules only if the game has started.
     */
-    if (gameStarted) { 
-        interpreter->setCurrentGameSession(this, &currentState, &constants, &rules);
+    if (gameStarted && checkTimeOuts()) { 
+        interpreter->setCurrentGameSession(this, &currentState, &rules);
 
         //-----------perform game turn-------
-
         for(auto& msg : inMsgs){
             std::ostringstream out;
 
@@ -179,7 +178,7 @@ GameSession::addUserToState(const User& user){
 
     if (user.getUserType() == UserType::Player){
         auto playerState = std::make_shared<Variable>();
-        auto variableCloner = game::VaribaleCloner();
+        auto variableCloner = game::VariableCloner();
         variableCloner.copyVariables(initialState.perPlayer, playerState);
 
         playerState->mapVar["name"] = nameVariable;
@@ -189,7 +188,7 @@ GameSession::addUserToState(const User& user){
         players->listVar.emplace_back(playerState);
     } else if (user.getUserType() == UserType::Audience){
         auto audienceState = std::make_shared<Variable>();
-        auto variableCloner = game::VaribaleCloner();
+        auto variableCloner = game::VariableCloner();
         variableCloner.copyVariables(initialState.perPlayer, audienceState);
 
         audienceState->mapVar["name"] = nameVariable;
@@ -205,6 +204,7 @@ GameSession::startGame(const ConnectionID& cid){
     if (cid == owner.getConnectionID()){
         if (getUserCountWithType(UserType::Player) >= configurations.getMinNoOfPlayers()){
             gameStarted = true;
+            initializeGameState();
             std::string msg = "Game started";
             sessionBroadCast(msg);
         } else {
@@ -248,4 +248,51 @@ GameSession::getUserCountWithType(const UserType& userType){
     return std::count_if(sessionUsers.begin(), sessionUsers.end(), 
         [&userType ](User& user) { return user.getUserType() == userType; }
     );
+}
+
+void 
+GameSession::setGlobalTimeout(){
+    // TODO: implementation.
+}
+
+void 
+GameSession::setTimeout(UserIdType id, Time delay){
+    Time currentTime;
+    std::time(&currentTime);
+    timeoutMap.emplace(id, currentTime + delay);
+}
+
+bool
+GameSession::checkTimeOuts(){
+    bool allResponsesAvailable = std::all_of(currentState.messageMap.begin(),
+        currentState.messageMap.end(),
+        [] (const auto& message) { return message.second.length() > 0; }
+    );
+
+    if (allResponsesAvailable) 
+        return true;
+
+    Time currentTime;
+    std::time(&currentTime);
+    
+    return std::all_of(timeoutMap.begin(), timeoutMap.end(),
+        [currentTime] (const auto& timeMap) { return timeMap.second > currentTime; }
+    );    
+}
+
+void 
+GameSession::initializeGameState(){
+    moveVariable(initialState.gameVariables);
+    moveVariable(initialState.constants);
+}
+
+void 
+GameSession::moveVariable(std::shared_ptr<Variable> from){
+    auto variableCloner = game::VariableCloner();
+    auto variable = std::make_shared<Variable>();
+    variableCloner.copyVariables(from, variable);
+
+    for (auto& var : variable->mapVar){
+        currentState.variables->createVariable(var.first, std::move(var.second));
+    }
 }

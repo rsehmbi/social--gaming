@@ -31,7 +31,9 @@ namespace gameConverter{
     
     
             game::GameState convertState(const nlohmann::json& gameVariables, 
-                const nlohmann::json& perPlayer, const nlohmann::json& perAudience);
+                const nlohmann::json& perPlayer, 
+                const nlohmann::json& perAudience,
+                const nlohmann::json& constants);
     
     
             game::Variables convertVariables(const nlohmann::json& gameVariables);
