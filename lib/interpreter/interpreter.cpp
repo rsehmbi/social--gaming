@@ -5,6 +5,7 @@
 #include <utility>
 #include <random>       // std::default_random_engine
 #include <chrono>
+#include "GameSession.h"
 
 using interpreter::Interpreter;
 using namespace game;
@@ -14,7 +15,7 @@ Interpreter::Interpreter () {
 }
 
 void 
-Interpreter::setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState,
+Interpreter::setCurrentGameSession(GameSessionInterface* session, RunningGameState* gameState,
                                    const Constants* constants, const GameRules* rules){
     mSession = session;
     gameState = gameState;
@@ -208,7 +209,7 @@ void interpreter::Interpreter::executeMessage(Rule &rule) {
     std::vector<user::User> userList;
     try{
         for(user::User user : userList){
-            // this->gameState->messageMap.insert(user.getId(), value); // function not overloaded
+            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getId(), (MessageText)value));
         }
     }catch(exception &e){
         LOG(INFO) << "Global Message failed in Interpreter while processing a list" << e.what();
@@ -218,12 +219,13 @@ void interpreter::Interpreter::executeMessage(Rule &rule) {
 void interpreter::Interpreter::executeGlobalMessage(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string value =  std::get<std::string>(container.ruleInformation.at(RuleField::value));
-    // std::vector<user::User> userList = mSession->getPlayers();
+    
+    std::vector<user::User> userList = dynamic_cast<GameSession*>(mSession)->getPlayers();
     
     try{
-    //     for(user::User user : userList){
-    //         this->gameState->messageMap.insert(user.getId(), value);
-            // }
+        for(user::User user : userList){
+            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getId(), (MessageText)value));
+        }
     }catch(exception &e){
         LOG(INFO) << "Global Message failed in Interpreter while processing a list" << e.what();
     }

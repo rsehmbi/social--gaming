@@ -8,6 +8,7 @@
 #include <glog/logging.h>
 #include "GameSessionInterface.h"
 
+
 using game::ListName;////****
 using game::Mode;
 using game::VariableName;
@@ -32,7 +33,7 @@ namespace interpreter{
     class Interpreter{
     private:
 
-        const GameSessionInterface* mSession;
+        GameSessionInterface* mSession;
         RunningGameState* gameState;
         const Constants* constants;
         const GameRules* rules;
@@ -47,7 +48,7 @@ namespace interpreter{
     public:
 
         Interpreter();
-        void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
+        void setCurrentGameSession(GameSessionInterface* session, RunningGameState* gameState, 
                 const Constants* constants, const GameRules* rules);
 
         // Control Structures
