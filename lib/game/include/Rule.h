@@ -4,6 +4,7 @@
 #include <map>
 #include <variant>
 #include "json.hpp"
+#include <optional>
 
 namespace game {
     
