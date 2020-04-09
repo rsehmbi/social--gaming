@@ -158,10 +158,11 @@ void interpreter::Interpreter::processRules(Rule &rule) {
 
 }
 
+/*
 void interpreter::Interpreter::executeInputChoice(Rule &rule) {
 
 }
-
+*/
 void interpreter::Interpreter::executeInputVote(Rule &rule) {
 
 }
@@ -181,14 +182,15 @@ void interpreter::Interpreter::executeGlobalMessage(Rule &rule) {
 void interpreter::Interpreter::executeScores(Rule &rule) {
 
 }
-/*
+
 void Interpreter::executeInputChoice(const Constants &constants, GameSessionInterface* session, 
                                     std::shared_ptr<Variable> to, Input& prompt, list<std::string>& choices, 
                                     Input& result, Count& timeout){
     if (session->getWaitingInputFlag==false){
         try {
             std::shared_ptr<Variable> playerPtr = this->gameState->variables->getVariable("players");
-            int connectionID = playerPtr->mapVar["id"];
+            int connectionID = playerPtr->intVar["id"];
+            //UserIdType convertedID = (UserIdType)connectionID;           
             //std::shared_ptr<Variable> playersPtr = to["id"];
             //int connectionID = to.getUserVariables.getVariables("id");
             session->msgUser(connectionID, prompt);
@@ -218,4 +220,3 @@ void Interpreter::executeInputChoice(const Constants &constants, GameSessionInte
         }
     }
 }
-*/
