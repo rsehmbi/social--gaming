@@ -5,6 +5,7 @@
 #include "../../jsonReader/include/dsl.h"
 #include "json.hpp"
 #include "Game.h"
+#include <glog/logging.h>
 #include "GameSessionInterface.h"
 
 using game::ListName;////****
@@ -33,7 +34,7 @@ namespace interpreter{
 
         const GameSessionInterface* mSession;
 
-        CurrentGameState* gameState;
+        RunningGameState* gameState;
 
         const Constants* constants;
 
@@ -51,18 +52,17 @@ namespace interpreter{
 
         Interpreter();
 
-        void setCurrentGameSession(const GameSessionInterface* session, CurrentGameState* gameState, 
+        void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
                 const Constants* constatnts, const GameRules* rules);
-        void executeShuffle(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeSort(GameState &state, const Constants &constants, Configurations &configurations, ListName &listName);
-        void executeDeal(GameState &state, const Constants &constants,
-                Configurations &configurations, Count count, ListName &from, ListName &to);
+        void executeShuffle(Rule& rule);
+        void executeSort(Rule& rule);
+        void executeDeal(Rule& rule);
 
         void executeAdd(GameState &state, VariableName& toVariable, VariableName& value);
         void executeTimer(GameState &state, VariableName& value);
         void processRules(json gameRules, json gameData);
         void executeInputChoice(const Constants &constants, GameSessionInterface* session, 
-                UserVariables& to, Input& prompt, list<std::string>& choices, Input& result, Count& timeout);
+                std::shared_ptr<Variable> to, Input& prompt, std::list<std::string>& choices, Input& result, Count& timeout);
 
         void executeReverse(GameState &state, Rule& rule);
         void executeExtend(GameState &state, Rule& rule);

@@ -7,16 +7,14 @@
 #include "UserVariables.h"
 
 using game::Variables;
-using game::UserVariables;
 
 namespace game{
     
 struct GameState {
-    Variables gameVariables;
-    Variables perPlayer;
-    Variables perAudience;
+    std::shared_ptr<Variable> gameVariables;
+    std::shared_ptr<Variable> perPlayer;
+    std::shared_ptr<Variable> perAudience;
 };
-
 }
 
 #endif

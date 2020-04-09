@@ -58,7 +58,9 @@ namespace game {
         prompt,
         result,
         score,
-        ascending
+        ascending,
+        timeout,
+        choices
     };
 
     extern std::unordered_map<game::RuleField, std::string> ruleFieldToString;
@@ -66,42 +68,40 @@ namespace game {
 
     RuleType matchRuleType(const nlohmann::json& jsonRuleName);
     bool isNestedJsonRule(const nlohmann::json& jsonRule);
+    bool hasCasesInRule(const nlohmann::json& jsonRule);
 
     // Type defenition for RuleContainer struct
     struct RuleContainer {
         std::map<RuleField, Value> ruleInformation;
 
-        void add(RuleField item, Value value) {
-            ruleInformation[item] = value;
-        }
-
-        std::string toString() {
-            std::string str = "";
-            for(auto& mapElem : ruleInformation) {
-                str += ruleFieldToString[mapElem.first] + ": " + std::get<std::string>(mapElem.second) + "\n";
-            }
-            
-            return str;
-        }
+        void add(RuleField item, Value value);
+        const Value& get(RuleField item);
+        std::string toString();
     };
 
     // The Rule class is responsible for holding information relevent
     // to executing a rule
     class Rule {
-        public:
+    public:
+        struct Case {
+            std::variant<std::string, bool> condition;
+            std::vector<game::Rule> rules;
+            std::string toString();
+        };
 
-        Rule() {
-            // This constructor is required to be explicity declared
-            // because it is called by the constructors of subclasses
-        }
-
+        Rule();
         Rule(RuleType ruleType, RuleContainer& rule);
         Rule(RuleType ruleType, RuleContainer& rule, std::vector<Rule>& nestedRules);
+        Rule(RuleType ruleType, RuleContainer& rule, std::vector<Rule::Case>& cases);
 
         RuleType getRuleType() const;
         
         const RuleContainer& getRuleContainer() const;
         const std::vector<Rule>& getNestedRules();
+        const std::vector<Case>& getCases();
+
+        bool hasNestedRules();
+        bool hasCases();
 
         void setRuleContainer(RuleContainer& rule);
 
@@ -111,96 +111,11 @@ namespace game {
     private:
         RuleContainer ruleContainer;
         std::vector<Rule> nestedRules;
+        std::vector<Case> cases; 
 
         RuleType ruleType;
 
-        bool hasNestedRules;
-    };
-
-    // Sorts a list in ascending order
-    class Sort: public Rule {
-    public:
-        Sort(RuleContainer &rule);
-
-        void sortList(ListName& list);
-        RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
-    private:
-        ListName list;
-    };
-
-    class Deal:public Rule {
-        Deal (RuleContainer& rule);
-
-        RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
-        void dealList(ListName From, ListName To, Count count);
-    private:
-        Count count;
-        ListName From;
-        ListName To;
-    };
-
-    class Timer: public Rule {
-    public:
-        Timer(RuleContainer& rule);
-        RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
-    private:
-        TimerLength timeLength;
-        Mode mode;
-        RuleContainer ruleContainer;
-        RuleType ruleType;
-    };
-
-    class Add: public Rule {
-    public:
-        Add(RuleContainer& rule);
-        RuleContainer& getRule();
-        void setRule(RuleContainer& rule);
-    private:
-        VariableName to;
-        VariableName value;
-        RuleContainer ruleContainer;
-        RuleType ruleType;
-    };
-    
-    class InputChoice: public Rule {
-    public:
-        InputChoice(RuleContainer& rule);
-        RuleContainer& getRule();
-        //void setRule(RuleContainer& rule);
-    private:
-        Input to;
-        Input prompt;
-        Input choices;
-        Input result;
-        Count timeout;
-    };
-
-    class InputText: public Rule {
-    public:
-        InputText(RuleContainer& rule);
-        RuleContainer& getRule();
-        //void setRule(RuleContainer& rule);
-    private:
-        Input to;
-        Input prompt;
-        Input result;
-        Count timeout;
-    };
-
-    class InputVote: public Rule {
-    public:
-        InputVote(RuleContainer& rule);
-        RuleContainer& getRule();
-        //void setRule(RuleContainer& rule);
-    private:
-        Input to;
-        Input prompt;
-        Input choices;
-        Input result;
-        std::optional<Count> timeout;
+        bool m_hasNestedRules;
+        bool m_hasCases;
     };
 }
-

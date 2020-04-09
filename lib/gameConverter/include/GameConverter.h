@@ -26,6 +26,7 @@ namespace gameConverter{
             game::RuleContainer constructRuleContainer(const nlohmann::json& jsonRule);
             game::Rule constructRule(nlohmann::json jsonRule);
             game::Rule constructNestedRule(nlohmann::json jsonRule);
+            game::Rule constructRuleWithCases(nlohmann::json jsonRule);
             void addJsonKeyValueToRuleContainer(game::RuleContainer& ruleContainer, nlohmann::json key, nlohmann::json value);
     
     
@@ -35,9 +36,6 @@ namespace gameConverter{
     
             game::Variables convertVariables(const nlohmann::json& gameVariables);
 
-            
-    
-    
             friend class ConvertGameRulesTest;
 
     friend class ConvertGameRulesTest;
