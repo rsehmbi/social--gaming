@@ -41,6 +41,24 @@ std::shared_ptr<Variable> processToList(std::string domainLanguage){
     return listVariablePtr;
 }
 
+VariablePtr getVariablePtrFromMap(std::unordered_map<std::string, VariablePtr> mapVariables, std::string name){
+    // VariablePtr element = std::find(mapVariables.begin, mapVariables.end, name);
+    std::unordered_map<std::string, VariablePtr>::const_iterator found = mapVariables.find(name);
+
+    if(found != mapVariables.end()){
+        return found->second;
+    }else{
+        for(auto var : mapVariables){
+            VariablePtr foundVar = getVariablePtrFromMap(var.second->mapVar, name);
+            if(foundVar != nullptr){
+                return foundVar;
+            }
+        }
+    }
+    return nullptr;
+}
+
+
 void interpreter::Interpreter::executeExtend(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
     std::string targetList = std::get<std::string>(container.ruleInformation.at(RuleField::target));
@@ -209,7 +227,7 @@ void interpreter::Interpreter::executeMessage(Rule &rule) {
     std::vector<user::User> userList;
     try{
         for(user::User user : userList){
-            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getId(), (MessageText)value));
+            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getConnectionID(), (MessageText)value));
         }
     }catch(exception &e){
         LOG(INFO) << "Global Message failed in Interpreter while processing a list" << e.what();
@@ -224,7 +242,7 @@ void interpreter::Interpreter::executeGlobalMessage(Rule &rule) {
     
     try{
         for(user::User user : userList){
-            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getId(), (MessageText)value));
+            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getConnectionID(), (MessageText)value));
         }
     }catch(exception &e){
         LOG(INFO) << "Global Message failed in Interpreter while processing a list" << e.what();
@@ -232,6 +250,58 @@ void interpreter::Interpreter::executeGlobalMessage(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeScores(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    //RuleField Values
+    std::string score = std::get<std::string>(container.ruleInformation.at(RuleField::score));
+    bool ascending =  std::get<bool>(container.ruleInformation.at(RuleField::ascending));
+
+    std::vector<user::User> playerList = dynamic_cast<GameSession*>(mSession)->getPlayers();
+    game::VariablePtr playerVar = gameState->variables->getVariable("player");
+    if(playerVar->varType != VariableType::ListType){
+        LOG(INFO) << "executeScores error, type mismatch; playerVar not ListType" <<std::endl;
+    }
+    std::unordered_map<std::string, VariablePtr> playerMap = playerVar->mapVar;
+    std::vector<std::pair<std::string, int>> sortScore;
+    std::string message = "Score List\n";
+
+    try{
+        //Insert scores into sort map
+        for(auto player : playerMap){
+            VariablePtr scorePtr = getVariablePtrFromMap(player.second->mapVar, score);
+            if(scorePtr->varType != VariableType::NumberType){
+                LOG(INFO) << "executeScores error, type mismatch; scorePtr not NumberType" << std::endl;
+            }   
+
+            sortScore.emplace_back(std::make_pair(player.first, scorePtr->intVar));
+        }
+
+        //Sort scores based on ascending value
+        if(ascending){
+            std::sort(sortScore.begin(), sortScore.end(), [](std::pair<std::string, int> first, std::pair<std::string, int> second) -> bool{
+                return second > first;
+            });
+        }else{
+            std::sort(sortScore.begin(), sortScore.end(), [](std::pair<std::string, int> first, std::pair<std::string, int> second) -> bool{
+                return second < first;
+            });
+        }
+
+        //Create message content
+        for(auto element : sortScore){
+            message += "Player: " + element.first;
+            message += "\tScore: " + element.second;
+            message += "\n";
+        }
+
+        //Send global message
+        for(user::User player : playerList){
+            this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(player.getConnectionID(), (MessageText)message));
+        }
+    }catch(exception &e){
+        LOG(INFO) << "Score failed in Interpreter while processing a list" << e.what();
+    }
+    
 
 }
+
 
