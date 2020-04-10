@@ -58,6 +58,73 @@ VariablePtr getVariablePtrFromMap(std::unordered_map<std::string, VariablePtr> m
     return nullptr;
 }
 
+void interpreter::Interpreter::processRuleChoice(Rule &rule){
+    RuleType ruleType = rule.getRuleType();
+    switch(ruleType){
+        case RuleType::Add:
+            executeAdd(rule);
+            break;
+        case RuleType::Deal:
+            executeDeal(rule);
+            break;
+        case RuleType::Discard:
+            executeDiscard(rule);
+            break;
+        case RuleType::Extend:
+            executeExtend(rule);
+            break;
+        case RuleType::Foreach:
+            executeForEach(rule);
+            break;
+        case RuleType::GlobalMessage:
+            executeGlobalMessage(rule);
+            break;
+        case RuleType::Inparallel:
+            executeInparallel(rule);
+            break;
+        case RuleType::InputChoice:
+            executeInputChoice(rule);
+            break;
+        case RuleType::InputText:
+            executeInputText(rule);
+            break;
+        case RuleType::InputVote:
+            executeInputVote(rule);
+            break;
+        case RuleType::Message:
+            executeMessage(rule);
+            break;
+        case RuleType::Loop:
+            executeLoop(rule);
+            break;
+        case RuleType::ParallelFor:
+            executeParallelFor(rule);
+            break;
+        case RuleType::Reverse:
+            executeReverse(rule);
+            break;
+        case RuleType::Scores:
+            executeScores(rule);
+            break;
+        case RuleType::Shuffle:
+            executeShuffle(rule);
+            break;
+        case RuleType::Sort:
+            executeSort(rule);
+            break;
+        case RuleType::Switch:
+            executeSwitch(rule);
+            break;
+        case RuleType::Timer:
+            executeTimer(rule);
+            break;
+        case RuleType::When:
+            executeWhen(rule);
+            break;
+        break;     
+    }
+}
+
 
 void interpreter::Interpreter::executeExtend(Rule &rule) {
     const RuleContainer& container = rule.getRuleContainer();
@@ -137,7 +204,27 @@ void interpreter::Interpreter::executeDeal(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeForEach(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    //RuleField Values
+    std::string list = std::get<std::string>(container.ruleInformation.at(RuleField::list));
+    std::string element = std::get<std::string>(container.ruleInformation.at(RuleField::element));
+    // std::string rules = std::get<std::string>(container.ruleInformation.at(RuleField::rules));
+    //TODO: fix using domainnametranslator
+    VariablePtr listPtr = processToList(list); // = parseInstruction(list, gameState) 
 
+    //Insert new element into list
+    std::pair<std::string, VariablePtr> insertion(element, VariablePtr{});
+    listPtr->mapVar.insert(insertion);
+
+    //Process nested rules
+    if(!rule.hasNestedRules()){
+        LOG(INFO) << "executeForEach error, has no nested rules" << std::endl;
+    }   
+    std::vector<game::Rule> nestedRuleList = rule.getNestedRules();
+    for(auto aRule : nestedRuleList){
+        processRuleChoice(aRule);
+    }
+    
 }
 
 void interpreter::Interpreter::executeLoop(Rule &rule) {
@@ -254,7 +341,7 @@ void interpreter::Interpreter::executeScores(Rule &rule) {
     //RuleField Values
     std::string score = std::get<std::string>(container.ruleInformation.at(RuleField::score));
     bool ascending =  std::get<bool>(container.ruleInformation.at(RuleField::ascending));
-
+    
     std::vector<user::User> playerList = dynamic_cast<GameSession*>(mSession)->getPlayers();
     game::VariablePtr playerVar = gameState->variables->getVariable("player");
     if(playerVar->varType != VariableType::ListType){
@@ -298,10 +385,8 @@ void interpreter::Interpreter::executeScores(Rule &rule) {
             this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(player.getConnectionID(), (MessageText)message));
         }
     }catch(exception &e){
-        LOG(INFO) << "Score failed in Interpreter while processing a list" << e.what();
+        LOG(INFO) << "Score failed in Interpreter while processing a list" << e.what();  
     }
-    
-
 }
 
 
