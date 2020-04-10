@@ -58,7 +58,7 @@ VariablePtr getVariablePtrFromMap(std::unordered_map<std::string, VariablePtr> m
     return nullptr;
 }
 
-std::string conversetListToString(std::shared_ptr<Variable> list){
+std::string converseListToString(std::shared_ptr<Variable> list){
     //TODO:implementation
     return "";
 }
@@ -338,13 +338,13 @@ void interpreter::Interpreter::executeInputChoice(Rule &rule) {
     std::string result = std::get<std::string>(container.ruleInformation.at(RuleField::result));
     std::shared_ptr<Variable> choicesPtr = processToList(choices);
     if(choicesPtr->varType != VariableType::ListType){
-            LOG(INFO) << "executeScores error, type mismatch; playerVar not ListType" <<std::endl;
+            LOG(INFO) << "executeInputChoices error, type mismatch; playerVar not ListType" <<std::endl;
         }
      
     try{        
         std::vector<UserIdType> toListId; //use domainNameTranslator to find UserIdtype of reciepients
         std::vector<user::User> userList = dynamic_cast<GameSession*>(mSession)->getPlayers();   
-        std::string choicesString = conversetListToString(choicesPtr);
+        std::string choicesString = converseListToString(choicesPtr);
 
         //Send global message
         for(auto user : userList){
@@ -372,11 +372,80 @@ void interpreter::Interpreter::executeInputChoice(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeInputVote(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    
+    std::string to = std::get<std::string>(container.ruleInformation.at(RuleField::to));
+    std::string prompt = std::get<std::string>(container.ruleInformation.at(RuleField::prompt));
+    std::string choices = std::get<std::string>(container.ruleInformation.at(RuleField::choices));
+    std::string result = std::get<std::string>(container.ruleInformation.at(RuleField::result));
+    std::shared_ptr<Variable> choicesPtr = processToList(choices);
+    if(choicesPtr->varType != VariableType::ListType){
+            LOG(INFO) << "executeInputVote error, type mismatch; playerVar not ListType" <<std::endl;
+        }
+     
+    try{        
+        std::vector<UserIdType> toListId; //use domainNameTranslator to find UserIdtype of reciepients
+        std::vector<user::User> userList = dynamic_cast<GameSession*>(mSession)->getPlayers();   
+        std::string choicesString = converseListToString(choicesPtr);
 
+        //Send global message
+        for(auto user : userList){
+            if(std::find(toListId.begin(), toListId.end(), user.getId()) != toListId.end()){
+                this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getConnectionID(), (MessageText)prompt));
+                this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getConnectionID(), (MessageText)choicesString));
+            }
+        }
+
+        //Insert result variable into user for input
+        std::string userType;
+        if(to == "player"){
+            userType = "players";
+        }else if(to == "audience"){
+            userType = "audiences";
+        }else{
+             LOG(INFO) << "executeInputVote error, to user not recognized" <<std::endl;
+        }
+        std::unordered_map<std::string, VariablePtr> userMap = gameState->variables->getVariable(userType)->mapVar;
+        std::string userId; //use domainNameTranslator to find userId of reciepients in GameSession
+        userMap.find(userId)->second->mapVar.insert(std::pair<std::string, VariablePtr> (result, VariablePtr{}));
+    }catch(exception &e){
+        LOG(INFO) << "InputVote failed in Interpreter while processing a list" << e.what();  
+    }
 }
 
 void interpreter::Interpreter::executeInputText(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    
+    std::string to = std::get<std::string>(container.ruleInformation.at(RuleField::to));
+    std::string prompt = std::get<std::string>(container.ruleInformation.at(RuleField::prompt));
+    std::string result = std::get<std::string>(container.ruleInformation.at(RuleField::result));
+     
+    try{        
+        std::vector<UserIdType> toListId; //use domainNameTranslator to find UserIdtype of reciepients
+        std::vector<user::User> userList = dynamic_cast<GameSession*>(mSession)->getPlayers();   
 
+        //Send global message
+        for(auto user : userList){
+            if(std::find(toListId.begin(), toListId.end(), user.getId()) != toListId.end()){
+                this->gameState->messageMap.insert(std::make_pair<UserIdType, MessageText>(user.getConnectionID(), (MessageText)prompt));
+            }
+        }
+
+        //Insert result variable into user for input
+        std::string userType;
+        if(to == "player"){
+            userType = "players";
+        }else if(to == "audience"){
+            userType = "audiences";
+        }else{
+             LOG(INFO) << "executeInputText error, to user not recognized" <<std::endl;
+        }
+        std::unordered_map<std::string, VariablePtr> userMap = gameState->variables->getVariable(userType)->mapVar;
+        std::string userId; //use domainNameTranslator to find userId of reciepients in GameSession
+        userMap.find(userId)->second->mapVar.insert(std::pair<std::string, VariablePtr> (result, VariablePtr{}));
+    }catch(exception &e){
+        LOG(INFO) << "InpuText failed in Interpreter while processing a list" << e.what();  
+    }
 }
 
 void interpreter::Interpreter::executeMessage(Rule &rule) {
