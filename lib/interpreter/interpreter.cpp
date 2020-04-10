@@ -287,6 +287,36 @@ void interpreter::Interpreter::executeAdd(Rule &rule) {
 }
 
 void interpreter::Interpreter::executeTimer(Rule &rule) {
+    const RuleContainer& container = rule.getRuleContainer();
+    TimerLength duration = std::get<TimerLength>(container.ruleInformation.at(RuleField::duration));
+    Mode mode = std::get<Mode>(container.ruleInformation.at(RuleField::mode));
+
+    if(!rule.hasNestedRules()){
+        LOG(INFO) << "executeTimer error, has no nested rules" << std::endl;
+    }
+    std::vector<game::Rule> nestedRuleList = rule.getNestedRules();
+
+    //init timer
+    std::clock_t start;
+    start = std::clock();
+    if(mode == "at most"){
+        for(auto aRule : nestedRuleList){
+            if((std::clock() - start) < duration){
+                processRuleChoice(aRule);
+            }else{
+                break;
+            }          
+        }
+    }else if(mode == "exact"){
+        while((std::clock() - start) < duration){};
+        for(auto aRule : nestedRuleList){
+            processRuleChoice(aRule);
+        }
+    }else if(mode == "track"){
+        
+    }else{
+        LOG(INFO) << "executeTimer error, mode not regconized" << std::endl;
+    }
 
 }
 
