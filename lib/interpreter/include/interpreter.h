@@ -7,6 +7,8 @@
 #include "Game.h"
 #include <glog/logging.h>
 #include "GameSessionInterface.h"
+// #include "DomainNameTranslator.h"
+
 
 using game::ListName;////****
 using game::Mode;
@@ -23,6 +25,7 @@ using game::Rule;
 using game::Variables;
 using game::Variable;
 using game::VariableType;
+// using domainnametranslator::DomainNameTranslator;
 
 using nlohmann::json;
 //responsible for checking rule inside json 
@@ -32,7 +35,7 @@ namespace interpreter{
     class Interpreter{
     private:
 
-        const GameSessionInterface* mSession;
+        GameSessionInterface* mSession;
         RunningGameState* gameState;
         const Constants* constants;
         const GameRules* rules;
@@ -42,13 +45,15 @@ namespace interpreter{
 
         json getNextRuleBlock(json jsonBlock);
         bool hasNestedRules(json ruleBlock);
+
         
-    
     public:
 
         Interpreter();
-        void setCurrentGameSession(const GameSessionInterface* session, RunningGameState* gameState, 
+        void setCurrentGameSession(GameSessionInterface* session, RunningGameState* gameState, 
                 const Constants* constants, const GameRules* rules);
+        
+        void processRuleChoice(Rule &rule);
 
         // Control Structures
         void executeForEach(Rule &rule);
