@@ -65,9 +65,9 @@ class GameSession : public GameSessionInterface {
         // Filters the users that are players.
         std::vector<user::User> getPlayers();
 
-        void sessionBroadCast(const std::string& text);
+        // void sessionBroadCast(const std::string& text);
 
-        void msgConnection(const ConnectionID& target, const std::string& msg); 
+        // void msgConnection(const ConnectionID& target, const std::string& msg); 
 
         std::string retrieveMsg ();
 
